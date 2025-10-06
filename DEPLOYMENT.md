@@ -136,7 +136,7 @@ services:
   frontend:
     build: .
     container_name: perfume-frontend
-    env_file:
+    env_file:e
       - .env.local
     ports:
       - "80:3000"
