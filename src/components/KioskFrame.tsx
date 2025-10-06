@@ -1,11 +1,12 @@
 "use client";
 
-import React, { startTransition, useEffect, useRef } from "react";
+import React, { startTransition, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import AnimatedBackground from "@/components/AnimatedBackground";
+import IdleTimer from "@/components/IdleTimer";
 
-const IDLE_TIMEOUT_MS = 30_000;
+const IDLE_TIMEOUT_MS = 120_000; // 2 minutes
 
 export default function KioskFrame({
   children,
@@ -17,6 +18,7 @@ export default function KioskFrame({
   const router = useRouter();
   const pathname = usePathname();
   const idleTimerRef = useRef<number | null>(null);
+  const [timerKey, setTimerKey] = useState(0);
   const isHome = pathname === "/";
   const shouldReduceMotion = useReducedMotion();
 
@@ -49,6 +51,8 @@ export default function KioskFrame({
         window.clearTimeout(idleTimerRef.current);
       }
       idleTimerRef.current = window.setTimeout(goHome, IDLE_TIMEOUT_MS);
+      // Reset the timer widget by changing key
+      setTimerKey((prev) => prev + 1);
     };
 
     const handleVisibility = () => {
@@ -93,6 +97,11 @@ export default function KioskFrame({
   return (
     <div className="kiosk-root">
       <AnimatedBackground />
+      <IdleTimer
+        key={timerKey}
+        timeoutMs={IDLE_TIMEOUT_MS}
+        isActive={!isHome}
+      />
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={shouldReduceMotion ? "static" : pathname}

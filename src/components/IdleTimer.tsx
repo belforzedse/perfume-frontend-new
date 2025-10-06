@@ -1,0 +1,110 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+interface IdleTimerProps {
+  timeoutMs: number;
+  onIdle?: () => void;
+  isActive: boolean;
+}
+
+export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProps) {
+  const [timeRemaining, setTimeRemaining] = useState(timeoutMs);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (!isActive) {
+      setIsVisible(false);
+      return;
+    }
+
+    setTimeRemaining(timeoutMs);
+
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        const next = prev - 1000;
+
+        // Show widget in last 30 seconds
+        if (next <= 30000 && !isVisible) {
+          setIsVisible(true);
+        }
+
+        // Hide when reset
+        if (next >= timeoutMs - 1000 && isVisible) {
+          setIsVisible(false);
+        }
+
+        if (next <= 0 && onIdle) {
+          onIdle();
+          return 0;
+        }
+
+        return next;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeoutMs, isActive, onIdle, isVisible]);
+
+  // Reset when props change
+  useEffect(() => {
+    setTimeRemaining(timeoutMs);
+  }, [timeoutMs]);
+
+  if (!isVisible || !isActive) return null;
+
+  const seconds = Math.max(0, Math.ceil(timeRemaining / 1000));
+  const progress = (timeRemaining / timeoutMs) * 100;
+
+  return (
+    <div className="fixed bottom-4 left-4 z-50 animate-fade-in">
+      <div className="glass-surface rounded-2xl px-4 py-3 shadow-lg backdrop-blur-xl border border-white/30 flex items-center gap-3 min-w-[140px]">
+        {/* Circular Progress */}
+        <div className="relative w-10 h-10 flex items-center justify-center">
+          <svg className="w-10 h-10 -rotate-90" viewBox="0 0 36 36">
+            {/* Background circle */}
+            <circle
+              cx="18"
+              cy="18"
+              r="15.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-gray-300/30"
+            />
+            {/* Progress circle */}
+            <circle
+              cx="18"
+              cy="18"
+              r="15.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeDasharray={`${2 * Math.PI * 15.5}`}
+              strokeDashoffset={`${2 * Math.PI * 15.5 * (1 - progress / 100)}`}
+              className={`transition-all duration-1000 ${
+                seconds <= 10 ? 'text-red-500' : seconds <= 20 ? 'text-orange-500' : 'text-[var(--color-accent)]'
+              }`}
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className={`absolute text-xs font-semibold ${
+            seconds <= 10 ? 'text-red-600' : 'text-[var(--color-foreground-muted)]'
+          }`}>
+            {seconds}
+          </span>
+        </div>
+
+        {/* Text */}
+        <div className="flex flex-col leading-tight">
+          <span className="text-[10px] text-[var(--color-foreground-subtle)] uppercase tracking-wider">
+            بازنشانی خودکار
+          </span>
+          <span className="text-xs text-[var(--color-foreground-muted)] font-medium">
+            {seconds} ثانیه
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
