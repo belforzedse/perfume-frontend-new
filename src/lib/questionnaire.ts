@@ -9,7 +9,7 @@ import {
 } from "@/lib/kiosk-options";
 
 export type QuestionType = "multiple" | "single";
-
+//hello
 export interface QuestionnaireAnswers {
   moods: string[];
   moments: string[];
