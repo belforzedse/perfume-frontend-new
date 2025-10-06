@@ -51,7 +51,7 @@ jobs:
 
             # Create .env if missing
             if [ ! -f .env ]; then
-              echo "NEXT_PUBLIC_STRAPI_URL=http://82.115.26.133:1337" > .env
+              echo "NEXT_PUBLIC_STRAPI_URL=https://kioskapi.gandom-perfume.ir" > .env
               echo "NEXT_PUBLIC_STRAPI_TOKEN=${{ secrets.STRAPI_TOKEN }}" >> .env
             fi
 
