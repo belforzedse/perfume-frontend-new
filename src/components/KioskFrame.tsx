@@ -1,12 +1,13 @@
 "use client";
 
-import React, { startTransition, useEffect, useRef, useState } from "react";
+import React, { startTransition, useEffect, useRef, useState, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import IdleTimer from "@/components/IdleTimer";
 
-const IDLE_TIMEOUT_MS = 120_000; // 2 minutes
+const QUESTIONNAIRE_TIMEOUT_MS = 30_000; // 30 seconds
+const RECOMMENDATIONS_TIMEOUT_MS = 120_000; // 2 minutes
 
 export default function KioskFrame({
   children,
@@ -19,11 +20,22 @@ export default function KioskFrame({
   const pathname = usePathname();
   const idleTimerRef = useRef<number | null>(null);
   const [timerKey, setTimerKey] = useState(0);
-  const isHome = pathname === "/";
   const shouldReduceMotion = useReducedMotion();
 
+  const isHome = pathname === "/";
+  const isQuestionnaire = pathname === "/questionnaire";
+  const isRecommendations = pathname === "/recommendations";
+
+  // Determine timeout based on current page
+  const IDLE_TIMEOUT_MS = useMemo(() => {
+    if (isHome) return 0; // No timeout on home
+    if (isQuestionnaire) return QUESTIONNAIRE_TIMEOUT_MS;
+    if (isRecommendations) return RECOMMENDATIONS_TIMEOUT_MS;
+    return 120_000; // Default 2 minutes for other pages
+  }, [isHome, isQuestionnaire, isRecommendations]);
+
   useEffect(() => {
-    if (typeof window === "undefined" || isHome) {
+    if (typeof window === "undefined" || isHome || IDLE_TIMEOUT_MS === 0) {
       return;
     }
 
@@ -92,16 +104,18 @@ export default function KioskFrame({
       window.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [router, pathname, isHome]);
+  }, [router, pathname, isHome, IDLE_TIMEOUT_MS]);
 
   return (
     <div className="kiosk-root">
       <AnimatedBackground />
-      <IdleTimer
-        key={timerKey}
-        timeoutMs={IDLE_TIMEOUT_MS}
-        isActive={!isHome}
-      />
+      {!isHome && IDLE_TIMEOUT_MS > 0 && (
+        <IdleTimer
+          key={timerKey}
+          timeoutMs={IDLE_TIMEOUT_MS}
+          isActive={true}
+        />
+      )}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={shouldReduceMotion ? "static" : pathname}

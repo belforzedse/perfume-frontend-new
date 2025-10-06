@@ -12,31 +12,31 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
   const [timeRemaining, setTimeRemaining] = useState(timeoutMs);
   const [isVisible, setIsVisible] = useState(false);
 
+  // Reset when component mounts or timeoutMs changes
   useEffect(() => {
-    if (!isActive) {
+    setTimeRemaining(timeoutMs);
+    setIsVisible(false);
+  }, [timeoutMs]);
+
+  useEffect(() => {
+    if (!isActive || timeoutMs === 0) {
       setIsVisible(false);
       return;
     }
 
-    setTimeRemaining(timeoutMs);
-
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
-        const next = prev - 1000;
+        const next = Math.max(0, prev - 1000);
 
         // Show widget in last 30 seconds
-        if (next <= 30000 && !isVisible) {
+        if (next <= 30000 && next > 0) {
           setIsVisible(true);
-        }
-
-        // Hide when reset
-        if (next >= timeoutMs - 1000 && isVisible) {
+        } else {
           setIsVisible(false);
         }
 
         if (next <= 0 && onIdle) {
           onIdle();
-          return 0;
         }
 
         return next;
@@ -44,14 +44,9 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeoutMs, isActive, onIdle, isVisible]);
+  }, [timeoutMs, isActive, onIdle]);
 
-  // Reset when props change
-  useEffect(() => {
-    setTimeRemaining(timeoutMs);
-  }, [timeoutMs]);
-
-  if (!isVisible || !isActive) return null;
+  if (!isVisible || !isActive || timeoutMs === 0) return null;
 
   const seconds = Math.max(0, Math.ceil(timeRemaining / 1000));
   const progress = (timeRemaining / timeoutMs) * 100;
