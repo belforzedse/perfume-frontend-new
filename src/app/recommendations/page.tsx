@@ -30,12 +30,12 @@ const StateMessage = ({
   actionLabel: string;
   secondaryAction?: ReactNode;
 }) => (
-  <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
-    <div className="space-y-3 rounded-3xl border border-white/20 bg-white/10 p-8 backdrop-blur-[32px]">
-      <p className="text-base font-semibold text-[var(--color-foreground)]">{title}</p>
-      {description && <p className="m-0 text-sm text-muted">{description}</p>}
+  <div className="flex h-full flex-col items-center justify-center gap-3 sm:gap-4 px-4 sm:px-6 text-center">
+    <div className="space-y-2 sm:space-y-3 rounded-2xl sm:rounded-3xl border border-white/20 bg-white/10 p-6 sm:p-8 backdrop-blur-[32px] max-w-md">
+      <p className="text-sm sm:text-base font-semibold text-[var(--color-foreground)]">{title}</p>
+      {description && <p className="m-0 text-xs sm:text-sm text-muted">{description}</p>}
       <div className="flex flex-col items-center gap-2">
-        <Link href={actionHref} className="btn tap-highlight touch-target touch-feedback">
+        <Link href={actionHref} className="btn tap-highlight touch-target touch-feedback text-sm sm:text-base">
           {actionLabel}
         </Link>
         {secondaryAction}
@@ -68,12 +68,12 @@ const MatchCard = ({
   const englishName = perfume.nameEn?.trim();
 
   return (
-    <article className="glass-card flex h-full flex-col gap-5 rounded-3xl p-6 text-right animate-fade-in-up">
+    <article className="glass-card flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right animate-fade-in-up">
       <header className="flex items-center justify-between text-muted">
-        <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-[var(--color-foreground)]">
+        <span className="rounded-full border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1 text-[10px] sm:text-xs font-medium text-[var(--color-foreground)]">
           {formatNumber(order)}
         </span>
-        <span className="text-sm font-semibold text-[var(--color-foreground)]">
+        <span className="text-xs sm:text-sm font-semibold text-[var(--color-foreground)]">
           {formatNumber(perfume.matchPercentage)}٪
         </span>
       </header>
@@ -81,7 +81,7 @@ const MatchCard = ({
       {perfume.image && (
         <div className="flex flex-grow items-center justify-center">
           <div
-            className="relative w-full overflow-hidden rounded-2xl bg-white/10 backdrop-blur-sm"
+            className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm"
             style={{ height: imageHeight }}
           >
             <Image
@@ -89,29 +89,29 @@ const MatchCard = ({
               alt={title}
               fill
               className="object-contain"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               priority
             />
           </div>
         </div>
       )}
 
-      <div className="space-y-2 text-right">
+      <div className="space-y-1 sm:space-y-1.5 md:space-y-2 text-right">
         {brand && (
-          <p className="m-0 text-[11px] uppercase tracking-[0.3em] text-muted line-clamp-1">
+          <p className="m-0 text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-muted line-clamp-1">
             {brand}
           </p>
         )}
         <h3
-          className={`m-0 font-semibold text-[var(--color-foreground)] ${compact === "ultra" ? "text-lg" : "text-2xl"} line-clamp-1`}
+          className={`m-0 font-semibold text-[var(--color-foreground)] ${compact === "ultra" ? "text-base sm:text-lg" : "text-lg sm:text-xl md:text-2xl"} line-clamp-1`}
         >
           {title}
         </h3>
         {compact !== "ultra" && englishName && (
-          <p className="m-0 text-xs text-subtle line-clamp-1">{englishName}</p>
+          <p className="m-0 text-[10px] sm:text-xs text-subtle line-clamp-1">{englishName}</p>
         )}
         {compact === "normal" && detailLine && (
-          <p className="m-0 text-xs text-muted line-clamp-1">{detailLine}</p>
+          <p className="m-0 text-[10px] sm:text-xs text-muted line-clamp-1">{detailLine}</p>
         )}
       </div>
     </article>
@@ -233,31 +233,31 @@ function RecommendationsContent() {
   }
 
   return (
-    <div className="flex h-full w-full items-center justify-center px-4 lg:px-8">
-      <div className="glass-card relative flex h-[92vh] w-full max-w-[1400px] flex-col gap-6 rounded-[32px] px-6 py-6 animate-blur-in">
-        <header className="flex items-center justify-between animate-slide-in-right">
-          <h1 className="text-3xl font-semibold text-[var(--color-foreground)]">پیشنهادهای شما</h1>
+    <div className="flex h-full w-full items-center justify-center px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+      <div className="glass-card relative flex h-[95vh] sm:h-[92vh] w-full max-w-full sm:max-w-[98vw] md:max-w-[95vw] lg:max-w-[90vw] xl:max-w-[1400px] flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-3 py-3 sm:px-4 sm:py-4 md:px-5 md:py-5 lg:px-6 lg:py-6 animate-blur-in">
+        <header className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 sm:gap-3 animate-slide-in-right">
+          <h1 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-semibold text-[var(--color-foreground)]">پیشنهادهای شما</h1>
           {recommendations.length > 0 && (
-            <span className="text-xs text-muted">
+            <span className="text-[10px] xs:text-xs sm:text-xs text-muted">
               {formatNumber(recommendations.length)} مورد بر اساس ترجیحات شما تنظیم شد.
             </span>
           )}
         </header>
 
-        <section className="grid flex-1 grid-cols-3 grid-rows-2 auto-rows-fr gap-3 xl:gap-4 animate-scale-in animate-delay-2">
+        <section className="grid flex-1 grid-cols-2 grid-rows-3 sm:grid-cols-3 sm:grid-rows-2 auto-rows-fr gap-2 sm:gap-2.5 md:gap-3 lg:gap-3 xl:gap-4 animate-scale-in animate-delay-2 overflow-y-auto">
           {recommendations.length > 0 ? (
             recommendations.map((perfume, index) => (
               <div
                 key={perfume.id}
-                className={`h-full animate-fade-in-up animate-delay-${Math.min(index + 3, 5)}`}
+                className={`h-full min-h-[180px] sm:min-h-[200px] animate-fade-in-up animate-delay-${Math.min(index + 3, 5)}`}
               >
                 <MatchCard perfume={perfume} order={index + 1} compact={compact} />
               </div>
             ))
           ) : (
-            <div className="glass-surface col-span-full flex h-full flex-col items-center justify-center gap-3 rounded-3xl text-sm text-muted animate-fade-in-up animate-delay-3">
+            <div className="glass-surface col-span-full flex h-full flex-col items-center justify-center gap-3 rounded-2xl sm:rounded-3xl text-xs sm:text-sm text-muted animate-fade-in-up animate-delay-3 p-4">
               <p className="m-0">مورد مناسبی پیدا نشد. لطفاً پاسخ‌ها را تغییر دهید.</p>
-              <Link href="/questionnaire" className="btn-ghost tap-highlight touch-target touch-feedback">
+              <Link href="/questionnaire" className="btn-ghost tap-highlight touch-target touch-feedback text-sm">
                 بازنگری پرسشنامه
               </Link>
             </div>

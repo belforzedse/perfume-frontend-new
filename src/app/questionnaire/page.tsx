@@ -191,32 +191,32 @@ export default function Questionnaire() {
 
   return (
     <KioskFrame>
-      <div className="relative flex h-full w-full items-center justify-center">
-        <div className="glass-card relative flex h-full w-full max-w-[1200px] flex-col gap-6 rounded-[32px] px-6 py-6 animate-blur-in">
-          <header className="flex items-center justify-between animate-slide-in-right">
-            <div className="space-y-2 text-right">
-              <p className="m-0 text-xs text-muted" aria-live="polite">
+      <div className="relative flex h-full w-full items-center justify-center px-3 sm:px-4 md:px-6">
+        <div className="glass-card relative flex h-full w-full max-w-full sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[1200px] flex-col gap-4 sm:gap-5 md:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-4 py-4 sm:px-5 sm:py-5 md:px-6 md:py-6 animate-blur-in">
+          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 animate-slide-in-right">
+            <div className="space-y-1 sm:space-y-2 text-right flex-1">
+              <p className="m-0 text-[10px] xs:text-xs text-muted" aria-live="polite">
                 سوال {formatNumber(currentStep + 1)} از {formatNumber(TOTAL_QUESTIONS)}
               </p>
-              <h1 className="text-3xl font-semibold text-[var(--color-foreground)]">
+              <h1 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-semibold text-[var(--color-foreground)] leading-tight">
                 {currentQuestion.title}
               </h1>
               {currentQuestion.description && (
-                <p className="m-0 text-sm text-muted">{currentQuestion.description}</p>
+                <p className="m-0 text-xs sm:text-sm text-muted">{currentQuestion.description}</p>
               )}
             </div>
-            <div className="w-48">
-              <div className="h-2 w-full rounded-full bg-soft">
+            <div className="w-full sm:w-32 md:w-40 lg:w-48">
+              <div className="h-1.5 sm:h-2 w-full rounded-full bg-soft">
                 <div
-                  className="h-2 rounded-full bg-[var(--color-accent)] transition-all duration-300"
+                  className="h-1.5 sm:h-2 rounded-full bg-[var(--color-accent)] transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>
             </div>
           </header>
 
-          <section className="flex flex-1 items-center justify-center animate-scale-in animate-delay-2">
-            <div className="grid w-full max-w-[900px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <section className="flex flex-1 items-center justify-center overflow-y-auto animate-scale-in animate-delay-2 px-1">
+            <div className="grid w-full max-w-full sm:max-w-[95%] md:max-w-[900px] grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 md:gap-4 py-2">
               {currentQuestion.options.map((option, idx) => {
                 const values = answers[currentQuestion.key];
                 const isSelected = values.includes(option.value);
@@ -233,26 +233,26 @@ export default function Questionnaire() {
                     aria-pressed={isSelected}
                     className={`${BTN_BASE} ${delayClass} ${
                       isSelected ? "question-option--selected" : "question-option--default"
-                    } ${disabled ? "question-option--disabled" : ""}`}
+                    } ${disabled ? "question-option--disabled" : ""} text-sm sm:text-base md:text-lg min-h-[48px] sm:min-h-[52px] md:min-h-[56px]`}
                   >
                     {option.label}
                   </button>
                 );
               })}
               {currentQuestion.options.length === 0 && (
-                <div className="col-span-full flex h-full items-center justify-center text-sm text-muted">گزینه‌ای یافت نشد.</div>
+                <div className="col-span-full flex h-full items-center justify-center text-xs sm:text-sm text-muted">گزینه‌ای یافت نشد.</div>
               )}
             </div>
           </section>
 
-          <footer className="flex items-center justify-between gap-3 animate-slide-in-left animate-delay-3">
-            <button onClick={back} disabled={currentStep === 0} className="btn-ghost w-32 tap-highlight touch-target touch-feedback">
+          <footer className="flex flex-col xs:flex-row items-center justify-between gap-2 sm:gap-3 animate-slide-in-left animate-delay-3">
+            <button onClick={back} disabled={currentStep === 0} className="btn-ghost w-full xs:w-24 sm:w-28 md:w-32 tap-highlight touch-target touch-feedback text-sm sm:text-base">
               بازگشت
             </button>
-            <span className="text-xs text-muted" aria-live="polite">
+            <span className="text-[10px] xs:text-xs sm:text-xs text-muted text-center px-2" aria-live="polite">
               {helperText}
             </span>
-            <button onClick={() => next()} disabled={!canProceed} className="btn w-32 tap-highlight touch-target touch-feedback">
+            <button onClick={() => next()} disabled={!canProceed} className="btn w-full xs:w-32 sm:w-36 md:w-40 tap-highlight touch-target touch-feedback text-sm sm:text-base">
               {currentStep === totalQuestions - 1 ? "مشاهده پیشنهادها" : "بعدی"}
             </button>
           </footer>

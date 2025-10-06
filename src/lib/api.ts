@@ -1,4 +1,4 @@
-﻿export const API_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+﻿export const API_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "https://kioskapi.gandom-perfume.ir";
 export const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
 type PerfumeAttributeKey = "family" | "season" | "character" | "gender";

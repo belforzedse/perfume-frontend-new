@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: "https",
+        hostname: "kioskapi.gandom-perfume.ir",
+        pathname: "/uploads/**",
+      },
+      {
         protocol: "http",
         hostname: "82.115.26.133",
         port: "1337",

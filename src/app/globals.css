@@ -138,7 +138,7 @@
 
   /* Kiosk-specific body adjustments */
   body.kiosk-body {
-    cursor: none;
+    cursor: default;
   }
 
   body::before,
