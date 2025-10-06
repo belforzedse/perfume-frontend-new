@@ -14,6 +14,6 @@ ENV NEXT_PUBLIC_STRAPI_TOKEN=$NEXT_PUBLIC_STRAPI_TOKEN
 ENV NODE_ENV=production
 
 RUN npm run build
-
+#hello world
 EXPOSE 3000
 CMD ["npm", "start"]
