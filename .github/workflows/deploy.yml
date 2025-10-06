@@ -1,0 +1,64 @@
+name: 🚀 Deploy Frontend to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️. Checkout your code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️. Quick connectivity check (optional but nice)
+      - name: Test SSH connection
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: whoami
+          debug: true
+          use_insecure_cipher: true
+
+      # 3️. Copy project files to VPS
+      - name: Upload project files to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          source: "."
+          target: "~/perfume-frontend"
+          overwrite: true
+          debug: true
+          use_insecure_cipher: true
+
+      # 4️. Run Docker deployment commands on VPS
+      - name: Deploy frontend using Docker
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: |
+            set -e  # stop on error
+            cd ~/perfume-frontend
+
+            # Create .env if missing
+            if [ ! -f .env ]; then
+              echo "NEXT_PUBLIC_STRAPI_URL=http://82.115.26.133:1337" > .env
+              echo "NEXT_PUBLIC_STRAPI_TOKEN=${{ secrets.STRAPI_TOKEN }}" >> .env
+            fi
+
+            echo " Starting Docker deployment..."
+            docker compose down || true
+            docker compose build --no-cache
+            docker compose up -d
+            docker system prune -f
+          debug: true
+          use_insecure_cipher: true
