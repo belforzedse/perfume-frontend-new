@@ -1,11 +1,15 @@
 version: "3.8"
-#boner alert
+
 services:
   frontend:
-    build: .
     container_name: perfume-frontend
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_STRAPI_URL: https://kioskapi.gandom-perfume.ir
+        NEXT_PUBLIC_STRAPI_TOKEN: your-public-token-here
     env_file:
-      - .env.local
+      - .env
     ports:
-      - "3000:3000"
+      - "3000:3000" # ✅ run on port 80 for production
     restart: always

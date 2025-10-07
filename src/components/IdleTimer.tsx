@@ -53,7 +53,7 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
 
   return (
     <div className="fixed bottom-4 left-4 z-50 animate-fade-in">
-      <div className="glass-surface rounded-2xl px-4 py-3 shadow-lg backdrop-blur-xl border border-white/30 flex items-center gap-3 min-w-[140px]">
+      <div className="glass-surface rounded-2xl px-4 py-3 shadow-lg backdrop-blur-xl border border-white/30 flex items-center justify-center">
         {/* Circular Progress */}
         <div className="relative w-10 h-10 flex items-center justify-center">
           <svg className="w-10 h-10 -rotate-90" viewBox="0 0 36 36">
@@ -87,16 +87,6 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
             seconds <= 10 ? 'text-red-600' : 'text-[var(--color-foreground-muted)]'
           }`}>
             {seconds}
-          </span>
-        </div>
-
-        {/* Text */}
-        <div className="flex flex-col leading-tight">
-          <span className="text-[10px] text-[var(--color-foreground-subtle)] uppercase tracking-wider">
-            بازنشانی خودکار
-          </span>
-          <span className="text-xs text-[var(--color-foreground-muted)] font-medium">
-            {seconds} ثانیه
           </span>
         </div>
       </div>
