@@ -1,12 +1,28 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
-import { API_URL, STRAPI_TOKEN, getPerfumes } from "@/lib/api";
+import { API_URL, STRAPI_TOKEN, getPerfumes, type Perfume } from "@/lib/api";
+
+const getErrorMessage = (err: unknown): string => {
+  if (err instanceof Error && err.message) {
+    return err.message;
+  }
+
+  if (typeof err === "string") {
+    return err;
+  }
+
+  try {
+    return JSON.stringify(err);
+  } catch {
+    return "Unknown error";
+  }
+};
 
 export default function ApiTestPage() {
   const [status, setStatus] = useState("Testing...");
   const [error, setError] = useState<string | null>(null);
-  const [perfumes, setPerfumes] = useState<any[]>([]);
+  const [perfumes, setPerfumes] = useState<Perfume[]>([]);
 
   useEffect(() => {
     async function test() {
@@ -22,9 +38,9 @@ export default function ApiTestPage() {
         console.log("Got perfumes:", data.length);
         setPerfumes(data);
         setStatus(`Success! Got ${data.length} perfumes`);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error:", err);
-        setError(err.message || String(err));
+        setError(getErrorMessage(err));
         setStatus("Failed");
       }
     }
