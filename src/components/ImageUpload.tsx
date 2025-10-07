@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import imageCompression from 'browser-image-compression';
 
 interface ImageUploadProps {
   value?: File | string | null;
@@ -50,7 +51,7 @@ export default function ImageUpload({
     }
   };
 
-  const handleFiles = (file: File) => {
+  const handleFiles = async (file: File) => {
     // Validate file type
     if (!file.type.startsWith('image/')) {
       alert('لطفاً فقط فایل‌های تصویری انتخاب کنید.');
@@ -63,14 +64,36 @@ export default function ImageUpload({
       return;
     }
 
-    onChange(file);
+    try {
+      // Convert image to WebP format
+      const options = {
+        maxSizeMB: maxSize,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+        fileType: 'image/webp',
+      };
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreview(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+      const compressedFile = await imageCompression(file, options);
+
+      // Create a new File object with .webp extension
+      const webpFile = new File(
+        [compressedFile],
+        file.name.replace(/\.[^/.]+$/, '.webp'),
+        { type: 'image/webp' }
+      );
+
+      onChange(webpFile);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(webpFile);
+    } catch (error) {
+      console.error('Error converting image to WebP:', error);
+      alert('خطا در تبدیل تصویر. لطفاً دوباره تلاش کنید.');
+    }
   };
 
   const handleClick = () => {
@@ -153,7 +176,7 @@ export default function ImageUpload({
               برای انتخاب تصویر کلیک کنید یا فایل را اینجا بکشید
             </p>
             <p className="text-xs text-[var(--color-foreground-subtle)]">
-              فرمت‌های مجاز: JPG، PNG، GIF (حداکثر {maxSize}MB)
+              فرمت‌های مجاز: JPG، PNG، GIF (خودکار به WebP تبدیل می‌شود - حداکثر {maxSize}MB)
             </p>
           </div>
         )}
