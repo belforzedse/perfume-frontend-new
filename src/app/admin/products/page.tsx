@@ -580,11 +580,14 @@ export default function AdminProductsPage() {
 
         {status && (
           <div
-            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm ${
+            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm transition-all duration-300 ${
               status.type === "success"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
+                ? "bg-green-100 text-green-800 border border-green-300"
+                : "bg-red-100 text-red-800 border border-red-300"
             }`}
+            style={{
+              animation: "fadeInUp 0.3s ease-out"
+            }}
           >
             {status.message}
           </div>
@@ -595,7 +598,7 @@ export default function AdminProductsPage() {
             <button
               type="button"
               onClick={handleCancelEdit}
-              className="inline-flex items-center justify-center rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-6 py-3 text-sm font-semibold text-[var(--color-foreground)] transition-all hover:bg-[var(--color-background-soft)]"
+              className="inline-flex items-center justify-center rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-6 py-3 text-sm font-semibold text-[var(--color-foreground)] transition-all duration-200 hover:bg-[var(--color-background-soft)] hover:scale-105 active:scale-95"
             >
               انصراف
             </button>
@@ -603,7 +606,7 @@ export default function AdminProductsPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-[var(--radius-base)] bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[var(--color-accent-strong)] disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex items-center justify-center rounded-[var(--radius-base)] bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[var(--color-accent-strong)] hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
           >
             {isSubmitting
               ? "در حال ارسال..."
@@ -649,7 +652,7 @@ export default function AdminProductsPage() {
               .map((perfume) => (
               <li
                 key={perfume.id}
-                className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)]"
+                className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)] transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
@@ -673,14 +676,14 @@ export default function AdminProductsPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(perfume)}
-                        className="rounded px-3 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100"
+                        className="rounded px-3 py-1 text-xs font-medium text-blue-600 transition-all duration-200 hover:bg-blue-100 hover:scale-105 active:scale-95"
                         title="ویرایش"
                       >
                         ویرایش
                       </button>
                       <button
                         onClick={() => handleDelete(perfume)}
-                        className="rounded px-3 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
+                        className="rounded px-3 py-1 text-xs font-medium text-red-600 transition-all duration-200 hover:bg-red-100 hover:scale-105 active:scale-95"
                         title="حذف"
                       >
                         حذف

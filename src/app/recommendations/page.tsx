@@ -68,20 +68,20 @@ const MatchCard = ({
   const englishName = perfume.nameEn?.trim();
 
   return (
-    <article className="glass-card flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right">
+    <article className="glass-card flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right transition-all duration-300 hover:shadow-xl hover:scale-[1.02] cursor-pointer">
       <header className="flex items-center justify-between text-muted">
-        <span className="rounded-full border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1 text-[10px] sm:text-xs font-medium text-[var(--color-foreground)]">
+        <span className="rounded-full border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1 text-[10px] sm:text-xs font-medium text-[var(--color-foreground)] bg-white/5">
           {formatNumber(order)}
         </span>
-        <span className="text-xs sm:text-sm font-semibold text-[var(--color-foreground)]">
+        <span className="text-xs sm:text-sm font-semibold text-[var(--color-accent)] bg-[var(--color-accent)]/10 px-2 py-1 rounded-lg">
           {formatNumber(perfume.matchPercentage)}٪
         </span>
       </header>
 
       {perfume.image && (
-        <div className="flex flex-grow items-center justify-center">
+        <div className="flex flex-grow items-center justify-center group">
           <div
-            className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm"
+            className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm transition-transform duration-300 group-hover:scale-105"
             style={{ height: imageHeight }}
           >
             <Image
@@ -250,6 +250,9 @@ function RecommendationsContent() {
               <div
                 key={perfume.id}
                 className="h-full min-h-[180px] sm:min-h-[200px]"
+                style={{
+                  animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
+                }}
               >
                 <MatchCard perfume={perfume} order={index + 1} compact={compact} />
               </div>
@@ -257,7 +260,7 @@ function RecommendationsContent() {
           ) : (
             <div className="glass-surface col-span-full flex h-full flex-col items-center justify-center gap-3 rounded-2xl sm:rounded-3xl text-xs sm:text-sm text-muted p-4">
               <p className="m-0">مورد مناسبی پیدا نشد. لطفاً پاسخ‌ها را تغییر دهید.</p>
-              <Link href="/questionnaire" className="btn-ghost tap-highlight touch-target touch-feedback text-sm">
+              <Link href="/questionnaire" className="btn-ghost tap-highlight touch-target touch-feedback text-sm transition-all duration-200 hover:bg-white/10">
                 بازنگری پرسشنامه
               </Link>
             </div>

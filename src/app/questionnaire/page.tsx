@@ -192,8 +192,8 @@ export default function Questionnaire() {
   return (
     <KioskFrame>
       <div className="relative flex h-full w-full items-center justify-center px-3 sm:px-4 md:px-6">
-        <div className="glass-card relative flex h-full w-full max-w-full sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[1200px] flex-col gap-4 sm:gap-5 md:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-4 py-4 sm:px-5 sm:py-5 md:px-6 md:py-6 animate-blur-in">
-          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 animate-slide-in-right">
+        <div className="glass-card relative flex h-full w-full max-w-full sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[1200px] flex-col gap-4 sm:gap-5 md:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-4 py-4 sm:px-5 sm:py-5 md:px-6 md:py-6">
+          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             <div className="space-y-1 sm:space-y-2 text-right flex-1">
               <p className="m-0 text-[10px] xs:text-xs text-muted" aria-live="polite">
                 سوال {formatNumber(currentStep + 1)} از {formatNumber(TOTAL_QUESTIONS)}
@@ -215,7 +215,7 @@ export default function Questionnaire() {
             </div>
           </header>
 
-          <section className="flex flex-1 items-center justify-center overflow-y-auto animate-scale-in animate-delay-2 px-1">
+          <section className="flex flex-1 items-center justify-center overflow-y-auto px-1">
             <div className="grid w-full max-w-full sm:max-w-[95%] md:max-w-[900px] grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 md:gap-4 py-2">
               {currentQuestion.options.map((option, idx) => {
                 const values = answers[currentQuestion.key];
@@ -224,16 +224,15 @@ export default function Questionnaire() {
                   !isSelected &&
                   typeof currentQuestion.maxSelections === "number" &&
                   values.length >= currentQuestion.maxSelections;
-                const delayClass = idx % 3 === 1 ? "animate-delay-1" : idx % 3 === 2 ? "animate-delay-2" : "";
                 return (
                   <button
                     key={option.value}
                     onClick={() => toggle(option.value)}
                     disabled={disabled}
                     aria-pressed={isSelected}
-                    className={`${BTN_BASE} ${delayClass} ${
+                    className={`${BTN_BASE} ${
                       isSelected ? "question-option--selected" : "question-option--default"
-                    } ${disabled ? "question-option--disabled" : ""} text-sm sm:text-base md:text-lg min-h-[48px] sm:min-h-[52px] md:min-h-[56px]`}
+                    } ${disabled ? "question-option--disabled" : ""} text-sm sm:text-base md:text-lg min-h-[48px] sm:min-h-[52px] md:min-h-[56px] hover:scale-102 transition-all duration-200`}
                   >
                     {option.label}
                   </button>
@@ -245,14 +244,14 @@ export default function Questionnaire() {
             </div>
           </section>
 
-          <footer className="flex flex-col xs:flex-row items-center justify-between gap-2 sm:gap-3 animate-slide-in-left animate-delay-3">
-            <button onClick={back} disabled={currentStep === 0} className="btn-ghost w-full xs:w-24 sm:w-28 md:w-32 tap-highlight touch-target touch-feedback text-sm sm:text-base">
+          <footer className="flex flex-col xs:flex-row items-center justify-between gap-2 sm:gap-3">
+            <button onClick={back} disabled={currentStep === 0} className="btn-ghost w-full xs:w-24 sm:w-28 md:w-32 tap-highlight touch-target touch-feedback text-sm sm:text-base transition-all duration-200 hover:bg-white/10 disabled:opacity-50">
               بازگشت
             </button>
             <span className="text-[10px] xs:text-xs sm:text-xs text-muted text-center px-2" aria-live="polite">
               {helperText}
             </span>
-            <button onClick={() => next()} disabled={!canProceed} className="btn w-full xs:w-32 sm:w-36 md:w-40 tap-highlight touch-target touch-feedback text-sm sm:text-base">
+            <button onClick={() => next()} disabled={!canProceed} className="btn w-full xs:w-32 sm:w-36 md:w-40 tap-highlight touch-target touch-feedback text-sm sm:text-base transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
               {currentStep === totalQuestions - 1 ? "مشاهده پیشنهادها" : "بعدی"}
             </button>
           </footer>
