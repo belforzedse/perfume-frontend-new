@@ -168,13 +168,27 @@ async function fetchJson<T>(url: string): Promise<T> {
     ? { Authorization: `Bearer ${STRAPI_TOKEN}` }
     : {};
 
-  const response = await fetch(url, { headers });
-  if (!response.ok) {
-    const errorBody = await response.text();
-    console.error(`Strapi request failed (${response.status}):`, errorBody);
-    throw new Error(`HTTP ${response.status} for ${url}`);
+  console.log("[API] Fetching:", url);
+  console.log("[API] API_URL:", API_URL);
+  console.log("[API] Has token:", !!STRAPI_TOKEN);
+
+  try {
+    const response = await fetch(url, { headers });
+    console.log("[API] Response status:", response.status);
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(`[API] Strapi request failed (${response.status}):`, errorBody);
+      throw new Error(`HTTP ${response.status} for ${url}`);
+    }
+
+    const data = (await response.json()) as T;
+    console.log("[API] Success, got data");
+    return data;
+  } catch (error) {
+    console.error("[API] Fetch error:", error);
+    throw error;
   }
-  return (await response.json()) as T;
 }
 
 const buildPerfumeListUrl = (page = 1) => {

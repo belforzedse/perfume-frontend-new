@@ -1,0 +1,65 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { API_URL, STRAPI_TOKEN, getPerfumes } from "@/lib/api";
+
+export default function ApiTestPage() {
+  const [status, setStatus] = useState("Testing...");
+  const [error, setError] = useState<string | null>(null);
+  const [perfumes, setPerfumes] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function test() {
+      try {
+        setStatus("Checking environment variables...");
+        console.log("API_URL:", API_URL);
+        console.log("STRAPI_TOKEN exists:", !!STRAPI_TOKEN);
+        console.log("STRAPI_TOKEN length:", STRAPI_TOKEN?.length);
+
+        setStatus("Fetching perfumes...");
+        const data = await getPerfumes();
+
+        console.log("Got perfumes:", data.length);
+        setPerfumes(data);
+        setStatus(`Success! Got ${data.length} perfumes`);
+      } catch (err: any) {
+        console.error("Error:", err);
+        setError(err.message || String(err));
+        setStatus("Failed");
+      }
+    }
+
+    test();
+  }, []);
+
+  return (
+    <div style={{ padding: "20px", fontFamily: "monospace" }}>
+      <h1>API Connection Test</h1>
+      <div style={{ marginBottom: "20px" }}>
+        <h2>Environment Variables</h2>
+        <p>API_URL: {API_URL || "NOT SET"}</p>
+        <p>STRAPI_TOKEN: {STRAPI_TOKEN ? `${STRAPI_TOKEN.substring(0, 20)}...` : "NOT SET"}</p>
+      </div>
+      <div>
+        <h2>Status: {status}</h2>
+        {error && (
+          <div style={{ color: "red", marginTop: "10px" }}>
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+        {perfumes.length > 0 && (
+          <div style={{ marginTop: "20px" }}>
+            <h3>Perfumes ({perfumes.length}):</h3>
+            <ul>
+              {perfumes.slice(0, 5).map((p) => (
+                <li key={p.id}>
+                  {p.nameFa || p.nameEn} - {p.brand}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

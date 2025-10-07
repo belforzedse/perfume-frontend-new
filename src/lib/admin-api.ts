@@ -6,6 +6,28 @@ const adminClient = axios.create({
   baseURL: API_URL,
 });
 
+// Add request interceptor for logging
+adminClient.interceptors.request.use((config) => {
+  console.log("[Admin API] Request:", config.method?.toUpperCase(), config.url);
+  console.log("[Admin API] Base URL:", config.baseURL);
+  console.log("[Admin API] Params:", config.params);
+  return config;
+});
+
+// Add response interceptor for logging
+adminClient.interceptors.response.use(
+  (response) => {
+    console.log("[Admin API] Success:", response.config.url, "- Status:", response.status);
+    console.log("[Admin API] Data count:", Array.isArray(response.data?.data) ? response.data.data.length : "N/A");
+    return response;
+  },
+  (error) => {
+    console.error("[Admin API] Error:", error.config?.url);
+    console.error("[Admin API] Error details:", error.response?.status, error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
 const authHeaders = (includeContentType = false) => {
   const headers: Record<string, string> = {
     Accept: "application/json",
@@ -75,17 +97,10 @@ const mapCollection = (
   // In Strapi v5, attributes are at root level
   const attributes = entity.attributes ?? (entity as unknown as Record<string, unknown>);
 
-  // Extract brand data if it exists
-  const brandData = (attributes.brand as StrapiRelation<BrandAttributes> | undefined)?.data;
-  const brandAttributes = brandData?.attributes ?? (brandData as unknown as Record<string, unknown>);
-
   return {
     id: entity.id,
     name: (attributes.name as string | null | undefined)?.trim() ?? "",
-    brand: brandData ? {
-      id: brandData.id,
-      name: (brandAttributes?.name as string | null | undefined)?.trim() ?? "",
-    } : null,
+    brand: null, // Collections don't have a direct brand relation
   };
 };
 
@@ -224,7 +239,6 @@ export const fetchCollectionsAdmin = async (): Promise<AdminCollection[]> => {
     headers: authHeaders(),
     params: {
       "pagination[pageSize]": 100,
-      "populate[brand][fields][0]": "name",
       sort: "name:asc",
     },
   });
@@ -238,9 +252,12 @@ export const fetchPerfumesAdmin = async (): Promise<AdminPerfume[]> => {
     {
       headers: authHeaders(),
       params: {
-        "pagination[pageSize]": 50,
+        "pagination[pageSize]": 100,
         "populate[brand][fields][0]": "name",
         "populate[collection][fields][0]": "name",
+        "populate[notes]": "*",
+        "populate[cover][fields][0]": "url",
+        "populate[cover][fields][1]": "alternativeText",
         sort: "updatedAt:desc",
       },
     },
