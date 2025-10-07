@@ -1,7 +1,5 @@
 ﻿export const API_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "https://kioskapi.gandom-perfume.ir";
-export const STRAPI_TOKEN =
-  process.env.NEXT_PUBLIC_STRAPI_TOKEN ||
-  "506061ccebba94b76a5367d675f321b661507da2a96d32157153d6d1eebf633a583705d25da01f8d2d064e3bcd629b2ee8d7a439927ed863c1bfc71a3f449c4d619329fda1d4969865724874e1ba7f7508862dfd7a0f348b7c9dcadddf6831043f690c9f956132b013094e48717a1b8668a184a2fb6b0b22b4bfd76dab73d3d2"; ;
+export const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 
 type PerfumeAttributeKey = "family" | "season" | "character" | "gender";
 
