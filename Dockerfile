@@ -7,6 +7,7 @@ COPY package*.json ./
 RUN npm ci
 
 # Copy source code
+COPY .env .env
 COPY . .
 
 #  Define build-time envs (used by Next.js)
