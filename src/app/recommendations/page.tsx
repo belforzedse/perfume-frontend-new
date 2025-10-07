@@ -68,7 +68,7 @@ const MatchCard = ({
   const englishName = perfume.nameEn?.trim();
 
   return (
-    <article className="glass-card flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right animate-fade-in-up">
+    <article className="glass-card flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right">
       <header className="flex items-center justify-between text-muted">
         <span className="rounded-full border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1 text-[10px] sm:text-xs font-medium text-[var(--color-foreground)]">
           {formatNumber(order)}
@@ -234,8 +234,8 @@ function RecommendationsContent() {
 
   return (
     <div className="flex h-full w-full items-center justify-center px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
-      <div className="glass-card relative flex h-[95vh] sm:h-[92vh] w-full max-w-full sm:max-w-[98vw] md:max-w-[95vw] lg:max-w-[90vw] xl:max-w-[1400px] flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-3 py-3 sm:px-4 sm:py-4 md:px-5 md:py-5 lg:px-6 lg:py-6 animate-blur-in">
-        <header className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 sm:gap-3 animate-slide-in-right">
+      <div className="glass-card relative flex h-[95vh] sm:h-[92vh] w-full max-w-full sm:max-w-[98vw] md:max-w-[95vw] lg:max-w-[90vw] xl:max-w-[1400px] flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-3 py-3 sm:px-4 sm:py-4 md:px-5 md:py-5 lg:px-6 lg:py-6">
+        <header className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 sm:gap-3">
           <h1 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-semibold text-[var(--color-foreground)]">پیشنهادهای شما</h1>
           {recommendations.length > 0 && (
             <span className="text-[10px] xs:text-xs sm:text-xs text-muted">
@@ -244,18 +244,18 @@ function RecommendationsContent() {
           )}
         </header>
 
-        <section className="grid flex-1 grid-cols-2 grid-rows-3 sm:grid-cols-3 sm:grid-rows-2 auto-rows-fr gap-2 sm:gap-2.5 md:gap-3 lg:gap-3 xl:gap-4 animate-scale-in animate-delay-2 overflow-y-auto">
+        <section className="grid flex-1 grid-cols-2 grid-rows-3 sm:grid-cols-3 sm:grid-rows-2 auto-rows-fr gap-2 sm:gap-2.5 md:gap-3 lg:gap-3 xl:gap-4 overflow-y-auto">
           {recommendations.length > 0 ? (
             recommendations.map((perfume, index) => (
               <div
                 key={perfume.id}
-                className={`h-full min-h-[180px] sm:min-h-[200px] animate-fade-in-up animate-delay-${Math.min(index + 3, 5)}`}
+                className="h-full min-h-[180px] sm:min-h-[200px]"
               >
                 <MatchCard perfume={perfume} order={index + 1} compact={compact} />
               </div>
             ))
           ) : (
-            <div className="glass-surface col-span-full flex h-full flex-col items-center justify-center gap-3 rounded-2xl sm:rounded-3xl text-xs sm:text-sm text-muted animate-fade-in-up animate-delay-3 p-4">
+            <div className="glass-surface col-span-full flex h-full flex-col items-center justify-center gap-3 rounded-2xl sm:rounded-3xl text-xs sm:text-sm text-muted p-4">
               <p className="m-0">مورد مناسبی پیدا نشد. لطفاً پاسخ‌ها را تغییر دهید.</p>
               <Link href="/questionnaire" className="btn-ghost tap-highlight touch-target touch-feedback text-sm">
                 بازنگری پرسشنامه

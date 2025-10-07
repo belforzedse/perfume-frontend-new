@@ -67,15 +67,18 @@ interface BrandAttributes {
 
 export interface AdminBrand {
   id: number;
+  documentId?: string;
   name: string;
 }
 
 const mapBrand = (entity: StrapiEntity<BrandAttributes>): AdminBrand => {
   // In Strapi v5, attributes are at root level
   const attributes = entity.attributes ?? (entity as unknown as Record<string, unknown>);
+  const rawEntity = entity as unknown as Record<string, unknown>;
 
   return {
     id: entity.id,
+    documentId: (rawEntity.documentId as string | undefined),
     name: (attributes.name as string | null | undefined)?.trim() ?? "",
   };
 };
@@ -87,6 +90,7 @@ interface CollectionAttributes {
 
 export interface AdminCollection {
   id: number;
+  documentId?: string;
   name: string;
   brand?: AdminBrand | null;
 }
@@ -96,9 +100,11 @@ const mapCollection = (
 ): AdminCollection => {
   // In Strapi v5, attributes are at root level
   const attributes = entity.attributes ?? (entity as unknown as Record<string, unknown>);
+  const rawEntity = entity as unknown as Record<string, unknown>;
 
   return {
     id: entity.id,
+    documentId: (rawEntity.documentId as string | undefined),
     name: (attributes.name as string | null | undefined)?.trim() ?? "",
     brand: null, // Collections don't have a direct brand relation
   };
@@ -119,7 +125,6 @@ export interface PerfumeNotes {
 interface PerfumeAttributes {
   name_fa?: string | null;
   name_en?: string | null;
-  description?: string | null;
   gender?: string | null;
   season?: string | null;
   family?: string | null;
@@ -131,9 +136,9 @@ interface PerfumeAttributes {
 
 export interface AdminPerfume {
   id: number;
+  documentId?: string;
   name_fa: string;
   name_en: string;
-  description?: string;
   gender?: string;
   season?: string;
   family?: string;
@@ -178,12 +183,13 @@ const mapPerfume = (entity: StrapiEntity<PerfumeAttributes>): AdminPerfume => {
   // In Strapi v5, attributes are at root level
   const attributes = entity.attributes ?? (entity as unknown as Record<string, unknown>);
   const attrs = attributes as PerfumeAttributes;
+  const rawEntity = entity as unknown as Record<string, unknown>;
 
   return {
     id: entity.id,
+    documentId: (rawEntity.documentId as string | undefined),
     name_fa: attrs.name_fa?.trim() ?? "",
     name_en: attrs.name_en?.trim() ?? "",
-    description: attrs.description?.trim() || undefined,
     gender: attrs.gender?.trim() || undefined,
     season: attrs.season?.trim() || undefined,
     family: attrs.family?.trim() || undefined,
@@ -206,7 +212,6 @@ export interface CreateCollectionPayload {
 export interface CreatePerfumePayload {
   name_fa: string;
   name_en: string;
-  description?: string;
   gender?: string;
   season?: string;
   family?: string;
@@ -331,12 +336,12 @@ export const createPerfume = async (
 export type UpdatePerfumePayload = CreatePerfumePayload;
 
 export const updatePerfume = async (
-  id: number,
+  documentId: string,
   payload: UpdatePerfumePayload,
 ): Promise<AdminPerfume> => {
   const response = await adminClient.put<
     StrapiSingleResponse<PerfumeAttributes>
-  >(`/api/perfumes/${id}`, { data: payload }, {
+  >(`/api/perfumes/${documentId}`, { data: payload }, {
     headers: authHeaders(true),
     params: {
       "populate[brand][fields][0]": "name",
@@ -348,8 +353,8 @@ export const updatePerfume = async (
   return mapPerfume(response.data.data);
 };
 
-export const deletePerfume = async (id: number): Promise<void> => {
-  await adminClient.delete(`/api/perfumes/${id}`, {
+export const deletePerfume = async (documentId: string): Promise<void> => {
+  await adminClient.delete(`/api/perfumes/${documentId}`, {
     headers: authHeaders(),
   });
 };

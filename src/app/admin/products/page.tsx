@@ -35,7 +35,6 @@ interface PerfumeFormValues {
   season: string;
   family: string;
   character: string;
-  description?: string;
   notes: PerfumeNotes;
   image?: File | null;
 }
@@ -54,7 +53,6 @@ const createDefaultValues = (): PerfumeFormValues => ({
   season: "",
   family: "",
   character: "",
-  description: "",
   notes: {
     top: [],
     middle: [],
@@ -238,7 +236,6 @@ export default function AdminProductsPage() {
       season: perfume.season || "",
       family: perfume.family || "",
       character: perfume.character || "",
-      description: perfume.description || "",
       notes: perfume.notes,
       image: null, // Don't populate image field when editing (user must upload a new file to change it)
     });
@@ -256,8 +253,16 @@ export default function AdminProductsPage() {
       return;
     }
 
+    if (!perfume.documentId) {
+      setStatus({
+        type: "error",
+        message: "شناسه محصول یافت نشد. لطفاً صفحه را رفرش کنید.",
+      });
+      return;
+    }
+
     try {
-      await deletePerfume(perfume.id);
+      await deletePerfume(perfume.documentId);
       setStatus({ type: "success", message: "محصول با موفقیت حذف شد." });
       await loadData();
     } catch (error) {
@@ -293,7 +298,6 @@ export default function AdminProductsPage() {
       const payload: CreatePerfumePayload | UpdatePerfumePayload = {
         name_fa: values.nameFa.trim(),
         name_en: values.nameEn.trim(),
-        description: values.description?.trim() || undefined,
         gender: values.gender || undefined,
         season: values.season || undefined,
         family: values.family || undefined,
@@ -309,7 +313,14 @@ export default function AdminProductsPage() {
       };
 
       if (isEditing && editingPerfume) {
-        await updatePerfume(editingPerfume.id, payload);
+        if (!editingPerfume.documentId) {
+          setStatus({
+            type: "error",
+            message: "شناسه محصول یافت نشد. لطفاً صفحه را رفرش کنید.",
+          });
+          return;
+        }
+        await updatePerfume(editingPerfume.documentId, payload);
         setStatus({ type: "success", message: "محصول با موفقیت به‌روزرسانی شد." });
         handleCancelEdit();
       } else {
@@ -503,19 +514,7 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[var(--color-foreground)]" htmlFor="description">
-              توضیحات تکمیلی
-            </label>
-            <textarea
-              id="description"
-              className="min-h-[140px] rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
-              placeholder="توضیحات و نکات برجسته محصول را بنویسید..."
-              {...register("description")}
-            />
-          </div>
-
+        <div className="flex flex-col gap-2">
           <Controller
             control={control}
             name="image"
