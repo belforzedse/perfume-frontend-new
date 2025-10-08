@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { memo } from "react";
 
 interface GradientCircle {
   id: number;
@@ -24,65 +24,64 @@ interface VeilLayer {
   delay: number;
 }
 
-export default function AnimatedBackground() {
-  const containerRef = useRef<HTMLDivElement>(null);
+const GRADIENT_CIRCLES: GradientCircle[] = [
+  {
+    id: 1,
+    x: 20,
+    y: 26,
+    size: 120,
+    color: "from-white/70 via-white/15 to-transparent",
+  },
+  {
+    id: 2,
+    x: 78,
+    y: 72,
+    size: 95,
+    color: "from-[#eadfcf]/55 via-transparent to-transparent",
+  },
+  {
+    id: 3,
+    x: 54,
+    y: 32,
+    size: 78,
+    color: "from-[#c8b090]/40 via-transparent to-transparent",
+  },
+];
+
+const VEIL_LAYERS: VeilLayer[] = [
+  {
+    id: "veil-1",
+    gradient: "from-white/25 via-white/5 to-transparent",
+    width: 620,
+    height: 420,
+    blur: "blur-[120px]",
+    opacity: 0.25,
+    rotate: -8,
+    translateX: "-30%",
+    translateY: "-45%",
+    delay: 0,
+  },
+  {
+    id: "veil-2",
+    gradient: "from-[#cfae7a]/30 via-transparent to-transparent",
+    width: 540,
+    height: 460,
+    blur: "blur-[140px]",
+    opacity: 0.32,
+    rotate: 12,
+    translateX: "45%",
+    translateY: "55%",
+    delay: 3.2,
+  },
+];
+
+const AnimatedBackground = memo(function AnimatedBackground() {
   const shouldReduceMotion = useReducedMotion();
 
-  const circles: GradientCircle[] = [
-    {
-      id: 1,
-      x: 20,
-      y: 26,
-      size: 120,
-      color: "from-white/70 via-white/15 to-transparent",
-    },
-    {
-      id: 2,
-      x: 78,
-      y: 72,
-      size: 95,
-      color: "from-[#eadfcf]/55 via-transparent to-transparent",
-    },
-    {
-      id: 3,
-      x: 54,
-      y: 32,
-      size: 78,
-      color: "from-[#c8b090]/40 via-transparent to-transparent",
-    },
-  ];
-
-  const veils: VeilLayer[] = [
-    {
-      id: "veil-1",
-      gradient: "from-white/25 via-white/5 to-transparent",
-      width: 620,
-      height: 420,
-      blur: "blur-[120px]",
-      opacity: 0.25,
-      rotate: -8,
-      translateX: "-30%",
-      translateY: "-45%",
-      delay: 0,
-    },
-    {
-      id: "veil-2",
-      gradient: "from-[#cfae7a]/30 via-transparent to-transparent",
-      width: 540,
-      height: 460,
-      blur: "blur-[140px]",
-      opacity: 0.32,
-      rotate: 12,
-      translateX: "45%",
-      translateY: "55%",
-      delay: 3.2,
-    },
-  ];
-
   return (
-    <div ref={containerRef} className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#f9f9f7] via-[#f3f1ec] to-[#ece8e0]" />
-      {circles.map((circle, index) => {
+      {GRADIENT_CIRCLES.map((circle, index) => {
         const baseStyle = {
           width: `${circle.size * 3.6}px`,
           height: `${circle.size * 3.6}px`,
@@ -132,7 +131,7 @@ export default function AnimatedBackground() {
 
       {shouldReduceMotion
         ? null
-        : veils.map((veil) => (
+        : VEIL_LAYERS.map((veil) => (
             <motion.div
               key={veil.id}
               className={`absolute ${veil.blur} bg-gradient-to-br ${veil.gradient} mix-blend-screen`}
@@ -180,4 +179,8 @@ export default function AnimatedBackground() {
       )}
     </div>
   );
-}
+});
+
+AnimatedBackground.displayName = "AnimatedBackground";
+
+export default AnimatedBackground;
