@@ -207,12 +207,16 @@ function RecommendationsContent() {
 
   if (loading) {
     return (
-      <div className="flex h-full w-full items-center justify-center px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
-        <div className="glass-card relative flex h-[95vh] sm:h-[92vh] w-full max-w-full sm:max-w-[98vw] md:max-w-[95vw] lg:max-w-[90vw] xl:max-w-[1400px] flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-3 py-3 sm:px-4 sm:py-4 md:px-5 md:py-5 lg:px-6 lg:py-6">
+      <div className="flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+        <div className="glass-card relative flex h-full max-h-[94vh] w-full max-w-6xl flex-col gap-3 overflow-hidden rounded-2xl px-3 py-3 shadow-soft sm:gap-4 sm:rounded-3xl sm:px-4 sm:py-4 md:gap-5 md:px-5 md:py-5 lg:gap-6 lg:px-6 lg:py-6">
           <header className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 sm:gap-3">
             <h1 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-semibold text-[var(--color-foreground)]">در حال بارگذاری...</h1>
           </header>
-          <section className="grid flex-1 grid-cols-2 grid-rows-3 sm:grid-cols-3 sm:grid-rows-2 auto-rows-fr gap-2 sm:gap-2.5 md:gap-3 lg:gap-3 xl:gap-4 overflow-y-auto">
+          <section className="flex-1 overflow-hidden">
+            <div
+              className="grid h-full w-full gap-2 overflow-y-auto pr-1 sm:gap-2.5 md:gap-3 lg:gap-3 xl:gap-4"
+              style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
+            >
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="h-full min-h-[180px] sm:min-h-[200px]">
                 <div className="glass-card flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 animate-pulse">
@@ -231,6 +235,7 @@ function RecommendationsContent() {
                 </div>
               </div>
             ))}
+            </div>
           </section>
         </div>
       </div>
@@ -269,8 +274,8 @@ function RecommendationsContent() {
   }
 
   return (
-    <div className="flex h-full w-full items-center justify-center px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
-      <div className="glass-card relative flex h-[95vh] sm:h-[92vh] w-full max-w-full sm:max-w-[98vw] md:max-w-[95vw] lg:max-w-[90vw] xl:max-w-[1400px] flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-3 py-3 sm:px-4 sm:py-4 md:px-5 md:py-5 lg:px-6 lg:py-6">
+    <div className="flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+      <div className="glass-card relative flex h-full max-h-[94vh] w-full max-w-6xl flex-col gap-3 overflow-hidden rounded-2xl px-3 py-3 shadow-soft sm:gap-4 sm:rounded-3xl sm:px-4 sm:py-4 md:gap-5 md:px-5 md:py-5 lg:gap-6 lg:px-6 lg:py-6">
         <header className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 sm:gap-3">
           <h1 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-semibold text-[var(--color-foreground)]">پیشنهادهای شما</h1>
           {recommendations.length > 0 && (
@@ -280,7 +285,11 @@ function RecommendationsContent() {
           )}
         </header>
 
-        <section className="grid flex-1 grid-cols-2 grid-rows-3 sm:grid-cols-3 sm:grid-rows-2 auto-rows-fr gap-2 sm:gap-2.5 md:gap-3 lg:gap-3 xl:gap-4 overflow-y-auto">
+        <section className="flex-1 overflow-hidden">
+          <div
+            className="grid h-full w-full gap-2 overflow-y-auto pr-1 sm:gap-2.5 md:gap-3 lg:gap-3 xl:gap-4"
+            style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
+          >
           {recommendations.length > 0 ? (
             recommendations.map((perfume, index) => (
               <div
@@ -301,6 +310,7 @@ function RecommendationsContent() {
               </Link>
             </div>
           )}
+          </div>
         </section>
       </div>
     </div>
