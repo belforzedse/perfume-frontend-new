@@ -6,6 +6,7 @@ services:
     build:
       context: .
       args:
+
         NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL}
         NEXT_PUBLIC_STRAPI_TOKEN: ${NEXT_PUBLIC_STRAPI_TOKEN}
     env_file:
