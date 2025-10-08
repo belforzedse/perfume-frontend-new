@@ -1,9 +1,9 @@
 import axios from "axios";
 
-import { API_URL, STRAPI_TOKEN } from "./api";
+import { API_URL } from "./api";
 
 const adminClient = axios.create({
-  baseURL: API_URL,
+  baseURL: "/api/strapi",
 });
 
 // Add request interceptor for logging
@@ -35,10 +35,6 @@ const authHeaders = (includeContentType = false) => {
 
   if (includeContentType) {
     headers["Content-Type"] = "application/json";
-  }
-
-  if (STRAPI_TOKEN) {
-    headers.Authorization = `Bearer ${STRAPI_TOKEN}`;
   }
 
   return headers;

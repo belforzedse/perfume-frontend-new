@@ -1,7 +1,9 @@
-﻿export const API_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "https://kioskapi.gandom-perfume.ir";
-export const STRAPI_TOKEN =
-  process.env.NEXT_PUBLIC_STRAPI_TOKEN ||
-  "506061ccebba94b76a5367d675f321b661507da2a96d32157153d6d1eebf633a583705d25da01f8d2d064e3bcd629b2ee8d7a439927ed863c1bfc71a3f449c4d619329fda1d4969865724874e1ba7f7508862dfd7a0f348b7c9dcadddf6831043f690c9f956132b013094e48717a1b8668a184a2fb6b0b22b4bfd76dab73d3d2";
+﻿export const API_URL =
+  process.env.NEXT_PUBLIC_STRAPI_URL || "https://kioskapi.gandom-perfume.ir";
+
+export const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN?.trim() || undefined;
+
+const SERVER_STRAPI_TOKEN = process.env.STRAPI_TOKEN?.trim() || undefined;
 
 type PerfumeAttributeKey = "family" | "season" | "character" | "gender";
 
@@ -163,39 +165,7 @@ const extractId = (item: unknown): number => {
   return typeof id === "number" ? id : 0;
 };
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const headers: HeadersInit = STRAPI_TOKEN
-    ? { Authorization: `Bearer ${STRAPI_TOKEN}` }
-    : {};
-
-  console.log("[API] Fetching:", url);
-  console.log("[API] API_URL:", API_URL);
-  console.log("[API] Has token:", !!STRAPI_TOKEN);
-
-  try {
-    const response = await fetch(url, {
-      headers,
-      next: { revalidate: 300 }, // Cache for 5 minutes
-      signal: AbortSignal.timeout(10000) // 10 second timeout
-    });
-    console.log("[API] Response status:", response.status);
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(`[API] Strapi request failed (${response.status}):`, errorBody);
-      throw new Error(`HTTP ${response.status} for ${url}`);
-    }
-
-    const data = (await response.json()) as T;
-    console.log("[API] Success, got data");
-    return data;
-  } catch (error) {
-    console.error("[API] Fetch error:", error);
-    throw error;
-  }
-}
-
-const buildPerfumeListUrl = (page = 1) => {
+const buildPerfumeListPath = (page = 1) => {
   const params = new URLSearchParams();
   params.set("populate[brand][fields][0]", "name");
   params.set("populate[collection][fields][0]", "name");
@@ -204,8 +174,74 @@ const buildPerfumeListUrl = (page = 1) => {
   params.set("populate[cover][fields][1]", "alternativeText");
   params.set("pagination[page]", page.toString());
   params.set("pagination[pageSize]", "100");
-  return `${API_URL}/api/perfumes?${params.toString()}`;
+  return `/api/perfumes?${params.toString()}`;
 };
+
+async function fetchJson<T>(endpoint: string): Promise<T> {
+  const isServer = typeof window === "undefined";
+  const baseUrl = isServer ? API_URL : "/api/strapi";
+  const url = `${baseUrl}${endpoint}`;
+  const headers: HeadersInit = {};
+
+  if (isServer) {
+    const token = SERVER_STRAPI_TOKEN || STRAPI_TOKEN;
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  console.log("[API] Fetching:", url);
+  console.log("[API] Using server token:", isServer && !!(SERVER_STRAPI_TOKEN || STRAPI_TOKEN));
+
+  try {
+    if (isServer) {
+      const response = await fetch(url, {
+        headers,
+        next: { revalidate: 300 }, // Cache for 5 minutes
+        signal: AbortSignal.timeout(10000), // 10 second timeout
+      });
+
+      console.log("[API] Response status:", response.status);
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error(`[API] Strapi request failed (${response.status}):`, errorBody);
+        throw new Error(`HTTP ${response.status} for ${url}`);
+      }
+
+      const data = (await response.json()) as T;
+      console.log("[API] Success, got data");
+      return data;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const response = await fetch(url, {
+        headers,
+        signal: controller.signal,
+      });
+
+      console.log("[API] Response status:", response.status);
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error(`[API] Proxy request failed (${response.status}):`, errorBody);
+        throw new Error(`HTTP ${response.status} for ${url}`);
+      }
+
+      const data = (await response.json()) as T;
+      console.log("[API] Success, got data");
+      return data;
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  } catch (error) {
+    console.error("[API] Fetch error:", error);
+    throw error;
+  }
+}
 
 const toPerfume = (item: unknown): Perfume | null => {
   const id = extractId(item);
@@ -240,8 +276,8 @@ export async function getPerfumes(): Promise<Perfume[]> {
     let pageCount = 1;
 
     do {
-      const url = buildPerfumeListUrl(page);
-      const json = await fetchJson<StrapiCollectionResponse>(url);
+      const endpoint = buildPerfumeListPath(page);
+      const json = await fetchJson<StrapiCollectionResponse>(endpoint);
 
       if (Array.isArray(json.data)) {
         json.data.map(toPerfume).forEach((perfume) => {
@@ -267,7 +303,7 @@ const buildFieldQuery = (field: PerfumeAttributeKey, page: number) => {
   params.set("fields[0]", field);
   params.set("pagination[page]", page.toString());
   params.set("pagination[pageSize]", "100");
-  return `${API_URL}/api/perfumes?${params.toString()}`;
+  return `/api/perfumes?${params.toString()}`;
 };
 
 async function getPerfumeFieldValues(
@@ -279,8 +315,8 @@ async function getPerfumeFieldValues(
 
   try {
     do {
-      const url = buildFieldQuery(field, page);
-      const json = await fetchJson<StrapiCollectionResponse>(url);
+      const endpoint = buildFieldQuery(field, page);
+      const json = await fetchJson<StrapiCollectionResponse>(endpoint);
 
       if (Array.isArray(json.data)) {
         for (const item of json.data) {
@@ -331,8 +367,8 @@ export async function getBrands(): Promise<string[]> {
       params.set("pagination[page]", page.toString());
       params.set("pagination[pageSize]", "100");
 
-      const url = `${API_URL}/api/perfumes?${params.toString()}`;
-      const json = await fetchJson<StrapiCollectionResponse>(url);
+      const endpoint = `/api/perfumes?${params.toString()}`;
+      const json = await fetchJson<StrapiCollectionResponse>(endpoint);
 
       if (Array.isArray(json.data)) {
         for (const item of json.data) {
@@ -368,8 +404,8 @@ export async function getNoteOptions(): Promise<string[]> {
       params.set("pagination[page]", page.toString());
       params.set("pagination[pageSize]", "100");
 
-      const url = `${API_URL}/api/perfumes?${params.toString()}`;
-      const json = await fetchJson<StrapiCollectionResponse>(url);
+      const endpoint = `/api/perfumes?${params.toString()}`;
+      const json = await fetchJson<StrapiCollectionResponse>(endpoint);
 
       if (Array.isArray(json.data)) {
         for (const item of json.data) {

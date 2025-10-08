@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
-import { API_URL, STRAPI_TOKEN, getPerfumes, type Perfume } from "@/lib/api";
+import { API_URL, getPerfumes, type Perfume } from "@/lib/api";
 
 const getErrorMessage = (err: unknown): string => {
   if (err instanceof Error && err.message) {
@@ -29,10 +29,9 @@ export default function ApiTestPage() {
       try {
         setStatus("Checking environment variables...");
         console.log("API_URL:", API_URL);
-        console.log("STRAPI_TOKEN exists:", !!STRAPI_TOKEN);
-        console.log("STRAPI_TOKEN length:", STRAPI_TOKEN?.length);
+        console.log("Requests are proxied through /api/strapi");
 
-        setStatus("Fetching perfumes...");
+        setStatus("Fetching perfumes via proxy...");
         const data = await getPerfumes();
 
         console.log("Got perfumes:", data.length);
@@ -54,7 +53,7 @@ export default function ApiTestPage() {
       <div style={{ marginBottom: "20px" }}>
         <h2>Environment Variables</h2>
         <p>API_URL: {API_URL || "NOT SET"}</p>
-        <p>STRAPI_TOKEN: {STRAPI_TOKEN ? `${STRAPI_TOKEN.substring(0, 20)}...` : "NOT SET"}</p>
+        <p>Token exposed to browser: خیر (proxy protects it)</p>
       </div>
       <div>
         <h2>Status: {status}</h2>

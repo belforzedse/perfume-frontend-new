@@ -34,3 +34,12 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` and provide your own values:
+
+- `NEXT_PUBLIC_STRAPI_URL` – Public base URL of the Strapi instance. This value is safe to expose because it only contains the host.
+- `STRAPI_TOKEN` – **Private** Strapi access token used by server-side code and API routes. Never prefix this variable with `NEXT_PUBLIC_` and avoid committing it to version control; otherwise, the token will be exposed to every browser bundle.
+
+The application proxies authenticated requests through `/api/strapi` so the browser never sees the private token.
