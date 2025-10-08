@@ -586,7 +586,7 @@ export default function AdminProductsPage() {
                 : "bg-red-100 text-red-800 border border-red-300"
             }`}
             style={{
-              animation: "fadeInUp 0.3s ease-out"
+              animation: "fade-in-up 0.3s ease-out"
             }}
           >
             {status.message}

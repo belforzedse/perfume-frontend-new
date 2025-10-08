@@ -287,7 +287,7 @@ function RecommendationsContent() {
                 key={perfume.id}
                 className="h-full min-h-[180px] sm:min-h-[200px]"
                 style={{
-                  animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
+                  animation: `fade-in-up 0.5s ease-out ${index * 0.1}s both`
                 }}
               >
                 <MatchCard perfume={perfume} order={index + 1} compact={compact} />
