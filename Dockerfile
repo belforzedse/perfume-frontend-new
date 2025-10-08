@@ -4,34 +4,40 @@ WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --prefer-offline --no-audit
 
-# Copy source code
-COPY .env .env
+# Copy project
 COPY . .
 
-#  Define build-time envs (used by Next.js)
-ARG NEXT_PUBLIC_STRAPI_URL
-ARG NEXT_PUBLIC_STRAPI_TOKEN
-ENV NEXT_PUBLIC_STRAPI_URL=${NEXT_PUBLIC_STRAPI_URL}
-ENV NEXT_PUBLIC_STRAPI_TOKEN=${NEXT_PUBLIC_STRAPI_TOKEN}
+# Build environment variables
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
-#  Build app (these envs are injected here)
+# Build the app
 RUN npm run build
 
-
-# ---------- Stage 2: Run ----------
+# ---------- Stage 2: Runtime ----------
 FROM node:20-alpine AS runner
 WORKDIR /app
-
-# Copy the built app
-COPY --from=builder /app ./
-
-# Expose port 3000
-EXPOSE 3000
-
-#  Runtime environment 
 ENV NODE_ENV=production
+ENV PORT=3000
+ENV NEXT_TELEMETRY_DISABLED=1
 
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy necessary files
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/next.config.ts ./
+
+# Set ownership
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3000
 CMD ["npm", "start"]

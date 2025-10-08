@@ -90,7 +90,9 @@ const MatchCard = ({
               fill
               className="object-contain"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              priority
+              priority={order <= 3}
+              loading={order <= 3 ? "eager" : "lazy"}
+              quality={85}
             />
           </div>
         </div>
@@ -131,9 +133,19 @@ function RecommendationsContent() {
   useEffect(() => {
     const updateCompact = () => {
       const height = window.innerHeight;
-      if (height < 740) setCompact("ultra");
-      else if (height < 900) setCompact("tight");
-      else setCompact("normal");
+      const width = window.innerWidth;
+
+      // Mobile devices
+      if (width < 768) {
+        if (height < 700) setCompact("ultra");
+        else if (height < 850) setCompact("tight");
+        else setCompact("normal");
+      } else {
+        // Desktop/tablet
+        if (height < 740) setCompact("ultra");
+        else if (height < 900) setCompact("tight");
+        else setCompact("normal");
+      }
     };
     updateCompact();
     window.addEventListener("resize", updateCompact);
@@ -195,8 +207,32 @@ function RecommendationsContent() {
 
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="loader-orbit" role="status" aria-label="در حال بارگذاری" />
+      <div className="flex h-full w-full items-center justify-center px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+        <div className="glass-card relative flex h-[95vh] sm:h-[92vh] w-full max-w-full sm:max-w-[98vw] md:max-w-[95vw] lg:max-w-[90vw] xl:max-w-[1400px] flex-col gap-3 sm:gap-4 md:gap-5 lg:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-3 py-3 sm:px-4 sm:py-4 md:px-5 md:py-5 lg:px-6 lg:py-6">
+          <header className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 sm:gap-3">
+            <h1 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-semibold text-[var(--color-foreground)]">در حال بارگذاری...</h1>
+          </header>
+          <section className="grid flex-1 grid-cols-2 grid-rows-3 sm:grid-cols-3 sm:grid-rows-2 auto-rows-fr gap-2 sm:gap-2.5 md:gap-3 lg:gap-3 xl:gap-4 overflow-y-auto">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-full min-h-[180px] sm:min-h-[200px]">
+                <div className="glass-card flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 animate-pulse">
+                  <div className="flex items-center justify-between">
+                    <div className="h-6 sm:h-8 w-12 sm:w-16 rounded-full bg-white/30" />
+                    <div className="h-5 sm:h-6 w-10 sm:w-12 rounded bg-white/30" />
+                  </div>
+                  <div className="flex flex-grow items-center justify-center">
+                    <div className="h-[120px] sm:h-[150px] md:h-[180px] w-full rounded-xl sm:rounded-2xl bg-white/20" />
+                  </div>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="h-3 sm:h-4 w-16 sm:w-20 rounded bg-white/30" />
+                    <div className="h-5 sm:h-6 w-2/3 sm:w-3/4 rounded bg-white/30" />
+                    <div className="h-3 sm:h-4 w-1/2 rounded bg-white/25" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </section>
+        </div>
       </div>
     );
   }

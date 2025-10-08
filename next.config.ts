@@ -32,7 +32,26 @@ const nextConfig: NextConfig = {
         port: "1337",
         pathname: "/uploads/**",
       },
+      {
+        protocol: "http",
+        hostname: "perfume-backend",
+        port: "1337",
+        pathname: "/uploads/**",
+      },
     ],
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    minimumCacheTTL: 60,
+  },
+  compress: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
   },
 };
 

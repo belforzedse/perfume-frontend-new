@@ -173,7 +173,11 @@ async function fetchJson<T>(url: string): Promise<T> {
   console.log("[API] Has token:", !!STRAPI_TOKEN);
 
   try {
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, {
+      headers,
+      next: { revalidate: 300 }, // Cache for 5 minutes
+      signal: AbortSignal.timeout(10000) // 10 second timeout
+    });
     console.log("[API] Response status:", response.status);
 
     if (!response.ok) {
