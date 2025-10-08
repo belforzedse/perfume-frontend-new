@@ -17,14 +17,15 @@ const FORWARDED_METHODS = [
 
 type ForwardedMethod = (typeof FORWARDED_METHODS)[number];
 
-interface RouteParams {
-  params: {
-    path?: string[];
-  };
-}
+type RouteContext = {
+  params: Promise<{
+    path: string[];
+  }>;
+};
 
-const buildTargetUrl = (request: NextRequest, params: RouteParams["params"]): string => {
-  const path = Array.isArray(params.path) ? params.path.join("/") : "";
+const buildTargetUrl = (request: NextRequest, params: Awaited<RouteContext["params"]>): string => {
+  const pathSegments = Array.isArray(params.path) ? params.path : [];
+  const path = pathSegments.join("/");
   const search = request.nextUrl.search;
   const normalizedPath = path.length > 0 ? `/${path}` : "";
   return `${STRAPI_BASE_URL}${normalizedPath}${search}`;
@@ -52,7 +53,7 @@ const createHeaders = (request: NextRequest): HeadersInit => {
 const proxyRequest = async (
   method: ForwardedMethod,
   request: NextRequest,
-  context: RouteParams,
+  context: RouteContext,
 ): Promise<NextResponse> => {
   if (!FORWARDED_METHODS.includes(method)) {
     return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
@@ -62,7 +63,8 @@ const proxyRequest = async (
     return NextResponse.json({ error: "Strapi base URL is not configured" }, { status: 500 });
   }
 
-  const targetUrl = buildTargetUrl(request, context.params);
+  const params = await context.params;
+  const targetUrl = buildTargetUrl(request, params);
   const headers = createHeaders(request);
 
   const init: RequestInit = {
@@ -91,17 +93,17 @@ const proxyRequest = async (
 
 export const runtime = "nodejs";
 
-export const GET = (request: NextRequest, context: RouteParams) =>
+export const GET = (request: NextRequest, context: RouteContext) =>
   proxyRequest("GET", request, context);
-export const POST = (request: NextRequest, context: RouteParams) =>
+export const POST = (request: NextRequest, context: RouteContext) =>
   proxyRequest("POST", request, context);
-export const PUT = (request: NextRequest, context: RouteParams) =>
+export const PUT = (request: NextRequest, context: RouteContext) =>
   proxyRequest("PUT", request, context);
-export const PATCH = (request: NextRequest, context: RouteParams) =>
+export const PATCH = (request: NextRequest, context: RouteContext) =>
   proxyRequest("PATCH", request, context);
-export const DELETE = (request: NextRequest, context: RouteParams) =>
+export const DELETE = (request: NextRequest, context: RouteContext) =>
   proxyRequest("DELETE", request, context);
-export const OPTIONS = (request: NextRequest, context: RouteParams) =>
+export const OPTIONS = (request: NextRequest, context: RouteContext) =>
   proxyRequest("OPTIONS", request, context);
-export const HEAD = (request: NextRequest, context: RouteParams) =>
+export const HEAD = (request: NextRequest, context: RouteContext) =>
   proxyRequest("HEAD", request, context);
