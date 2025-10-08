@@ -6,10 +6,13 @@ services:
     build:
       context: .
       args:
-        NEXT_PUBLIC_STRAPI_URL: https://kioskapi.gandom-perfume.ir
-        NEXT_PUBLIC_STRAPI_TOKEN: your-public-token-here
+        NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL}
+        NEXT_PUBLIC_STRAPI_TOKEN: ${NEXT_PUBLIC_STRAPI_TOKEN}
     env_file:
       - .env
+    environment:
+      NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL}
+      NEXT_PUBLIC_STRAPI_TOKEN: ${NEXT_PUBLIC_STRAPI_TOKEN}
     ports:
       - "3000:3000" # ✅ run on port 80 for production
     restart: always
