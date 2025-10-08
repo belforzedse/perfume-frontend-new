@@ -20,6 +20,41 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment configuration
+
+The frontend makes authenticated requests to a Strapi backend. Provide the following environment variables whenever you run `npm run build`, `npm start`, or the Docker image so that both the static Next.js bundle and the runtime API calls point to the same backend:
+
+```bash
+NEXT_PUBLIC_STRAPI_URL=<https://your-strapi-host>
+NEXT_PUBLIC_STRAPI_TOKEN=<public-api-token>
+```
+
+For local development you can create a `.env` file in the project root with these keys. The provided `docker-compose.yml` automatically loads `.env` values and passes them to the build so the generated bundle and runtime environment stay aligned.
+
+When building the Docker image manually, pass the values as build arguments and runtime environment variables:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_STRAPI_URL="$NEXT_PUBLIC_STRAPI_URL" \
+  --build-arg NEXT_PUBLIC_STRAPI_TOKEN="$NEXT_PUBLIC_STRAPI_TOKEN" \
+  -t perfume-frontend .
+
+docker run -p 3000:3000 \
+  -e NEXT_PUBLIC_STRAPI_URL="$NEXT_PUBLIC_STRAPI_URL" \
+  -e NEXT_PUBLIC_STRAPI_TOKEN="$NEXT_PUBLIC_STRAPI_TOKEN" \
+  perfume-frontend
+```
+
+## Docker Compose
+
+Create a `.env` file in the project root and set `NEXT_PUBLIC_STRAPI_URL` and `NEXT_PUBLIC_STRAPI_TOKEN` (you can copy from an existing example file if you maintain one). Then run:
+
+```bash
+docker compose up --build
+```
+
+The compose file forwards the same values to both the image build and the running container.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

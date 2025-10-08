@@ -1,5 +1,7 @@
 # ---------- Stage 1: Build ----------
 FROM node:20-alpine AS builder
+ARG NEXT_PUBLIC_STRAPI_URL
+ARG NEXT_PUBLIC_STRAPI_TOKEN
 WORKDIR /app
 
 # Install dependencies
@@ -12,16 +14,22 @@ COPY . .
 # Build environment variables
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_STRAPI_URL=${NEXT_PUBLIC_STRAPI_URL}
+ENV NEXT_PUBLIC_STRAPI_TOKEN=${NEXT_PUBLIC_STRAPI_TOKEN}
 
 # Build the app
 RUN npm run build
 
 # ---------- Stage 2: Runtime ----------
 FROM node:20-alpine AS runner
+ARG NEXT_PUBLIC_STRAPI_URL
+ARG NEXT_PUBLIC_STRAPI_TOKEN
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_STRAPI_URL=${NEXT_PUBLIC_STRAPI_URL}
+ENV NEXT_PUBLIC_STRAPI_TOKEN=${NEXT_PUBLIC_STRAPI_TOKEN}
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
