@@ -454,9 +454,9 @@
 @layer base {
   .kiosk-root {
     position: relative;
-    width: 100vw;
-    height: 100vh;
-    height: 100svh;
+    width: min(100%, 100vw);
+    min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -466,15 +466,16 @@
 
   /* Default to fluid full-bleed; limit in portrait to 9:16 */
   .kiosk-frame {
-    width: 100vw;
-    height: 100svh;
+    width: min(100%, 100vw);
+    max-width: 100%;
+    min-height: 100svh;
     position: relative;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    padding-left: max(16px, 2.5vw, env(safe-area-inset-left));
-    padding-right: max(16px, 2.5vw, env(safe-area-inset-right));
+    padding-left: max(clamp(12px, 2.5vw, 40px), env(safe-area-inset-left));
+    padding-right: max(clamp(12px, 2.5vw, 40px), env(safe-area-inset-right));
     padding-top: max(12px, 2vh, env(safe-area-inset-top));
     padding-bottom: max(12px, 2vh, env(safe-area-inset-bottom));
   }

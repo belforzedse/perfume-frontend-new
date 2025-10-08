@@ -91,11 +91,10 @@ const AnimatedBackground = memo(function AnimatedBackground() {
           return (
             <div
               key={circle.id}
-              className={`absolute rounded-full blur-[80px] bg-gradient-to-br ${circle.color}`}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 transform-gpu rounded-full blur-[80px] bg-gradient-to-br ${circle.color}`}
               style={{
                 left: `${circle.x}%`,
                 top: `${circle.y}%`,
-                transform: "translate(-50%, -50%) scale(1)",
                 opacity: 0.28,
                 ...baseStyle,
               }}
@@ -106,17 +105,16 @@ const AnimatedBackground = memo(function AnimatedBackground() {
         return (
           <motion.div
             key={circle.id}
-            className={`absolute rounded-full blur-[80px] bg-gradient-to-br ${circle.color}`}
-            style={{ left: 0, top: 0, transform: "translate(-50%, -50%)" }}
-            initial={{
-              x: `${circle.x}%`,
-              y: `${circle.y}%`,
-              opacity: 0.26,
+            className={`absolute -translate-x-1/2 -translate-y-1/2 transform-gpu rounded-full blur-[80px] bg-gradient-to-br ${circle.color}`}
+            style={{
+              left: `${circle.x}%`,
+              top: `${circle.y}%`,
+              willChange: "left, top, transform, opacity",
               ...baseStyle,
             }}
             animate={{
-              x: [`${circle.x}%`, `${circle.x + 7}%`, `${circle.x - 4}%`, `${circle.x}%`],
-              y: [`${circle.y}%`, `${circle.y - 5}%`, `${circle.y + 7}%`, `${circle.y}%`],
+              left: [`${circle.x}%`, `${circle.x + 7}%`, `${circle.x - 4}%`, `${circle.x}%`],
+              top: [`${circle.y}%`, `${circle.y - 5}%`, `${circle.y + 7}%`, `${circle.y}%`],
               opacity: [0.22, 0.3, 0.26, 0.24],
               scale: [1, 1.04, 0.98, 1],
             }}
