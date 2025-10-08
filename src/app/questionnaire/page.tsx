@@ -191,8 +191,8 @@ export default function Questionnaire() {
 
   return (
     <KioskFrame>
-      <div className="relative flex h-full w-full items-center justify-center px-3 sm:px-4 md:px-6">
-        <div className="glass-card relative flex h-full w-full max-w-full sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[1200px] flex-col gap-4 sm:gap-5 md:gap-6 rounded-2xl sm:rounded-3xl lg:rounded-[32px] px-4 py-4 sm:px-5 sm:py-5 md:px-6 md:py-6">
+      <div className="relative flex h-full w-full items-center justify-center px-3 py-4 sm:px-4 md:px-6">
+        <div className="glass-card relative flex h-full max-h-[94vh] w-full max-w-full flex-col gap-4 overflow-hidden rounded-2xl px-4 py-4 shadow-soft sm:max-w-[95vw] sm:gap-5 sm:rounded-3xl sm:px-5 sm:py-5 md:max-w-[90vw] md:gap-6 md:px-6 md:py-6 lg:max-w-[1200px] lg:rounded-[32px]">
           <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             <div className="space-y-1 sm:space-y-2 text-right flex-1">
               <p className="m-0 text-[10px] xs:text-xs text-muted" aria-live="polite">
@@ -216,8 +216,11 @@ export default function Questionnaire() {
           </header>
 
           <section className="flex flex-1 items-center justify-center overflow-y-auto px-1">
-            <div className="grid w-full max-w-full sm:max-w-[95%] md:max-w-[900px] grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 md:gap-4 py-2">
-              {currentQuestion.options.map((option, idx) => {
+            <div
+              className="grid w-full max-w-full gap-2.5 py-2 sm:max-w-[95%] sm:gap-3 md:max-w-[900px] md:gap-4"
+              style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
+            >
+              {currentQuestion.options.map((option) => {
                 const values = answers[currentQuestion.key];
                 const isSelected = values.includes(option.value);
                 const disabled =
