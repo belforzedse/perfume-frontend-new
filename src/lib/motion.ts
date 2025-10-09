@@ -197,7 +197,7 @@ export function resolveSignatureMotion(shouldReduceMotion: boolean) {
 }
 
 export function useSignatureMotionVariants() {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotion() ?? false;
 
   return useMemo(
     () => resolveSignatureMotion(shouldReduceMotion),
