@@ -32,6 +32,116 @@ const formatNumber = (value: number) => toPersianNumbers(String(value));
 
 const AUTO_ADVANCE_CONFIRMATION_DURATION = 450;
 
+const SECTION_TRANSITION_DURATION = signatureTransitions.section.duration ?? 0.6;
+const DEFAULT_SIGNATURE_EASE =
+  signatureTransitions.section.ease ??
+  signatureTransitions.surface.ease ??
+  signatureTransitions.page.ease ??
+  signatureTransitions.hover.ease;
+const SECTION_TRANSITION_EASE = DEFAULT_SIGNATURE_EASE;
+const LIST_TRANSITION_DURATION = signatureTransitions.listItem.duration ?? 0.45;
+const LIST_TRANSITION_EASE =
+  signatureTransitions.listItem.ease ?? DEFAULT_SIGNATURE_EASE;
+const questionStackVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION,
+      ease: SECTION_TRANSITION_EASE,
+      when: "beforeChildren",
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION * 0.65,
+      ease: SECTION_TRANSITION_EASE,
+      when: "afterChildren",
+    },
+  },
+} as const;
+
+const questionHeaderVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION,
+      ease: SECTION_TRANSITION_EASE,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -16,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION * 0.7,
+      ease: SECTION_TRANSITION_EASE,
+    },
+  },
+} as const;
+
+const questionSubheaderVariants = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION * 0.9,
+      ease: SECTION_TRANSITION_EASE,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION * 0.7,
+      ease: SECTION_TRANSITION_EASE,
+    },
+  },
+} as const;
+
+const questionTitleVariants = {
+  hidden: { opacity: 0, y: 18 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION,
+      ease: SECTION_TRANSITION_EASE,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -14,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION * 0.75,
+      ease: SECTION_TRANSITION_EASE,
+    },
+  },
+} as const;
+
+const helperTextVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION * 0.8,
+      ease: SECTION_TRANSITION_EASE,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: {
+      duration: SECTION_TRANSITION_DURATION * 0.6,
+      ease: SECTION_TRANSITION_EASE,
+    },
+  },
+} as const;
+
 const toggleSelection = (
   previous: QuestionnaireAnswers,
   question: QuestionDefinition,
@@ -113,15 +223,16 @@ export default function Questionnaire() {
   const currentQuestion = questions[currentStep];
   const totalQuestions = questions.length;
   const optionsContainerVariants = useStaggeredListVariants({
-    delayChildren: 0.14,
-    staggerChildren: 0.08,
+    delayChildren: SECTION_TRANSITION_DURATION * 0.35,
+    staggerChildren: LIST_TRANSITION_DURATION * 0.3,
   });
   const optionVariants = useFadeScaleVariants({
     y: 26,
     scale: 0.94,
     blur: 14,
-    duration: signatureTransitions.surface.duration ?? 0.68,
-    ease: signatureTransitions.surface.ease,
+    duration: LIST_TRANSITION_DURATION,
+    ease: LIST_TRANSITION_EASE,
+    exitY: -18,
   });
 
   useEffect(() => {
@@ -284,70 +395,100 @@ export default function Questionnaire() {
         className="page-main flex min-h-0 w-full flex-1 items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
         <div className="glass-card page-panel flex h-full w-full min-h-0 flex-1 flex-col">
-          <header className="space-y-2 text-right">
-            <p className="m-0 text-[11px] text-muted sm:text-xs" aria-live="polite">
-              سوال {formatNumber(currentStep + 1)} از {formatNumber(TOTAL_QUESTIONS)}
-            </p>
-            <h1
-              id={headingId}
-              className="m-0 text-xl font-semibold leading-tight text-[var(--color-foreground)] xs:text-2xl md:text-[1.85rem]"
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentQuestion.key}
+              className="flex flex-1 min-h-0 flex-col"
+              variants={questionStackVariants}
+              initial="hidden"
+              animate="show"
+              exit="exit"
             >
-              {currentQuestion.title}
-            </h1>
-            {currentQuestion.description && (
-              <p className="m-0 text-xs text-muted sm:text-sm">{currentQuestion.description}</p>
-            )}
-          </header>
-
-          <div className="space-y-3 text-right">
-            <div className="h-2 w-full rounded-full bg-soft" role="presentation">
-              <div
-                className="h-2 rounded-full bg-[var(--color-accent)] transition-all duration-300"
-                style={{ width: `${progress}%` }}
-                aria-hidden
-              />
-            </div>
-            <p id={helperId} className="m-0 text-[11px] text-muted sm:text-xs" aria-live="polite">
-              {helperText}
-            </p>
-            <div
-              role="status"
-              aria-live="polite"
-              className="relative flex min-h-[28px] justify-end text-[11px] font-medium text-[var(--color-accent)] sm:min-h-[30px] sm:text-xs"
-            >
-              <AnimatePresence>
-                {showAutoAdvanceConfirmation && (
-                  <motion.span
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.18 }}
-                    className="inline-flex rounded-full bg-[var(--color-accent)]/10 px-2 py-1"
-                  >
-                    انتخاب ثبت شد
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <section
-            ref={questionSectionRef}
-            className="page-panel__scroll flex flex-1 min-h-0 flex-col text-right"
-            aria-describedby={helperId}
-          >
-            <div className="mb-2 hidden text-xs font-medium text-muted lg:block">گزینه‌های خود را لمس کنید</div>
-            <div className="flex-1 min-h-0 pr-1">
-              <motion.div
-                key={currentQuestion.key}
-                className="grid w-full gap-2.5 sm:gap-3 md:gap-4"
-                style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
-                variants={optionsContainerVariants}
-                initial="hidden"
-                animate="show"
-                exit="exit"
+              <motion.header
+                className="space-y-2 text-right"
+                variants={questionHeaderVariants}
               >
-                {currentQuestion.options.map((option) => {
+                <motion.p
+                  className="m-0 text-[11px] text-muted sm:text-xs"
+                  aria-live="polite"
+                  variants={questionSubheaderVariants}
+                >
+                  سوال {formatNumber(currentStep + 1)} از {formatNumber(TOTAL_QUESTIONS)}
+                </motion.p>
+                <motion.h1
+                  id={headingId}
+                  className="m-0 text-xl font-semibold leading-tight text-[var(--color-foreground)] xs:text-2xl md:text-[1.85rem]"
+                  variants={questionTitleVariants}
+                >
+                  {currentQuestion.title}
+                </motion.h1>
+                {currentQuestion.description && (
+                  <motion.p
+                    className="m-0 text-xs text-muted sm:text-sm"
+                    variants={questionSubheaderVariants}
+                  >
+                    {currentQuestion.description}
+                  </motion.p>
+                )}
+              </motion.header>
+
+              <motion.div
+                className="space-y-3 text-right"
+                variants={questionSubheaderVariants}
+              >
+                <div className="h-2 w-full rounded-full bg-soft" role="presentation">
+                  <div
+                    className="h-2 rounded-full bg-[var(--color-accent)] transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                    aria-hidden
+                  />
+                </div>
+                <motion.p
+                  id={helperId}
+                  className="m-0 text-[11px] text-muted sm:text-xs"
+                  aria-live="polite"
+                  variants={helperTextVariants}
+                >
+                  {helperText}
+                </motion.p>
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="relative flex min-h-[28px] justify-end text-[11px] font-medium text-[var(--color-accent)] sm:min-h-[30px] sm:text-xs"
+                >
+                  <AnimatePresence>
+                    {showAutoAdvanceConfirmation && (
+                      <motion.span
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.18 }}
+                        className="inline-flex rounded-full bg-[var(--color-accent)]/10 px-2 py-1"
+                      >
+                        انتخاب ثبت شد
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+
+              <motion.section
+                ref={questionSectionRef}
+                className="page-panel__scroll flex flex-1 min-h-0 flex-col text-right"
+                aria-describedby={helperId}
+                variants={questionHeaderVariants}
+              >
+                <div className="mb-2 hidden text-xs font-medium text-muted lg:block">گزینه‌های خود را لمس کنید</div>
+                <div className="flex-1 min-h-0 pr-1">
+                  <motion.div
+                    className="grid w-full gap-2.5 sm:gap-3 md:gap-4"
+                    style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
+                    variants={optionsContainerVariants}
+                    initial="hidden"
+                    animate="show"
+                    exit="exit"
+                  >
+                    {currentQuestion.options.map((option) => {
                   const values = answers[currentQuestion.key];
                   const isSelected = values.includes(option.value);
                   const disabled =
@@ -372,14 +513,16 @@ export default function Questionnaire() {
                     </motion.button>
                   );
                 })}
-                {currentQuestion.options.length === 0 && (
-                  <div className="glass-surface col-span-full flex h-full items-center justify-center rounded-2xl p-6 text-xs text-muted sm:text-sm">
-                    گزینه‌ای یافت نشد.
-                  </div>
-                )}
-              </motion.div>
-            </div>
-          </section>
+                    {currentQuestion.options.length === 0 && (
+                      <div className="glass-surface col-span-full flex h-full items-center justify-center rounded-2xl p-6 text-xs text-muted sm:text-sm">
+                        گزینه‌ای یافت نشد.
+                      </div>
+                    )}
+                  </motion.div>
+                </div>
+              </motion.section>
+            </motion.div>
+          </AnimatePresence>
 
           <div className="flex items-center justify-between gap-3 text-right">
             <div className="flex items-center gap-2">
