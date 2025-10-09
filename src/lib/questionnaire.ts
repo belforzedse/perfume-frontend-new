@@ -19,6 +19,7 @@ export interface QuestionnaireAnswers {
   noteLikes: string[];
   noteDislikes: string[];
 }
+//camel by camel
 
 export type AnswerKey = keyof QuestionnaireAnswers;
 
