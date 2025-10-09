@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { toPersianNumbers } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import KioskFrame from "@/components/KioskFrame";
@@ -17,6 +18,8 @@ const BTN_BASE =
   "question-option text-base sm:text-lg font-semibold animate-fade-in-up transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] tap-highlight touch-target touch-feedback";
 
 const formatNumber = (value: number) => toPersianNumbers(String(value));
+
+const AUTO_ADVANCE_CONFIRMATION_DURATION = 450;
 
 const toggleSelection = (
   previous: QuestionnaireAnswers,
@@ -87,7 +90,10 @@ export default function Questionnaire() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuestionnaireAnswers>(() => createInitialAnswers());
   const [limitMessage, setLimitMessage] = useState<string | null>(null);
-  const autoAdvanceTimerRef = useRef<number | null>(null);
+  const [showAutoAdvanceConfirmation, setShowAutoAdvanceConfirmation] =
+    useState(false);
+  const autoAdvanceAnimationFrameRef = useRef<number | null>(null);
+  const autoAdvanceStartTimestampRef = useRef<number | null>(null);
   const headingId = "questionnaire-heading";
   const helperId = "questionnaire-helper";
 
@@ -97,18 +103,21 @@ export default function Questionnaire() {
 
   useEffect(() => {
     setLimitMessage(null);
-    if (autoAdvanceTimerRef.current) {
-      window.clearTimeout(autoAdvanceTimerRef.current);
-      autoAdvanceTimerRef.current = null;
+    if (autoAdvanceAnimationFrameRef.current !== null) {
+      window.cancelAnimationFrame(autoAdvanceAnimationFrameRef.current);
+      autoAdvanceAnimationFrameRef.current = null;
     }
+    autoAdvanceStartTimestampRef.current = null;
+    setShowAutoAdvanceConfirmation(false);
   }, [currentQuestion]);
 
   useEffect(() => {
     return () => {
-      if (autoAdvanceTimerRef.current) {
-        window.clearTimeout(autoAdvanceTimerRef.current);
-        autoAdvanceTimerRef.current = null;
+      if (autoAdvanceAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(autoAdvanceAnimationFrameRef.current);
+        autoAdvanceAnimationFrameRef.current = null;
       }
+      autoAdvanceStartTimestampRef.current = null;
     };
   }, []);
 
@@ -127,10 +136,12 @@ export default function Questionnaire() {
 
   const toggle = useCallback(
     (value: string) => {
-      if (autoAdvanceTimerRef.current) {
-        window.clearTimeout(autoAdvanceTimerRef.current);
-        autoAdvanceTimerRef.current = null;
+      if (autoAdvanceAnimationFrameRef.current !== null) {
+        window.cancelAnimationFrame(autoAdvanceAnimationFrameRef.current);
+        autoAdvanceAnimationFrameRef.current = null;
       }
+      autoAdvanceStartTimestampRef.current = null;
+      setShowAutoAdvanceConfirmation(false);
 
       let shouldAutoAdvance = false;
       let updatedAnswersSnapshot: QuestionnaireAnswers | null = null;
@@ -158,16 +169,35 @@ export default function Questionnaire() {
 
         shouldAutoAdvance =
           !wasSelected &&
-          ((currentQuestion.type === "single" && !currentQuestion.optional && selectionCount > 0) || reachedMax);
+          ((currentQuestion.type === "single" && !currentQuestion.optional && selectionCount > 0) ||
+            (reachedMax && !currentQuestion.optional));
 
         return updatedAnswers;
       });
 
       if (shouldAutoAdvance && updatedAnswersSnapshot) {
-        autoAdvanceTimerRef.current = window.setTimeout(() => {
-          autoAdvanceTimerRef.current = null;
-          next(updatedAnswersSnapshot!);
-        }, 250);
+        const answersForAutoAdvance = updatedAnswersSnapshot;
+        setShowAutoAdvanceConfirmation(true);
+
+        const animate = (timestamp: number) => {
+          if (autoAdvanceStartTimestampRef.current === null) {
+            autoAdvanceStartTimestampRef.current = timestamp;
+          }
+
+          const elapsed = timestamp - autoAdvanceStartTimestampRef.current;
+
+          if (elapsed >= AUTO_ADVANCE_CONFIRMATION_DURATION) {
+            autoAdvanceAnimationFrameRef.current = null;
+            autoAdvanceStartTimestampRef.current = null;
+            setShowAutoAdvanceConfirmation(false);
+            next(answersForAutoAdvance);
+            return;
+          }
+
+          autoAdvanceAnimationFrameRef.current = window.requestAnimationFrame(animate);
+        };
+
+        autoAdvanceAnimationFrameRef.current = window.requestAnimationFrame(animate);
       }
     },
     [currentQuestion, next]
@@ -224,6 +254,23 @@ export default function Questionnaire() {
             <p id={helperId} className="m-0 text-[11px] text-muted sm:text-xs" aria-live="polite">
               {helperText}
             </p>
+            <AnimatePresence>
+              {showAutoAdvanceConfirmation && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.18 }}
+                  role="status"
+                  aria-live="polite"
+                  className="flex justify-end text-[11px] font-medium text-[var(--color-accent)] sm:text-xs"
+                >
+                  <span className="rounded-full bg-[var(--color-accent)]/10 px-2 py-1">
+                    انتخاب ثبت شد
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <section
