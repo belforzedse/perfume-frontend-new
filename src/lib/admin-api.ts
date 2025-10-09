@@ -95,9 +95,11 @@ const mapCollection = (
   entity: StrapiEntity<CollectionAttributes>,
 ): AdminCollection => {
   // In Strapi v5, attributes are at root level
-  const attributes = entity.attributes ?? (entity as unknown as Record<string, unknown>);
+  const attributes = (entity.attributes ?? (entity as unknown)) as
+    CollectionAttributes & Record<string, unknown>;
   const rawEntity = entity as unknown as Record<string, unknown>;
-  const brandEntity = (attributes.brand?.data ?? null) as
+  const brandRelation = attributes.brand as StrapiRelation<BrandAttributes> | undefined;
+  const brandEntity = (brandRelation?.data ?? null) as
     | StrapiEntity<BrandAttributes>
     | null;
 
