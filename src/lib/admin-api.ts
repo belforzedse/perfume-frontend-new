@@ -97,12 +97,15 @@ const mapCollection = (
   // In Strapi v5, attributes are at root level
   const attributes = entity.attributes ?? (entity as unknown as Record<string, unknown>);
   const rawEntity = entity as unknown as Record<string, unknown>;
+  const brandEntity = (attributes.brand?.data ?? null) as
+    | StrapiEntity<BrandAttributes>
+    | null;
 
   return {
     id: entity.id,
     documentId: (rawEntity.documentId as string | undefined),
     name: (attributes.name as string | null | undefined)?.trim() ?? "",
-    brand: null, // Collections don't have a direct brand relation
+    brand: brandEntity ? mapBrand(brandEntity) : null,
   };
 };
 
@@ -241,6 +244,8 @@ export const fetchCollectionsAdmin = async (): Promise<AdminCollection[]> => {
     params: {
       "pagination[pageSize]": 100,
       sort: "name:asc",
+      "populate[brand][fields][0]": "name",
+      "populate[brand][fields][1]": "documentId",
     },
   });
 

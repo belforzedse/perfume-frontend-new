@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { AnimatePresence, motion } from "framer-motion";
 
 import {
   createBrand,
@@ -9,6 +10,7 @@ import {
   type AdminBrand,
   type CreateBrandPayload,
 } from "@/lib/admin-api";
+import { useAdminMotionVariants } from "@/components/admin/AdminMotion";
 
 type FeedbackState = {
   type: "success" | "error";
@@ -38,6 +40,8 @@ export default function AdminBrandsPage() {
   const [status, setStatus] = useState<FeedbackState | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const { section, listItem, status: statusVariants, stagger, transition, ease, shouldReduce } =
+    useAdminMotionVariants();
 
   const loadBrands = useCallback(async () => {
     setLoading(true);
@@ -75,7 +79,13 @@ export default function AdminBrandsPage() {
   };
 
   return (
-    <section className="flex flex-col gap-10" dir="rtl">
+    <motion.section
+      className="flex flex-col gap-10"
+      dir="rtl"
+      initial="hidden"
+      animate="visible"
+      variants={section}
+    >
       <div className="space-y-3">
         <h2 className="text-2xl font-semibold">برندها</h2>
         <p className="text-[var(--color-foreground-muted)]">
@@ -104,23 +114,30 @@ export default function AdminBrandsPage() {
         </div>
 
 
-        {status && (
-          <div
-            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm ${
-              status.type === "success"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {status.message}
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {status && (
+            <motion.div
+              key={`${status.type}-${status.message}`}
+              className={`rounded-[var(--radius-base)] px-4 py-3 text-sm ${
+                status.type === "success"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={statusVariants}
+            >
+              {status.message}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="flex items-center justify-end gap-3">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-[var(--radius-base)] bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[var(--color-accent-strong)] disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex items-center justify-center rounded-[var(--radius-base)] bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--color-accent-strong)] hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
           >
             {isSubmitting ? "در حال ارسال..." : "ثبت برند"}
           </button>
@@ -151,31 +168,58 @@ export default function AdminBrandsPage() {
         {brands.length === 0 && !loading ? (
           <p className="text-sm text-[var(--color-foreground-muted)]">هنوز برندی ثبت نشده است.</p>
         ) : (
-          <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {brands
-              .filter((brand) => brand.name.toLowerCase().includes(searchTerm.toLowerCase()))
-              .map((brand) => (
-                <li
-                  key={brand.id}
-                  className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-[var(--color-foreground)]">{brand.name}</p>
-                    <span className="text-xs text-[var(--color-foreground-subtle)] bg-[var(--color-accent-soft)] px-2 py-1 rounded">
-                      #{brand.id}
-                    </span>
-                  </div>
-                </li>
-              ))}
-          </ul>
+          <motion.ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3" variants={stagger}>
+            <AnimatePresence>
+              {brands
+                .filter((brand) => brand.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                .map((brand) => (
+                  <motion.li
+                    key={brand.id}
+                    className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)]"
+                    layout
+                    variants={listItem}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    whileHover={
+                      shouldReduce
+                        ? undefined
+                        : {
+                            y: -4,
+                            boxShadow: "var(--shadow-strong)",
+                            borderColor: "rgba(183, 146, 90, 0.4)",
+                            transition: { duration: 0.4, ease },
+                          }
+                    }
+                    transition={transition}
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-[var(--color-foreground)]">{brand.name}</p>
+                      <span className="rounded bg-[var(--color-accent-soft)] px-2 py-1 text-xs text-[var(--color-foreground-subtle)]">
+                        #{brand.id}
+                      </span>
+                    </div>
+                  </motion.li>
+                ))}
+            </AnimatePresence>
+          </motion.ul>
         )}
 
-        {searchTerm && brands.filter((brand) => brand.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
-          <p className="text-sm text-[var(--color-foreground-muted)] text-center py-8">
-            برندی با این نام یافت نشد.
-          </p>
-        )}
+        <AnimatePresence mode="wait">
+          {searchTerm &&
+            brands.filter((brand) => brand.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
+              <motion.p
+                className="py-8 text-center text-sm text-[var(--color-foreground-muted)]"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={statusVariants}
+              >
+                برندی با این نام یافت نشد.
+              </motion.p>
+            )}
+        </AnimatePresence>
       </div>
-    </section>
+    </motion.section>
   );
 }

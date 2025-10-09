@@ -11,6 +11,8 @@ import {
   type QuestionnaireAnswers,
 } from "@/lib/questionnaire";
 import { rankPerfumes, type RankedPerfume } from "@/lib/perfume-matcher";
+import { motion } from "framer-motion";
+import { useFadeScaleVariants, useStaggeredListVariants } from "@/lib/motion";
 
 const formatNumber = (value: number) => toPersianNumbers(String(value));
 
@@ -40,7 +42,7 @@ const MatchCard = ({
   const englishName = perfume.nameEn?.trim();
 
   return (
-    <article className="glass-card glass-card--muted flex h-full flex-col gap-2.5 sm:gap-3 md:gap-4 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3.5 md:p-4 lg:p-5 text-right transition-all duration-300 hover:scale-[1.02] cursor-pointer">
+    <article className="glass-card glass-card--muted flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.01] cursor-pointer">
       <header className="flex items-center justify-between text-muted">
         <span className="rounded-full border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1 text-[10px] sm:text-xs font-medium text-[var(--color-foreground)] bg-white/5">
           {formatNumber(order)}
@@ -53,7 +55,7 @@ const MatchCard = ({
       {perfume.image && (
         <div className="flex flex-grow items-center justify-center group">
           <div
-            className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm transition-transform duration-300 group-hover:scale-105"
+            className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
             style={{ height: imageHeight }}
           >
             <Image
@@ -127,6 +129,8 @@ function RecommendationsContent() {
   const [compact, setCompact] = useState<CompactMode>("normal");
   const [refreshToken, setRefreshToken] = useState(0);
   const headingId = "recommendations-heading";
+  const listVariants = useStaggeredListVariants({ delayChildren: 0.18, staggerChildren: 0.1 });
+  const cardVariants = useFadeScaleVariants({ y: 28, scale: 0.94, blur: 18 });
 
   useEffect(() => {
     const updateCompact = () => {
@@ -348,7 +352,12 @@ function RecommendationsContent() {
           </section>
         )}
 
-        <section className="flex flex-1 min-h-0 flex-col overflow-hidden text-right">
+        <motion.section
+          className="flex flex-1 min-h-0 flex-col overflow-hidden text-right"
+          variants={listVariants}
+          initial="hidden"
+          animate="show"
+        >
           {recommendations.length > 0 && (
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted sm:text-xs">
               <span>برای ذخیره یا اشتراک‌گذاری، کارت هر عطر را لمس کنید.</span>
@@ -366,13 +375,13 @@ function RecommendationsContent() {
             >
               {recommendations.length > 0 ? (
                 recommendations.map((perfume, index) => (
-                  <div
+                  <motion.div
                     key={perfume.id}
                     className="h-full min-h-[200px]"
-                    style={{ animation: `fade-in-up 0.5s ease-out ${index * 0.1}s both` }}
+                    variants={cardVariants}
                   >
                     <MatchCard perfume={perfume} order={index + 1} compact={compact} />
-                  </div>
+                  </motion.div>
                 ))
               ) : (
                 <div className="glass-surface col-span-full flex h-full flex-col items-center justify-center gap-3 rounded-2xl p-6 text-xs text-muted sm:text-sm">
@@ -384,7 +393,7 @@ function RecommendationsContent() {
               )}
             </div>
           </div>
-        </section>
+        </motion.section>
       </div>
     </main>
   );

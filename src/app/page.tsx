@@ -13,7 +13,7 @@ export default function HomePage() {
     <KioskFrame>
       <main className="flex min-h-0 w-full flex-1 justify-center px-4 py-8 sm:px-6 lg:px-12">
         <motion.article
-          className="glass-card page-panel relative flex w-full max-w-4xl flex-col items-center gap-10 px-6 py-10 text-center sm:px-10 lg:gap-14 lg:py-14"
+          className="glass-card page-panel relative flex w-full max-w-4xl flex-col items-center gap-6 px-6 py-8 text-center sm:gap-8 sm:px-10 sm:py-10 lg:gap-12 lg:py-12"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 28, scale: 0.985, filter: "blur(8px)" }}
           animate={
             shouldReduceMotion
@@ -25,7 +25,7 @@ export default function HomePage() {
               ? { opacity: 1 }
               : { opacity: 0, y: -18, scale: 0.99, filter: "blur(6px)" }
           }
-          transition={{ duration: 0.55, ease: easing }}
+          transition={{ duration: 0.75, ease: easing }}
         >
           <div className="relative flex items-center justify-center">
             <div className="pointer-events-none absolute -inset-4 rounded-[46px] bg-gradient-to-br from-white/40 via-white/10 to-transparent blur-xl" aria-hidden />
@@ -40,13 +40,13 @@ export default function HomePage() {
               />
             </div>
           </div>
-          <section className="flex w-full max-w-2xl flex-col items-center gap-10 text-center">
+          <section className="flex w-full max-w-2xl flex-col items-center gap-6 text-center sm:gap-8">
             <motion.header
               className="space-y-6"
               initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
               animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
-              transition={{ duration: 0.5, ease: easing, delay: shouldReduceMotion ? 0 : 0.08 }}
+              transition={{ duration: 0.7, ease: easing, delay: shouldReduceMotion ? 0 : 0.12 }}
             >
               <h1 className="m-0 text-[2.35rem] font-semibold leading-[1.05] text-[var(--color-foreground)] xs:text-[2.6rem] sm:text-[3rem] lg:text-[3.2rem]">
                 سلیقه عطری خود را کشف کنید

@@ -294,7 +294,9 @@ export async function getPerfumes(): Promise<Perfume[]> {
     return collected;
   } catch (error) {
     console.error("Error fetching perfumes:", error);
-    return [];
+    throw error instanceof Error
+      ? error
+      : new Error("Unknown error fetching perfumes");
   }
 }
 
