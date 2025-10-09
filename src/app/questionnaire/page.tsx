@@ -105,6 +105,7 @@ export default function Questionnaire() {
     useState(false);
   const autoAdvanceAnimationFrameRef = useRef<number | null>(null);
   const autoAdvanceStartTimestampRef = useRef<number | null>(null);
+  const questionSectionRef = useRef<HTMLElement | null>(null);
   const headingId = "questionnaire-heading";
   const helperId = "questionnaire-helper";
 
@@ -142,6 +143,23 @@ export default function Questionnaire() {
       autoAdvanceStartTimestampRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const section = questionSectionRef.current;
+    if (!section) return;
+
+    const isMobile = window.matchMedia
+      ? window.matchMedia("(max-width: 767px)").matches
+      : window.innerWidth <= 767;
+
+    if (!isMobile) return;
+
+    const { top } = section.getBoundingClientRect();
+    if (top <= 16) return;
+
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentStep]);
 
   const reset = useCallback((nextAnswers: QuestionnaireAnswers) => {
     setAnswers(nextAnswers);
@@ -314,6 +332,7 @@ export default function Questionnaire() {
           </div>
 
           <section
+            ref={questionSectionRef}
             className="page-panel__scroll flex flex-1 min-h-0 flex-col text-right"
             aria-describedby={helperId}
           >
