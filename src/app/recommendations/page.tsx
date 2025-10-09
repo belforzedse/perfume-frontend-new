@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -102,7 +102,7 @@ const MatchCard = ({
             ))}
           </ul>
         )}
-        {typeof perfume.confidence === "number" && perfume.confidence > 0 && (
+        {compact === "normal" && typeof perfume.confidence === "number" && perfume.confidence > 0 && (
           <div className="mt-2 space-y-1">
             <div className="flex items-center justify-between text-[9px] text-muted sm:text-[10px]">
               <span>اطمینان سیستم</span>
@@ -132,6 +132,7 @@ function RecommendationsContent() {
   const [error, setError] = useState<string | null>(null);
   const [compact, setCompact] = useState<CompactMode>("normal");
   const [refreshToken, setRefreshToken] = useState(0);
+  const [showAll, setShowAll] = useState(false);
   const headingId = "recommendations-heading";
   const listVariants = useStaggeredListVariants({ delayChildren: 0.18, staggerChildren: 0.1 });
   const cardVariants = useFadeScaleVariants({
@@ -169,6 +170,7 @@ function RecommendationsContent() {
     if (!answersParam) {
       setAnswers(null);
       setRecommendations([]);
+      setShowAll(false);
       setError(null);
       setLoading(false);
       return () => {
@@ -180,6 +182,7 @@ function RecommendationsContent() {
     if (!parsedAnswers) {
       setAnswers(null);
       setRecommendations([]);
+      setShowAll(false);
       setError("پاسخ‌ها معتبر نیستند. لطفاً پرسشنامه را مجدداً تکمیل کنید.");
       setLoading(false);
       return () => {
@@ -195,12 +198,14 @@ function RecommendationsContent() {
       try {
         const allPerfumes = await getPerfumes();
         if (cancelled) return;
-        const ranked = rankPerfumes(allPerfumes, parsedAnswers).slice(0, 6);
+        const ranked = rankPerfumes(allPerfumes, parsedAnswers);
         setRecommendations(ranked);
+        setShowAll(false);
       } catch (err) {
         if (cancelled) return;
         console.error("Error generating recommendations:", err);
         setRecommendations([]);
+        setShowAll(false);
         setError("در تهیه پیشنهادها خطایی رخ داد. لطفاً دوباره تلاش کنید.");
       } finally {
         if (!cancelled) {
@@ -215,6 +220,24 @@ function RecommendationsContent() {
       cancelled = true;
     };
   }, [answersParam, refreshToken]);
+
+  const limit = useMemo(() => {
+    switch (compact) {
+      case "ultra":
+        return 3;
+      case "tight":
+        return 4;
+      default:
+        return 6;
+    }
+  }, [compact]);
+
+  const visibleRecommendations = useMemo(() => {
+    if (showAll) return recommendations;
+    return recommendations.slice(0, limit);
+  }, [recommendations, showAll, limit]);
+
+  const hiddenCount = Math.max(recommendations.length - limit, 0);
 
   if (loading) {
     return (
@@ -407,8 +430,8 @@ function RecommendationsContent() {
               className="grid w-full gap-2.5 sm:gap-3 md:gap-3.5"
               style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))" }}
             >
-              {recommendations.length > 0 ? (
-                recommendations.map((perfume, index) => (
+              {visibleRecommendations.length > 0 ? (
+                visibleRecommendations.map((perfume, index) => (
                   <motion.div
                     key={perfume.id}
                     className="h-full min-h-[200px]"
@@ -426,6 +449,28 @@ function RecommendationsContent() {
                 </div>
               )}
             </div>
+            {hiddenCount > 0 && !showAll && (
+              <div className="mt-3 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowAll(true)}
+                  className="btn-ghost tap-highlight touch-target touch-feedback text-xs sm:text-sm"
+                >
+                  نمایش {formatNumber(hiddenCount)} مورد دیگر
+                </button>
+              </div>
+            )}
+            {hiddenCount > 0 && showAll && (
+              <div className="mt-3 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowAll(false)}
+                  className="btn-ghost tap-highlight touch-target touch-feedback text-xs sm:text-sm"
+                >
+                  نمایش کمتر
+                </button>
+              </div>
+            )}
           </div>
         </motion.section>
       </div>
