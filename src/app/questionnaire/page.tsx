@@ -260,23 +260,25 @@ export default function Questionnaire() {
             <p id={helperId} className="m-0 text-[11px] text-muted sm:text-xs" aria-live="polite">
               {helperText}
             </p>
-            <AnimatePresence>
-              {showAutoAdvanceConfirmation && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.18 }}
-                  role="status"
-                  aria-live="polite"
-                  className="flex justify-end text-[11px] font-medium text-[var(--color-accent)] sm:text-xs"
-                >
-                  <span className="rounded-full bg-[var(--color-accent)]/10 px-2 py-1">
+            <div
+              role="status"
+              aria-live="polite"
+              className="relative flex min-h-[28px] justify-end text-[11px] font-medium text-[var(--color-accent)] sm:min-h-[30px] sm:text-xs"
+            >
+              <AnimatePresence>
+                {showAutoAdvanceConfirmation && (
+                  <motion.span
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18 }}
+                    className="inline-flex rounded-full bg-[var(--color-accent)]/10 px-2 py-1"
+                  >
                     انتخاب ثبت شد
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           <section
