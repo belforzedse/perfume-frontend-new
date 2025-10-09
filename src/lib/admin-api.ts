@@ -57,6 +57,27 @@ interface StrapiRelation<T> {
   data?: StrapiEntity<T> | null;
 }
 
+type MaybeRelation<T> = StrapiRelation<T> | StrapiEntity<T> | null;
+
+const unwrapRelation = <T>(
+  relation: MaybeRelation<T> | undefined,
+): StrapiEntity<T> | null => {
+  if (!relation || typeof relation !== "object") {
+    return null;
+  }
+
+  if ("data" in relation) {
+    const relationData = relation.data;
+    return relationData ? (relationData as StrapiEntity<T>) : null;
+  }
+
+  if ("id" in relation) {
+    return relation as StrapiEntity<T>;
+  }
+
+  return null;
+};
+
 interface BrandAttributes {
   name?: string | null;
 }
@@ -81,7 +102,7 @@ const mapBrand = (entity: StrapiEntity<BrandAttributes>): AdminBrand => {
 
 interface CollectionAttributes {
   name?: string | null;
-  brand?: StrapiRelation<BrandAttributes>;
+  brand?: MaybeRelation<BrandAttributes>;
 }
 
 export interface AdminCollection {
@@ -98,10 +119,7 @@ const mapCollection = (
   const attributes = (entity.attributes ?? (entity as unknown)) as
     CollectionAttributes & Record<string, unknown>;
   const rawEntity = entity as unknown as Record<string, unknown>;
-  const brandRelation = attributes.brand as StrapiRelation<BrandAttributes> | undefined;
-  const brandEntity = (brandRelation?.data ?? null) as
-    | StrapiEntity<BrandAttributes>
-    | null;
+  const brandEntity = unwrapRelation<BrandAttributes>(attributes.brand);
 
   return {
     id: entity.id,
@@ -131,8 +149,8 @@ interface PerfumeAttributes {
   family?: string | null;
   character?: string | null;
   notes?: PerfumeNotesAttributes | null;
-  brand?: BrandAttributes | null;
-  collection?: CollectionAttributes | null;
+  brand?: MaybeRelation<BrandAttributes>;
+  collection?: MaybeRelation<CollectionAttributes>;
 }
 
 export interface AdminPerfume {
@@ -185,6 +203,8 @@ const mapPerfume = (entity: StrapiEntity<PerfumeAttributes>): AdminPerfume => {
   const attributes = entity.attributes ?? (entity as unknown as Record<string, unknown>);
   const attrs = attributes as PerfumeAttributes;
   const rawEntity = entity as unknown as Record<string, unknown>;
+  const brandEntity = unwrapRelation<BrandAttributes>(attrs.brand);
+  const collectionEntity = unwrapRelation<CollectionAttributes>(attrs.collection);
 
   return {
     id: entity.id,
@@ -196,8 +216,8 @@ const mapPerfume = (entity: StrapiEntity<PerfumeAttributes>): AdminPerfume => {
     family: attrs.family?.trim() || undefined,
     character: attrs.character?.trim() || undefined,
     notes: normaliseNotes(attrs.notes),
-    brand: attrs.brand ? { id: (attrs.brand as { id?: number }).id || 0, name: attrs.brand.name || "" } : null,
-    collection: attrs.collection ? { id: (attrs.collection as { id?: number }).id || 0, name: attrs.collection.name || "" } : null,
+    brand: brandEntity ? mapBrand(brandEntity) : null,
+    collection: collectionEntity ? mapCollection(collectionEntity) : null,
     image: extractImageUrl((attrs as unknown as Record<string, unknown>).cover),
   };
 };
@@ -231,6 +251,7 @@ export const fetchBrandsAdmin = async (): Promise<AdminBrand[]> => {
       params: {
         "pagination[pageSize]": 100,
         sort: "name:asc",
+        publicationState: "preview",
       },
     },
   );
@@ -248,6 +269,7 @@ export const fetchCollectionsAdmin = async (): Promise<AdminCollection[]> => {
       sort: "name:asc",
       "populate[brand][fields][0]": "name",
       "populate[brand][fields][1]": "documentId",
+      publicationState: "preview",
     },
   });
 
@@ -267,6 +289,7 @@ export const fetchPerfumesAdmin = async (): Promise<AdminPerfume[]> => {
         "populate[cover][fields][0]": "url",
         "populate[cover][fields][1]": "alternativeText",
         sort: "updatedAt:desc",
+        publicationState: "preview",
       },
     },
   );
