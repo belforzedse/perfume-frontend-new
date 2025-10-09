@@ -17,10 +17,10 @@ type AuroraAnimationKeyframes = {
 };
 
 const baseAuroraAnimation: AuroraAnimationKeyframes = {
-  opacity: [0.18, 0.28, 0.22],
-  scale: [0.98, 1.05, 1.01],
-  x: ["-12%", "4%", "-6%"],
-  y: ["-6%", "8%", "2%"],
+  opacity: [0.18, 0.28, 0.22] as number[],
+  scale: [0.98, 1.05, 1.01] as number[],
+  x: ["-12%", "4%", "-6%"] as string[],
+  y: ["-6%", "8%", "2%"] as string[],
 };
 
 const baseAuroraTransition = {
@@ -32,10 +32,10 @@ const baseAuroraTransition = {
 };
 
 const delayedAuroraAnimation: AuroraAnimationKeyframes = {
-  opacity: [0.255, 0.28, 0.22, 0.28, 0.18, 0.255],
-  scale: [1.0325, 1.05, 1.01, 1.05, 0.98, 1.0325],
-  x: ["0%", "4%", "-6%", "4%", "-12%", "0%"],
-  y: ["4.5%", "8%", "2%", "8%", "-6%", "4.5%"],
+  opacity: [0.255, 0.28, 0.22, 0.28, 0.18, 0.255] as number[],
+  scale: [1.0325, 1.05, 1.01, 1.05, 0.98, 1.0325] as number[],
+  x: ["0%", "4%", "-6%", "4%", "-12%", "0%"] as string[],
+  y: ["4.5%", "8%", "2%", "8%", "-6%", "4.5%"] as string[],
 };
 
 const delayedAuroraTransition = {
@@ -47,10 +47,10 @@ const delayedAuroraTransition = {
 };
 
 const haloAnimation: AuroraAnimationKeyframes = {
-  opacity: [0.2354, 0.3, 0.2, 0.3, 0.18, 0.2354],
-  scale: [1.0662, 1.12, 1.04, 1.12, 1.02, 1.0662],
-  x: ["-1.85%", "-4%", "6%", "-4%", "0%", "-1.85%"],
-  y: ["-2.77%", "-6%", "4%", "-6%", "0%", "-2.77%"],
+  opacity: [0.2354, 0.3, 0.2, 0.3, 0.18, 0.2354] as number[],
+  scale: [1.0662, 1.12, 1.04, 1.12, 1.02, 1.0662] as number[],
+  x: ["-1.85%", "-4%", "6%", "-4%", "0%", "-1.85%"] as string[],
+  y: ["-2.77%", "-6%", "4%", "-6%", "0%", "-2.77%"] as string[],
 };
 
 const haloTransition = {
