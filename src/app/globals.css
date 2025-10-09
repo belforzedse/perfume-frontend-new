@@ -147,34 +147,6 @@
     cursor: default;
   }
 
-  body::before,
-  body::after {
-    content: "";
-    position: fixed;
-    pointer-events: none;
-    border-radius: 50%;
-    filter: blur(140px);
-    z-index: -1;
-  }
-
-  body::before {
-    width: 520px;
-    height: 520px;
-    top: -160px;
-    right: -120px;
-    background: rgba(255, 255, 255, 0.45);
-    opacity: 0.22;
-  }
-
-  body::after {
-    width: 620px;
-    height: 620px;
-    bottom: -220px;
-    left: -140px;
-    background: rgba(183, 146, 90, 0.14);
-    opacity: 0.28;
-  }
-
   main {
     width: min(100%, var(--max-content-width));
     margin: 0 auto;
@@ -390,11 +362,6 @@
   }
 
   @media (max-width: 768px) {
-    body::before,
-    body::after {
-      display: none;
-    }
-
     main {
       padding-inline: 1.25rem;
     }
@@ -823,10 +790,10 @@
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.74);
-    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 20px 50px rgba(var(--shadow-color) / 0.09);
+    box-shadow: 0 20px 50px rgba(var(--shadow-color) / 0.07);
     position: relative;
     overflow: hidden;
   }
@@ -835,28 +802,19 @@
   .glass-card::after {
     content: "";
     position: absolute;
-    inset: -36%;
+    inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    background: radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0));
-    opacity: 0.24;
-    will-change: transform, opacity;
+  }
+
+  .glass-card::before {
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+    opacity: 0.35;
   }
 
   .glass-card::after {
-    inset: -42%;
-    background: radial-gradient(circle at 70% 80%, rgba(183, 146, 90, 0.22), rgba(255, 255, 255, 0));
-    opacity: 0.2;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .glass-card::before {
-      animation: aurora-shift 28s ease-in-out infinite alternate;
-    }
-
-    .glass-card::after {
-      animation: halo-glow 32s cubic-bezier(0.37, 0, 0.63, 1) infinite;
-    }
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    mix-blend-mode: soft-light;
   }
 
   .glass-surface {
