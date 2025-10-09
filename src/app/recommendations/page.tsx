@@ -137,7 +137,6 @@ function RecommendationsContent() {
   const cardVariants = useFadeScaleVariants({
     y: 28,
     scale: 0.94,
-    blur: 18,
     duration: signatureTransitions.surface.duration ?? 0.68,
     ease: signatureTransitions.surface.ease,
   });

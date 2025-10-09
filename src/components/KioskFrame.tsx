@@ -206,17 +206,17 @@ export default function KioskFrame({
           initial={
             shouldReduceMotion
               ? false
-              : { opacity: 0, y: 26, scale: 0.984, filter: "blur(10px)" }
+              : { opacity: 0, y: 26, scale: 0.984 }
           }
           animate={
             shouldReduceMotion
               ? { opacity: 1 }
-              : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
+              : { opacity: 1, y: 0, scale: 1 }
           }
           exit={
             shouldReduceMotion
               ? { opacity: 1 }
-              : { opacity: 0, y: -18, scale: 0.988, filter: "blur(8px)" }
+              : { opacity: 0, y: -18, scale: 0.988 }
           }
           transition={pageTransition}
         >
