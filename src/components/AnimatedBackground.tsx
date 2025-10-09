@@ -9,12 +9,19 @@ import {
 } from "framer-motion";
 import { memo, useEffect } from "react";
 
-const baseAuroraAnimation = {
+type AuroraAnimationKeyframes = {
+  opacity: number[];
+  scale: number[];
+  x: string[];
+  y: string[];
+};
+
+const baseAuroraAnimation: AuroraAnimationKeyframes = {
   opacity: [0.18, 0.28, 0.22],
   scale: [0.98, 1.05, 1.01],
   x: ["-12%", "4%", "-6%"],
   y: ["-6%", "8%", "2%"],
-} as const;
+};
 
 const baseAuroraTransition = {
   duration: 28,
@@ -24,12 +31,12 @@ const baseAuroraTransition = {
   times: [0, 0.5, 1],
 };
 
-const delayedAuroraAnimation = {
+const delayedAuroraAnimation: AuroraAnimationKeyframes = {
   opacity: [0.255, 0.28, 0.22, 0.28, 0.18, 0.255],
   scale: [1.0325, 1.05, 1.01, 1.05, 0.98, 1.0325],
   x: ["0%", "4%", "-6%", "4%", "-12%", "0%"],
   y: ["4.5%", "8%", "2%", "8%", "-6%", "4.5%"],
-} as const;
+};
 
 const delayedAuroraTransition = {
   duration: 64,
@@ -39,12 +46,12 @@ const delayedAuroraTransition = {
   times: [0, 0.0625, 0.3125, 0.5625, 0.8125, 1],
 };
 
-const haloAnimation = {
+const haloAnimation: AuroraAnimationKeyframes = {
   opacity: [0.2354, 0.3, 0.2, 0.3, 0.18, 0.2354],
   scale: [1.0662, 1.12, 1.04, 1.12, 1.02, 1.0662],
   x: ["-1.85%", "-4%", "6%", "-4%", "0%", "-1.85%"],
   y: ["-2.77%", "-6%", "4%", "-6%", "0%", "-2.77%"],
-} as const;
+};
 
 const haloTransition = {
   duration: 52,
