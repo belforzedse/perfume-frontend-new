@@ -191,73 +191,95 @@ export default function Questionnaire() {
 
   return (
     <KioskFrame>
-      <div className="relative flex h-full w-full items-center justify-center px-3 py-4 sm:px-4 md:px-6">
-        <div className="glass-card relative flex h-full max-h-[94vh] w-full max-w-full flex-col gap-4 overflow-hidden rounded-2xl px-4 py-4 shadow-soft sm:max-w-[95vw] sm:gap-5 sm:rounded-3xl sm:px-5 sm:py-5 md:max-w-[90vw] md:gap-6 md:px-6 md:py-6 lg:max-w-[1200px] lg:rounded-[32px]">
-          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-            <div className="space-y-1 sm:space-y-2 text-right flex-1">
-              <p className="m-0 text-[10px] xs:text-xs text-muted" aria-live="polite">
-                سوال {formatNumber(currentStep + 1)} از {formatNumber(TOTAL_QUESTIONS)}
-              </p>
-              <h1 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-semibold text-[var(--color-foreground)] leading-tight">
-                {currentQuestion.title}
-              </h1>
-              {currentQuestion.description && (
-                <p className="m-0 text-xs sm:text-sm text-muted">{currentQuestion.description}</p>
-              )}
-            </div>
-            <div className="w-full sm:w-32 md:w-40 lg:w-48">
-              <div className="h-1.5 sm:h-2 w-full rounded-full bg-soft">
-                <div
-                  className="h-1.5 sm:h-2 rounded-full bg-[var(--color-accent)] transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                />
+      <div className="flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8">
+        <div className="glass-card relative flex h-full max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl px-3 py-3 shadow-soft sm:px-4 sm:py-4 md:px-6 md:py-6 lg:gap-2 lg:px-7 lg:py-7 lg:rounded-[36px]">
+          <div className="flex h-full flex-col gap-4 overflow-hidden lg:flex-row-reverse lg:items-stretch lg:gap-7">
+            <aside className="flex w-full flex-shrink-0 flex-col gap-4 rounded-2xl bg-white/55 px-4 py-4 text-right shadow-inner sm:px-5 sm:py-5 lg:w-[300px] xl:w-[340px]">
+              <div className="space-y-2">
+                <p className="m-0 text-[11px] xs:text-xs text-muted" aria-live="polite">
+                  سوال {formatNumber(currentStep + 1)} از {formatNumber(TOTAL_QUESTIONS)}
+                </p>
+                <h1 className="m-0 text-xl font-semibold leading-tight text-[var(--color-foreground)] xs:text-2xl md:text-[1.85rem]">
+                  {currentQuestion.title}
+                </h1>
+                {currentQuestion.description && (
+                  <p className="m-0 text-xs text-muted sm:text-sm">{currentQuestion.description}</p>
+                )}
               </div>
-            </div>
-          </header>
 
-          <section className="flex flex-1 items-center justify-center overflow-y-auto px-1">
-            <div
-              className="grid w-full max-w-full gap-2.5 py-2 sm:max-w-[95%] sm:gap-3 md:max-w-[900px] md:gap-4"
-              style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
-            >
-              {currentQuestion.options.map((option) => {
-                const values = answers[currentQuestion.key];
-                const isSelected = values.includes(option.value);
-                const disabled =
-                  !isSelected &&
-                  typeof currentQuestion.maxSelections === "number" &&
-                  values.length >= currentQuestion.maxSelections;
-                return (
-                  <button
-                    key={option.value}
-                    onClick={() => toggle(option.value)}
-                    disabled={disabled}
-                    aria-pressed={isSelected}
-                    className={`${BTN_BASE} ${
-                      isSelected ? "question-option--selected" : "question-option--default"
-                    } ${disabled ? "question-option--disabled" : ""} text-sm sm:text-base md:text-lg min-h-[48px] sm:min-h-[52px] md:min-h-[56px] hover:scale-102 transition-all duration-200`}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-              {currentQuestion.options.length === 0 && (
-                <div className="col-span-full flex h-full items-center justify-center text-xs sm:text-sm text-muted">گزینه‌ای یافت نشد.</div>
-              )}
-            </div>
-          </section>
+              <div className="space-y-3">
+                <div className="h-2 w-full rounded-full bg-soft">
+                  <div
+                    className="h-2 rounded-full bg-[var(--color-accent)] transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                    aria-hidden
+                  />
+                </div>
+                <p className="m-0 text-[11px] text-muted sm:text-xs" aria-live="polite">
+                  {helperText}
+                </p>
+              </div>
 
-          <footer className="flex flex-col xs:flex-row items-center justify-between gap-2 sm:gap-3">
-            <button onClick={back} disabled={currentStep === 0} className="btn-ghost w-full xs:w-24 sm:w-28 md:w-32 tap-highlight touch-target touch-feedback text-sm sm:text-base transition-all duration-200 hover:bg-white/10 disabled:opacity-50">
-              بازگشت
-            </button>
-            <span className="text-[10px] xs:text-xs sm:text-xs text-muted text-center px-2" aria-live="polite">
-              {helperText}
-            </span>
-            <button onClick={() => next()} disabled={!canProceed} className="btn w-full xs:w-32 sm:w-36 md:w-40 tap-highlight touch-target touch-feedback text-sm sm:text-base transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-              {currentStep === totalQuestions - 1 ? "مشاهده پیشنهادها" : "بعدی"}
-            </button>
-          </footer>
+              <div className="mt-auto grid grid-cols-1 gap-2 xs:grid-cols-2">
+                <button
+                  onClick={back}
+                  disabled={currentStep === 0}
+                  className="btn-ghost tap-highlight touch-target touch-feedback text-sm sm:text-base"
+                >
+                  بازگشت
+                </button>
+                <button
+                  onClick={() => next()}
+                  disabled={!canProceed}
+                  className="btn tap-highlight touch-target touch-feedback text-sm sm:text-base disabled:cursor-not-allowed"
+                >
+                  {currentStep === totalQuestions - 1 ? "مشاهده پیشنهادها" : "بعدی"}
+                </button>
+              </div>
+            </aside>
+
+            <section className="flex min-h-[260px] flex-1 flex-col overflow-hidden rounded-2xl bg-white/45 px-3 py-3 shadow-inner sm:px-4 sm:py-4 lg:px-5 lg:py-5">
+              <div className="mb-2 hidden text-xs font-medium text-muted lg:block">گزینه‌های خود را لمس کنید</div>
+              <div className="flex-1 overflow-y-auto pr-1">
+                <div
+                  className="grid w-full gap-2.5 sm:gap-3 md:gap-4"
+                  style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
+                >
+                  {currentQuestion.options.map((option) => {
+                    const values = answers[currentQuestion.key];
+                    const isSelected = values.includes(option.value);
+                    const disabled =
+                      !isSelected &&
+                      typeof currentQuestion.maxSelections === "number" &&
+                      values.length >= currentQuestion.maxSelections;
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() => toggle(option.value)}
+                        disabled={disabled}
+                        aria-pressed={isSelected}
+                        className={`${BTN_BASE} ${
+                          isSelected ? "question-option--selected" : "question-option--default"
+                        } ${disabled ? "question-option--disabled" : ""} min-h-[56px] text-sm sm:min-h-[60px] sm:text-base md:min-h-[68px] md:text-lg`}
+                      >
+                        <span className="flex-1 text-right">{option.label}</span>
+                        {currentQuestion.type === "multiple" && isSelected && (
+                          <span className="rounded-full bg-white/70 px-2 py-0.5 text-[0.7rem] text-muted">
+                            انتخاب شده
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                  {currentQuestion.options.length === 0 && (
+                    <div className="col-span-full flex h-full items-center justify-center rounded-2xl border border-dashed border-white/60 bg-white/40 p-6 text-xs text-muted sm:text-sm">
+                      گزینه‌ای یافت نشد.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </KioskFrame>
