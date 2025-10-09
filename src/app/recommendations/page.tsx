@@ -34,10 +34,10 @@ const MatchCard = ({
 
   const imageHeight =
     compact === "ultra"
-      ? "min(18vh, 120px)"
+      ? "min(16vh, 105px)"
       : compact === "tight"
-        ? "min(22vh, 150px)"
-        : "min(26vh, 180px)";
+        ? "min(20vh, 135px)"
+        : "min(24vh, 160px)";
   const brand = perfume.brand?.trim();
   const englishName = perfume.nameEn?.trim();
 
@@ -72,7 +72,7 @@ const MatchCard = ({
         </div>
       )}
 
-      <div className="space-y-1 sm:space-y-1.5 md:space-y-2 text-right">
+      <div className="space-y-1 sm:space-y-1.5 md:space-y-1.5 text-right">
         {brand && (
           <p className="m-0 text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-muted line-clamp-1">
             {brand}
@@ -90,7 +90,7 @@ const MatchCard = ({
           <p className="m-0 text-[10px] sm:text-xs text-muted line-clamp-1">{detailLine}</p>
         )}
         {perfume.reasons.length > 0 && compact !== "ultra" && (
-          <ul className="m-0 list-disc space-y-1 pr-4 text-[10px] text-muted sm:text-xs">
+          <ul className="m-0 list-disc space-y-0.5 pr-4 text-[10px] text-muted sm:text-xs">
             {perfume.reasons.slice(0, compact === "tight" ? 1 : 2).map((reason) => (
               <li key={reason} className="leading-5">
                 {reason}
@@ -139,13 +139,13 @@ function RecommendationsContent() {
 
       // Mobile devices
       if (width < 768) {
-        if (height < 700) setCompact("ultra");
-        else if (height < 850) setCompact("tight");
+        if (height <= 760) setCompact("ultra");
+        else if (height <= 920) setCompact("tight");
         else setCompact("normal");
       } else {
         // Desktop/tablet
-        if (height < 740) setCompact("ultra");
-        else if (height < 900) setCompact("tight");
+        if (height <= 820) setCompact("ultra");
+        else if (height <= 1000) setCompact("tight");
         else setCompact("normal");
       }
     };
@@ -222,7 +222,7 @@ function RecommendationsContent() {
           </header>
           <div className="flex-1 min-h-0 overflow-y-auto pr-1">
             <div
-              className="grid h-full w-full gap-3 sm:gap-3.5 md:gap-4"
+              className="grid h-full w-full gap-2.5 sm:gap-3 md:gap-3.5"
               style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
             >
               {Array.from({ length: 6 }).map((_, i) => (
@@ -232,7 +232,7 @@ function RecommendationsContent() {
                     <div className="h-5 w-12 rounded bg-white/35 sm:h-6" />
                   </div>
                   <div className="flex flex-1 items-center justify-center">
-                    <div className="h-[120px] w-full rounded-xl bg-white/30 sm:h-[150px] md:h-[180px]" />
+                    <div className="h-[100px] w-full rounded-xl bg-white/30 sm:h-[130px] md:h-[160px]" />
                   </div>
                   <div className="space-y-2">
                     <div className="h-4 w-3/4 rounded bg-white/35" />
@@ -370,7 +370,7 @@ function RecommendationsContent() {
           )}
           <div className="flex-1 min-h-0 overflow-y-auto pr-1">
             <div
-              className="grid w-full gap-3 sm:gap-3.5 md:gap-4"
+              className="grid w-full gap-2.5 sm:gap-3 md:gap-3.5"
               style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))" }}
             >
               {recommendations.length > 0 ? (
