@@ -657,9 +657,7 @@
     -webkit-backdrop-filter: blur(var(--glass-blur-panel)) saturate(140%);
     border: 1px solid var(--glass-border-panel);
     box-shadow: var(--glass-shadow-panel);
-    gap: clamp(16px, 2.5vw, 32px) !important;
-    --page-panel-header: clamp(160px, 20vh, 220px);
-    --page-panel-footer: clamp(60px, 11vh, 108px);
+    gap: clamp(20px, 3vw, 36px);
     --glass-highlight-active: var(--glass-highlight-panel);
     --glass-glow-active: var(--glass-glow-panel);
   }
@@ -677,7 +675,8 @@
 
   .page-panel__scroll {
     overflow-y: auto;
-    max-height: calc(100% - (var(--page-panel-header) + var(--page-panel-footer)));
+    flex: 1;
+    min-height: 0;
     padding-inline-end: clamp(6px, 1vw, 18px);
     scroll-behavior: smooth;
   }

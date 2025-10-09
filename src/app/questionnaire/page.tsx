@@ -225,9 +225,9 @@ export default function Questionnaire() {
     <KioskFrame>
       <main
         aria-labelledby={headingId}
-        className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
+        className="page-main flex min-h-0 w-full flex-1 items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
-        <div className="glass-card page-panel flex h-full w-full flex-col">
+        <div className="glass-card page-panel flex h-full w-full min-h-0 flex-1 flex-col">
           <header className="space-y-2 text-right">
             <p className="m-0 text-[11px] text-muted sm:text-xs" aria-live="polite">
               سوال {formatNumber(currentStep + 1)} از {formatNumber(TOTAL_QUESTIONS)}
@@ -274,11 +274,11 @@ export default function Questionnaire() {
           </div>
 
           <section
-            className="page-panel__scroll flex flex-1 flex-col text-right"
+            className="page-panel__scroll flex flex-1 min-h-0 flex-col text-right"
             aria-describedby={helperId}
           >
             <div className="mb-2 hidden text-xs font-medium text-muted lg:block">گزینه‌های خود را لمس کنید</div>
-            <div className="flex-1 pr-1">
+            <div className="flex-1 min-h-0 pr-1">
               <div
                 className="grid w-full gap-2.5 sm:gap-3 md:gap-4"
                 style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}

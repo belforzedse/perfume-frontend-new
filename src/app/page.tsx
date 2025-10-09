@@ -11,7 +11,7 @@ export default function HomePage() {
 
   return (
     <KioskFrame>
-      <main className="flex w-full justify-center px-4 py-8 sm:px-6 lg:px-12">
+      <main className="flex min-h-0 w-full flex-1 justify-center px-4 py-8 sm:px-6 lg:px-12">
         <motion.article
           className="glass-card page-panel relative flex w-full max-w-4xl flex-col items-center gap-10 px-6 py-10 text-center sm:px-10 lg:gap-14 lg:py-14"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 28, scale: 0.985, filter: "blur(8px)" }}
