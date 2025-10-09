@@ -16,6 +16,10 @@ type AuroraAnimationKeyframes = {
   y: string[];
 };
 
+type LeafAnimationKeyframes = AuroraAnimationKeyframes & {
+  rotate: number[];
+};
+
 const baseAuroraAnimation: AuroraAnimationKeyframes = {
   opacity: [0.18, 0.28, 0.22] as number[],
   scale: [0.98, 1.05, 1.01] as number[],
@@ -61,6 +65,22 @@ const haloTransition = {
   times: [0, 0.1346, 0.3846, 0.6346, 0.8846, 1],
 };
 
+const leafAnimation: LeafAnimationKeyframes = {
+  opacity: [0.04, 0.085, 0.06] as number[],
+  scale: [0.88, 1.02, 0.95] as number[],
+  x: ["-22%", "6%", "-12%"] as string[],
+  y: ["-16%", "14%", "-6%"] as string[],
+  rotate: [-6, 4, -3] as number[],
+};
+
+const leafTransition = {
+  duration: 46,
+  ease: "easeInOut" as const,
+  repeat: Infinity,
+  repeatType: "mirror" as const,
+  times: [0, 0.52, 1],
+};
+
 
 const AnimatedBackground = memo(function AnimatedBackground() {
   const shouldReduceMotion = useReducedMotion();
@@ -79,6 +99,12 @@ const AnimatedBackground = memo(function AnimatedBackground() {
   const haloScale = useMotionValue(0.9);
   const haloX = useMotionValue(haloAnimation.x[0]);
   const haloY = useMotionValue(haloAnimation.y[0]);
+
+  const leafOpacity = useMotionValue(0);
+  const leafScale = useMotionValue(0.82);
+  const leafX = useMotionValue(leafAnimation.x[0]);
+  const leafY = useMotionValue(leafAnimation.y[0]);
+  const leafRotate = useMotionValue(leafAnimation.rotate[0]);
 
   useEffect(() => {
     if (shouldReduceMotion) {
@@ -193,12 +219,43 @@ const AnimatedBackground = memo(function AnimatedBackground() {
       controls.push(opacityLoop, scaleLoop);
     };
 
+    const startLeaf = async () => {
+      await delay(320);
+
+      if (!isActive) {
+        return;
+      }
+
+      const fadeOpacity = animate(leafOpacity, leafAnimation.opacity[0], {
+        duration: 1.8,
+        ease: "easeOut",
+      });
+      const fadeScale = animate(leafScale, leafAnimation.scale[0], {
+        duration: 1.8,
+        ease: "easeOut",
+      });
+
+      controls.push(fadeOpacity, fadeScale);
+      await Promise.all([fadeOpacity.finished, fadeScale.finished]);
+
+      if (!isActive) {
+        return;
+      }
+
+      const opacityLoop = animate(leafOpacity, leafAnimation.opacity, leafTransition);
+      const scaleLoop = animate(leafScale, leafAnimation.scale, leafTransition);
+      controls.push(opacityLoop, scaleLoop);
+    };
+
     const baseXLoop = animate(baseX, baseAuroraAnimation.x, baseAuroraTransition);
     const baseYLoop = animate(baseY, baseAuroraAnimation.y, baseAuroraTransition);
     const delayedXLoop = animate(delayedX, delayedAuroraAnimation.x, delayedAuroraTransition);
     const delayedYLoop = animate(delayedY, delayedAuroraAnimation.y, delayedAuroraTransition);
     const haloXLoop = animate(haloX, haloAnimation.x, haloTransition);
     const haloYLoop = animate(haloY, haloAnimation.y, haloTransition);
+    const leafXLoop = animate(leafX, leafAnimation.x, leafTransition);
+    const leafYLoop = animate(leafY, leafAnimation.y, leafTransition);
+    const leafRotateLoop = animate(leafRotate, leafAnimation.rotate, leafTransition);
 
     controls.push(
       baseXLoop,
@@ -207,11 +264,15 @@ const AnimatedBackground = memo(function AnimatedBackground() {
       delayedYLoop,
       haloXLoop,
       haloYLoop,
+      leafXLoop,
+      leafYLoop,
+      leafRotateLoop,
     );
 
     startBase();
     startDelayed();
     startHalo();
+    startLeaf();
 
     return () => {
       isActive = false;
@@ -231,6 +292,11 @@ const AnimatedBackground = memo(function AnimatedBackground() {
     haloScale,
     haloX,
     haloY,
+    leafOpacity,
+    leafScale,
+    leafX,
+    leafY,
+    leafRotate,
     shouldReduceMotion,
   ]);
 
@@ -238,7 +304,18 @@ const AnimatedBackground = memo(function AnimatedBackground() {
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#f9f9f7] via-[#f3f1ec] to-[#ece8e0]" />
       {shouldReduceMotion ? (
-        <div className="absolute left-1/2 top-1/3 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.45),rgba(255,255,255,0))] opacity-40 blur-[120px]" />
+        <>
+          <div className="absolute left-1/2 top-1/3 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.45),rgba(255,255,255,0))] opacity-40 blur-[120px]" />
+          <svg
+            aria-hidden
+            className="absolute left-[14%] top-[22%] h-[260px] w-[260px] text-[#a8c6aa]"
+            fill="currentColor"
+            viewBox="0 0 120 120"
+          >
+            <path d="M60 6c18 9 36 39 30 63-5 19-24 30-42 27-16-2-29-15-31-31-3-24 25-54 43-59Z" opacity={0.35} />
+            <path d="M36 48c12-12 32-18 48-12-4 14-17 26-30 32-14 8-33 12-42 0 4-9 13-16 24-20Z" opacity={0.18} />
+          </svg>
+        </>
       ) : (
         <>
           <motion.div
@@ -261,6 +338,22 @@ const AnimatedBackground = memo(function AnimatedBackground() {
             className="absolute right-[14%] top-[26%] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(255,247,236,0.32),rgba(255,247,236,0))] blur-[110px]"
             style={{ opacity: haloOpacity, scale: haloScale, x: haloX, y: haloY }}
           />
+          <motion.svg
+            aria-hidden
+            className="absolute left-[12%] top-[18%] h-[320px] w-[320px] text-[#9dbb9f]"
+            fill="currentColor"
+            viewBox="0 0 120 120"
+            style={{
+              opacity: leafOpacity,
+              scale: leafScale,
+              x: leafX,
+              y: leafY,
+              rotate: leafRotate,
+            }}
+          >
+            <path d="M60 6c18 9 36 39 30 63-5 19-24 30-42 27-16-2-29-15-31-31-3-24 25-54 43-59Z" opacity={0.4} />
+            <path d="M36 48c12-12 32-18 48-12-4 14-17 26-30 32-14 8-33 12-42 0 4-9 13-16 24-20Z" opacity={0.22} />
+          </motion.svg>
         </>
       )}
     </div>
