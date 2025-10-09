@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { AnimatePresence, motion } from "framer-motion";
 
 import {
   createPerfume,
@@ -20,6 +21,7 @@ import {
 } from "@/lib/admin-api";
 
 import ImageUpload from "@/components/ImageUpload";
+import { useAdminMotionVariants } from "@/components/admin/AdminMotion";
 
 type FeedbackState = {
   type: "success" | "error";
@@ -168,6 +170,8 @@ export default function AdminProductsPage() {
   const [editingPerfume, setEditingPerfume] = useState<AdminPerfume | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const { section, listItem, status: statusVariants, stagger, transition, ease, shouldReduce } =
+    useAdminMotionVariants();
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -342,7 +346,13 @@ export default function AdminProductsPage() {
   };
 
   return (
-    <section className="flex flex-col gap-10" dir="rtl">
+    <motion.section
+      className="flex flex-col gap-10"
+      dir="rtl"
+      initial="hidden"
+      animate="visible"
+      variants={section}
+    >
       <div className="space-y-3">
         <h2 className="text-2xl font-semibold">
           {isEditing ? `ویرایش عطر: ${editingPerfume?.name_fa}` : "محصولات / عطرها"}
@@ -578,20 +588,24 @@ export default function AdminProductsPage() {
           />
         </div>
 
-        {status && (
-          <div
-            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              status.type === "success"
-                ? "bg-green-100 text-green-800 border border-green-300"
-                : "bg-red-100 text-red-800 border border-red-300"
-            }`}
-            style={{
-              animation: "fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1)"
-            }}
-          >
-            {status.message}
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {status && (
+            <motion.div
+              key={`${status.type}-${status.message}`}
+              className={`rounded-[var(--radius-base)] border px-4 py-3 text-sm ${
+                status.type === "success"
+                  ? "border-green-300 bg-green-100 text-green-800"
+                  : "border-red-300 bg-red-100 text-red-800"
+              }`}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={statusVariants}
+            >
+              {status.message}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="flex items-center justify-end gap-3">
           {isEditing && (
@@ -642,18 +656,43 @@ export default function AdminProductsPage() {
         {perfumes.length === 0 && !loading ? (
           <p className="text-sm text-[var(--color-foreground-muted)]">هنوز محصولی ثبت نشده است.</p>
         ) : (
-          <ul className="grid gap-4 md:grid-cols-2">
-            {perfumes
-              .filter((perfume) =>
-                perfume.name_fa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                perfume.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                perfume.brand?.name.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-              .map((perfume) => (
-              <li
-                key={perfume.id}
-                className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-[var(--shadow-strong)] hover:scale-[1.01]"
-              >
+          <motion.ul className="grid gap-4 md:grid-cols-2" variants={stagger}>
+            <AnimatePresence>
+              {perfumes
+                .filter((perfume) =>
+                  perfume.name_fa.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  perfume.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  perfume.brand?.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((perfume) => (
+                  <motion.li
+                    key={perfume.id}
+                    className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)]"
+                    layout
+                    variants={listItem}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    whileHover={
+                      shouldReduce
+                        ? undefined
+                        : {
+                            scale: 1.01,
+                            boxShadow: "var(--shadow-strong)",
+                            borderColor: "rgba(183, 146, 90, 0.4)",
+                            transition: { duration: 0.4, ease },
+                          }
+                    }
+                    whileTap={
+                      shouldReduce
+                        ? undefined
+                        : {
+                            scale: 0.99,
+                            transition: { duration: 0.2, ease },
+                          }
+                    }
+                    transition={transition}
+                  >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
                     {perfume.image && (
@@ -716,21 +755,31 @@ export default function AdminProductsPage() {
                     </div>
                   </div>
                 </div>
-              </li>
-            ))}
-          </ul>
+                  </motion.li>
+                ))}
+            </AnimatePresence>
+          </motion.ul>
         )}
 
-        {searchTerm && perfumes.filter((perfume) =>
-          perfume.name_fa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          perfume.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          perfume.brand?.name.toLowerCase().includes(searchTerm.toLowerCase())
-        ).length === 0 && (
-          <p className="text-sm text-[var(--color-foreground-muted)] text-center py-8">
-            محصولی با این نام یافت نشد.
-          </p>
-        )}
+        <AnimatePresence mode="wait">
+          {searchTerm &&
+            perfumes.filter((perfume) =>
+              perfume.name_fa.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              perfume.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              perfume.brand?.name.toLowerCase().includes(searchTerm.toLowerCase())
+            ).length === 0 && (
+              <motion.p
+                className="py-8 text-center text-sm text-[var(--color-foreground-muted)]"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={statusVariants}
+              >
+                محصولی با این نام یافت نشد.
+              </motion.p>
+            )}
+        </AnimatePresence>
       </div>
-    </section>
+    </motion.section>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { AnimatePresence, motion } from "framer-motion";
 
 import {
   createCollection,
@@ -9,6 +10,7 @@ import {
   type AdminCollection,
   type CreateCollectionPayload,
 } from "@/lib/admin-api";
+import { useAdminMotionVariants } from "@/components/admin/AdminMotion";
 
 type FeedbackState = {
   type: "success" | "error";
@@ -38,6 +40,8 @@ export default function AdminCollectionsPage() {
   const [status, setStatus] = useState<FeedbackState | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const { section, listItem, status: statusVariants, stagger, transition, ease, shouldReduce } =
+    useAdminMotionVariants();
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -75,7 +79,13 @@ export default function AdminCollectionsPage() {
   };
 
   return (
-    <section className="flex flex-col gap-10" dir="rtl">
+    <motion.section
+      className="flex flex-col gap-10"
+      dir="rtl"
+      initial="hidden"
+      animate="visible"
+      variants={section}
+    >
       <div className="space-y-3">
         <h2 className="text-2xl font-semibold">کالکشن‌ها</h2>
         <p className="text-[var(--color-foreground-muted)]">
@@ -103,18 +113,24 @@ export default function AdminCollectionsPage() {
           )}
         </div>
 
-        {status && (
-          <div
-            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              status.type === "success"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-            style={{ animation: "fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1)" }}
-          >
-            {status.message}
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {status && (
+            <motion.div
+              key={`${status.type}-${status.message}`}
+              className={`rounded-[var(--radius-base)] px-4 py-3 text-sm ${
+                status.type === "success"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={statusVariants}
+            >
+              {status.message}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="flex items-center justify-end">
           <button
@@ -151,36 +167,63 @@ export default function AdminCollectionsPage() {
         {collections.length === 0 && !loading ? (
           <p className="text-sm text-[var(--color-foreground-muted)]">هنوز کالکشنی ثبت نشده است.</p>
         ) : (
-          <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {collections
-              .filter((collection) => collection.name.toLowerCase().includes(searchTerm.toLowerCase()))
-              .map((collection) => (
-                <li
-                  key={collection.id}
-                  className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-[var(--shadow-strong)] hover:-translate-y-0.5"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-semibold text-[var(--color-foreground)]">{collection.name}</p>
-                    <span className="text-xs text-[var(--color-foreground-subtle)] bg-[var(--color-accent-soft)] px-2 py-1 rounded">
-                      #{collection.id}
-                    </span>
-                  </div>
-                  {collection.brand && (
-                    <p className="text-xs text-[var(--color-foreground-muted)]">
-                      برند: {collection.brand.name}
-                    </p>
-                  )}
-                </li>
-              ))}
-          </ul>
+          <motion.ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3" variants={stagger}>
+            <AnimatePresence>
+              {collections
+                .filter((collection) => collection.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                .map((collection) => (
+                  <motion.li
+                    key={collection.id}
+                    className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)]"
+                    layout
+                    variants={listItem}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    whileHover={
+                      shouldReduce
+                        ? undefined
+                        : {
+                            y: -4,
+                            boxShadow: "var(--shadow-strong)",
+                            borderColor: "rgba(183, 146, 90, 0.4)",
+                            transition: { duration: 0.4, ease },
+                          }
+                    }
+                    transition={transition}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <p className="font-semibold text-[var(--color-foreground)]">{collection.name}</p>
+                      <span className="rounded bg-[var(--color-accent-soft)] px-2 py-1 text-xs text-[var(--color-foreground-subtle)]">
+                        #{collection.id}
+                      </span>
+                    </div>
+                    {collection.brand && (
+                      <p className="text-xs text-[var(--color-foreground-muted)]">
+                        برند: {collection.brand.name}
+                      </p>
+                    )}
+                  </motion.li>
+                ))}
+            </AnimatePresence>
+          </motion.ul>
         )}
 
-        {searchTerm && collections.filter((collection) => collection.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
-          <p className="text-sm text-[var(--color-foreground-muted)] text-center py-8">
-            کالکشنی با این نام یافت نشد.
-          </p>
-        )}
+        <AnimatePresence mode="wait">
+          {searchTerm &&
+            collections.filter((collection) => collection.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
+              <motion.p
+                className="py-8 text-center text-sm text-[var(--color-foreground-muted)]"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={statusVariants}
+              >
+                کالکشنی با این نام یافت نشد.
+              </motion.p>
+            )}
+        </AnimatePresence>
       </div>
-    </section>
+    </motion.section>
   );
 }
