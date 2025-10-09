@@ -568,7 +568,6 @@
     border: 1px solid rgba(255, 255, 255, 0.55);
     box-shadow: var(--shadow-soft);
     gap: clamp(20px, 3vw, 36px);
-    overflow: hidden;
     position: relative;
     --page-panel-header: clamp(180px, 22vh, 240px);
     --page-panel-footer: clamp(72px, 12vh, 120px);
@@ -792,7 +791,6 @@
     border: 1px solid rgba(255, 255, 255, 0.35);
     box-shadow: 0 16px 32px rgba(var(--shadow-color) / 0.05);
     position: relative;
-    overflow: hidden;
   }
 
   .glass-card--muted {
