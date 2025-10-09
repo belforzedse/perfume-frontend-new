@@ -7,7 +7,7 @@ import {
   useMotionValue,
   useReducedMotion,
 } from "framer-motion";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 
 type AuroraAnimationKeyframes = {
   opacity: number[];
@@ -82,8 +82,52 @@ const leafTransition = {
 };
 
 
+/**
+ * Animated aurora background that gracefully degrades on lower-capability devices.
+ *
+ * The component checks for coarse pointers, limited `navigator.deviceMemory`, and an
+ * opt-in `staticBackground` query parameter to decide whether to bypass GPU-heavy
+ * animations. When any of those signals are present (or motion reduction is requested)
+ * the static fallback markup is rendered so that other pages can safely reuse this
+ * component without worrying about device capability checks.
+ */
 const AnimatedBackground = memo(function AnimatedBackground() {
   const shouldReduceMotion = useReducedMotion();
+  const [isLowCapability, setIsLowCapability] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const prefersStatic = searchParams.has("staticBackground");
+
+    const coarsePointerQuery = window.matchMedia?.("(pointer: coarse)");
+
+    const nav = window.navigator as Navigator & { deviceMemory?: number };
+    const deviceMemory = nav.deviceMemory;
+    const isLowMemory = typeof deviceMemory === "number" && deviceMemory > 0 && deviceMemory <= 4;
+
+    const computeCapability = (hasCoarsePointer: boolean) =>
+      prefersStatic || isLowMemory || hasCoarsePointer;
+
+    setIsLowCapability(computeCapability(coarsePointerQuery?.matches ?? false));
+
+    if (!coarsePointerQuery) {
+      return;
+    }
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsLowCapability(computeCapability(event.matches));
+    };
+
+    coarsePointerQuery.addEventListener("change", handleChange);
+
+    return () => {
+      coarsePointerQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
 
   const baseOpacity = useMotionValue(0);
   const baseScale = useMotionValue(0.9);
@@ -107,7 +151,7 @@ const AnimatedBackground = memo(function AnimatedBackground() {
   const leafRotate = useMotionValue(leafAnimation.rotate[0]);
 
   useEffect(() => {
-    if (shouldReduceMotion) {
+    if (shouldReduceMotion || isLowCapability) {
       return;
     }
 
@@ -297,13 +341,14 @@ const AnimatedBackground = memo(function AnimatedBackground() {
     leafX,
     leafY,
     leafRotate,
+    isLowCapability,
     shouldReduceMotion,
   ]);
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#f9f9f7] via-[#f3f1ec] to-[#ece8e0]" />
-      {shouldReduceMotion ? (
+      {shouldReduceMotion || isLowCapability ? (
         <>
           <div className="absolute left-1/2 top-1/3 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.45),rgba(255,255,255,0))] opacity-40 blur-[120px]" />
           <svg
@@ -320,12 +365,12 @@ const AnimatedBackground = memo(function AnimatedBackground() {
         <>
           <motion.div
             aria-hidden
-            className="absolute left-1/2 top-[18%] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.28),rgba(255,255,255,0))] blur-[160px]"
+            className="absolute left-1/2 top-[18%] h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.28),rgba(255,255,255,0))] blur-[140px]"
             style={{ opacity: baseOpacity, scale: baseScale, x: baseX, y: baseY }}
           />
           <motion.div
             aria-hidden
-            className="absolute left-[22%] top-[42%] h-[440px] w-[440px] rounded-full bg-[radial-gradient(circle_at_70%_30%,rgba(183,146,90,0.32),rgba(183,146,90,0))] blur-[140px]"
+            className="absolute left-[22%] top-[42%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_at_70%_30%,rgba(183,146,90,0.32),rgba(183,146,90,0))] blur-[120px]"
             style={{
               opacity: delayedOpacity,
               scale: delayedScale,
@@ -335,12 +380,12 @@ const AnimatedBackground = memo(function AnimatedBackground() {
           />
           <motion.div
             aria-hidden
-            className="absolute right-[14%] top-[26%] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(255,247,236,0.32),rgba(255,247,236,0))] blur-[110px]"
+            className="absolute right-[14%] top-[26%] h-[340px] w-[340px] rounded-full bg-[radial-gradient(circle,rgba(255,247,236,0.32),rgba(255,247,236,0))] blur-[96px]"
             style={{ opacity: haloOpacity, scale: haloScale, x: haloX, y: haloY }}
           />
           <motion.svg
             aria-hidden
-            className="absolute left-[12%] top-[18%] h-[320px] w-[320px] text-[#9dbb9f]"
+            className="absolute left-[12%] top-[18%] h-[300px] w-[300px] text-[#9dbb9f]"
             fill="currentColor"
             viewBox="0 0 120 120"
             style={{
