@@ -650,15 +650,14 @@
     border: 1px solid var(--glass-border-panel);
     box-shadow: var(--glass-shadow-panel);
     gap: clamp(20px, 3vw, 36px);
-    --page-panel-header: clamp(180px, 22vh, 240px);
-    --page-panel-footer: clamp(72px, 12vh, 120px);
     --glass-highlight-active: var(--glass-highlight-panel);
     --glass-glow-active: var(--glass-glow-panel);
   }
 
   .page-panel__scroll {
     overflow-y: auto;
-    max-height: calc(100% - (var(--page-panel-header) + var(--page-panel-footer)));
+    flex: 1;
+    min-height: 0;
     padding-inline-end: clamp(6px, 1vw, 18px);
     scroll-behavior: smooth;
   }

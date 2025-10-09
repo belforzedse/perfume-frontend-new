@@ -207,16 +207,16 @@ function RecommendationsContent() {
     return (
       <main
         aria-labelledby={headingId}
-        className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
+        className="page-main flex min-h-0 w-full flex-1 items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
-        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-5xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
+        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-5xl flex-1 flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
           <header className="flex flex-col gap-3 text-right sm:flex-row sm:items-center sm:justify-between">
             <h1 id={headingId} className="m-0 text-xl xs:text-2xl sm:text-3xl font-semibold text-[var(--color-foreground)]">
               در حال آماده‌سازی پیشنهادها...
             </h1>
             <div className="loader-orbit" role="status" aria-label="در حال بارگذاری" />
           </header>
-          <div className="flex-1 overflow-y-auto pr-1">
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1">
             <div
               className="grid h-full w-full gap-3 sm:gap-3.5 md:gap-4"
               style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
@@ -248,9 +248,9 @@ function RecommendationsContent() {
     return (
       <main
         aria-labelledby={headingId}
-        className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
+        className="page-main flex min-h-0 w-full flex-1 items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
-        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
+        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-3xl flex-1 flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
           <header className="space-y-2 text-right">
             <h1 id={headingId} className="m-0 text-xl sm:text-2xl font-semibold text-[var(--color-foreground)]">مشکلی پیش آمد.</h1>
             <p className="m-0 text-xs text-muted sm:text-sm">{error}</p>
@@ -276,9 +276,9 @@ function RecommendationsContent() {
     return (
       <main
         aria-labelledby={headingId}
-        className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
+        className="page-main flex min-h-0 w-full flex-1 items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
-        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
+        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-3xl flex-1 flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
           <header className="space-y-2 text-right">
             <h1 id={headingId} className="m-0 text-xl sm:text-2xl font-semibold text-[var(--color-foreground)]">پاسخی ثبت نشد.</h1>
             <p className="m-0 text-xs text-muted sm:text-sm">برای دریافت پیشنهادها، پرسشنامه را تکمیل کنید.</p>
@@ -299,9 +299,9 @@ function RecommendationsContent() {
   return (
     <main
       aria-labelledby={headingId}
-      className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
+      className="page-main flex min-h-0 w-full flex-1 items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
     >
-      <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-5xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
+      <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-5xl flex-1 flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
         <header className="flex flex-col gap-3 text-right sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <h1 id={headingId} className="m-0 text-xl xs:text-2xl sm:text-3xl font-semibold text-[var(--color-foreground)]">
@@ -348,7 +348,7 @@ function RecommendationsContent() {
           </section>
         )}
 
-        <section className="flex flex-1 flex-col overflow-hidden text-right">
+        <section className="flex flex-1 min-h-0 flex-col overflow-hidden text-right">
           {recommendations.length > 0 && (
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted sm:text-xs">
               <span>برای ذخیره یا اشتراک‌گذاری، کارت هر عطر را لمس کنید.</span>
@@ -359,7 +359,7 @@ function RecommendationsContent() {
               </span>
             </div>
           )}
-          <div className="flex-1 overflow-y-auto pr-1">
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1">
             <div
               className="grid w-full gap-3 sm:gap-3.5 md:gap-4"
               style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))" }}
