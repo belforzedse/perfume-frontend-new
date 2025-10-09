@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <KioskFrame>
       <main className="flex w-full justify-center px-4 py-6 sm:px-6 lg:px-10">
-        <article className="glass-card relative flex w-full max-w-3xl flex-col items-center gap-8 overflow-hidden rounded-[32px] border border-white/55 bg-white/70 px-8 py-10 text-center shadow-soft backdrop-blur-xl sm:gap-10 sm:px-10 sm:py-12 lg:max-w-4xl">
+        <article className="glass-card relative flex w-full max-w-3xl flex-col items-center gap-8 overflow-hidden rounded-[32px] px-8 py-10 text-center sm:gap-10 sm:px-10 sm:py-12 lg:max-w-4xl">
           <Image
             src="/logo.webp"
             alt="لوگوی فروشگاه"
@@ -19,7 +19,7 @@ export default function HomePage() {
           />
           <section className="flex w-full max-w-2xl flex-col items-center gap-8 text-center">
             <header className="space-y-5">
-              <span className="inline-flex items-center justify-center rounded-full border border-white/45 bg-white/65 px-5 py-1.5 text-sm font-medium text-[var(--color-foreground-muted)] tracking-tight shadow-sm backdrop-blur">
+              <span className="glass-section inline-flex items-center justify-center rounded-full px-5 py-1.5 text-sm font-medium text-[var(--color-foreground-muted)] tracking-tight">
                 پرسشنامه عطری گندم
               </span>
               <div className="space-y-4">

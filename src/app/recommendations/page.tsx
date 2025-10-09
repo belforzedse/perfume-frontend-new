@@ -40,7 +40,7 @@ const MatchCard = ({
   const englishName = perfume.nameEn?.trim();
 
   return (
-    <article className="glass-card flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right transition-all duration-300 hover:shadow-xl hover:scale-[1.02] cursor-pointer">
+    <article className="glass-card glass-card--muted flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right transition-all duration-300 hover:scale-[1.02] cursor-pointer">
       <header className="flex items-center justify-between text-muted">
         <span className="rounded-full border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1 text-[10px] sm:text-xs font-medium text-[var(--color-foreground)] bg-white/5">
           {formatNumber(order)}
@@ -209,7 +209,7 @@ function RecommendationsContent() {
         aria-labelledby={headingId}
         className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
-        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-5xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 shadow-soft sm:p-6 md:p-8">
+        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-5xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
           <header className="flex flex-col gap-3 text-right sm:flex-row sm:items-center sm:justify-between">
             <h1 id={headingId} className="m-0 text-xl xs:text-2xl sm:text-3xl font-semibold text-[var(--color-foreground)]">
               در حال آماده‌سازی پیشنهادها...
@@ -250,7 +250,7 @@ function RecommendationsContent() {
         aria-labelledby={headingId}
         className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
-        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 shadow-soft sm:p-6 md:p-8">
+        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
           <header className="space-y-2 text-right">
             <h1 id={headingId} className="m-0 text-xl sm:text-2xl font-semibold text-[var(--color-foreground)]">مشکلی پیش آمد.</h1>
             <p className="m-0 text-xs text-muted sm:text-sm">{error}</p>
@@ -278,7 +278,7 @@ function RecommendationsContent() {
         aria-labelledby={headingId}
         className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
-        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 shadow-soft sm:p-6 md:p-8">
+        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
           <header className="space-y-2 text-right">
             <h1 id={headingId} className="m-0 text-xl sm:text-2xl font-semibold text-[var(--color-foreground)]">پاسخی ثبت نشد.</h1>
             <p className="m-0 text-xs text-muted sm:text-sm">برای دریافت پیشنهادها، پرسشنامه را تکمیل کنید.</p>
@@ -301,7 +301,7 @@ function RecommendationsContent() {
       aria-labelledby={headingId}
       className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
     >
-      <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-5xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 shadow-soft sm:p-6 md:p-8">
+      <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-5xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 sm:p-6 md:p-8">
         <header className="flex flex-col gap-3 text-right sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <h1 id={headingId} className="m-0 text-xl xs:text-2xl sm:text-3xl font-semibold text-[var(--color-foreground)]">
