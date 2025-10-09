@@ -539,6 +539,29 @@
     box-shadow: 0 12px 32px rgba(var(--shadow-color) / 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.35);
   }
 
+  .page-panel {
+    width: min(100%, 960px);
+    min-height: min(88vh, 980px);
+    padding: clamp(28px, 4vw, 56px);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow: var(--shadow-soft);
+    gap: clamp(20px, 3vw, 36px);
+    overflow: hidden;
+    position: relative;
+    --page-panel-header: clamp(180px, 22vh, 240px);
+    --page-panel-footer: clamp(72px, 12vh, 120px);
+  }
+
+  .page-panel__scroll {
+    overflow-y: auto;
+    max-height: calc(100% - (var(--page-panel-header) + var(--page-panel-footer)));
+    padding-inline-end: clamp(6px, 1vw, 18px);
+    scroll-behavior: smooth;
+  }
+
   .lux-divider {
     display: inline-flex;
     align-items: center;

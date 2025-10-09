@@ -197,7 +197,7 @@ export default function Questionnaire() {
         aria-labelledby={headingId}
         className="page-main flex h-full w-full items-center justify-center px-2 py-4 sm:px-3 md:px-4 lg:px-6 xl:px-8"
       >
-        <div className="glass-card page-panel flex h-full max-h-[94vh] w-full max-w-4xl flex-col gap-4 overflow-hidden rounded-[28px] p-4 shadow-soft sm:p-6 md:p-8">
+        <div className="glass-card page-panel flex h-full w-full flex-col">
           <header className="space-y-2 text-right">
             <p className="m-0 text-[11px] text-muted sm:text-xs" aria-live="polite">
               سوال {formatNumber(currentStep + 1)} از {formatNumber(TOTAL_QUESTIONS)}
@@ -226,9 +226,12 @@ export default function Questionnaire() {
             </p>
           </div>
 
-          <section className="flex flex-1 flex-col overflow-hidden text-right" aria-describedby={helperId}>
+          <section
+            className="page-panel__scroll flex flex-1 flex-col text-right"
+            aria-describedby={helperId}
+          >
             <div className="mb-2 hidden text-xs font-medium text-muted lg:block">گزینه‌های خود را لمس کنید</div>
-            <div className="flex-1 overflow-y-auto pr-1">
+            <div className="flex-1 pr-1">
               <div
                 className="grid w-full gap-2.5 sm:gap-3 md:gap-4"
                 style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
