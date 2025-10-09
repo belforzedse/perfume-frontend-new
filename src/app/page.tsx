@@ -25,7 +25,7 @@ export default function HomePage() {
               ? { opacity: 1 }
               : { opacity: 0, y: -18, scale: 0.99, filter: "blur(6px)" }
           }
-          transition={{ duration: 0.55, ease: easing }}
+          transition={{ duration: 0.75, ease: easing }}
         >
           <div className="relative flex items-center justify-center">
             <div className="pointer-events-none absolute -inset-4 rounded-[46px] bg-gradient-to-br from-white/40 via-white/10 to-transparent blur-xl" aria-hidden />
@@ -46,7 +46,7 @@ export default function HomePage() {
               initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
               animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
-              transition={{ duration: 0.5, ease: easing, delay: shouldReduceMotion ? 0 : 0.08 }}
+              transition={{ duration: 0.7, ease: easing, delay: shouldReduceMotion ? 0 : 0.12 }}
             >
               <h1 className="m-0 text-[2.35rem] font-semibold leading-[1.05] text-[var(--color-foreground)] xs:text-[2.6rem] sm:text-[3rem] lg:text-[3.2rem]">
                 سلیقه عطری خود را کشف کنید

@@ -38,10 +38,10 @@ export default function AdminLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center justify-between whitespace-nowrap rounded-lg sm:rounded-[var(--radius-base)] px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm transition-all min-h-[44px] ${
+                className={`flex items-center justify-between whitespace-nowrap rounded-lg sm:rounded-[var(--radius-base)] px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] min-h-[44px] ${
                   active
                     ? "bg-[var(--color-accent)] text-white shadow-[var(--shadow-strong)]"
-                    : "bg-transparent text-[var(--color-foreground-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-background-soft)]"
+                    : "bg-transparent text-[var(--color-foreground-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-background-soft)]/80 hover:-translate-y-0.5"
                 }`}
               >
                 <span>{item.label}</span>

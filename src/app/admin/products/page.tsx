@@ -580,13 +580,13 @@ export default function AdminProductsPage() {
 
         {status && (
           <div
-            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm transition-all duration-300 ${
+            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               status.type === "success"
                 ? "bg-green-100 text-green-800 border border-green-300"
                 : "bg-red-100 text-red-800 border border-red-300"
             }`}
             style={{
-              animation: "fade-in-up 0.3s ease-out"
+              animation: "fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1)"
             }}
           >
             {status.message}
@@ -598,7 +598,7 @@ export default function AdminProductsPage() {
             <button
               type="button"
               onClick={handleCancelEdit}
-              className="inline-flex items-center justify-center rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-6 py-3 text-sm font-semibold text-[var(--color-foreground)] transition-all duration-200 hover:bg-[var(--color-background-soft)] hover:scale-105 active:scale-95"
+              className="inline-flex items-center justify-center rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-6 py-3 text-sm font-semibold text-[var(--color-foreground)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--color-background-soft)] hover:scale-[1.01] active:scale-[0.99]"
             >
               انصراف
             </button>
@@ -606,7 +606,7 @@ export default function AdminProductsPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-[var(--radius-base)] bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[var(--color-accent-strong)] hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+            className="inline-flex items-center justify-center rounded-[var(--radius-base)] bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--color-accent-strong)] hover:scale-[1.02] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
           >
             {isSubmitting
               ? "در حال ارسال..."
@@ -652,7 +652,7 @@ export default function AdminProductsPage() {
               .map((perfume) => (
               <li
                 key={perfume.id}
-                className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)] transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
+                className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-[var(--shadow-strong)] hover:scale-[1.01]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
@@ -676,14 +676,14 @@ export default function AdminProductsPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(perfume)}
-                        className="rounded px-3 py-1 text-xs font-medium text-blue-600 transition-all duration-200 hover:bg-blue-100 hover:scale-105 active:scale-95"
+                        className="rounded px-3 py-1 text-xs font-medium text-blue-600 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-blue-100 hover:scale-[1.02] active:scale-[0.98]"
                         title="ویرایش"
                       >
                         ویرایش
                       </button>
                       <button
                         onClick={() => handleDelete(perfume)}
-                        className="rounded px-3 py-1 text-xs font-medium text-red-600 transition-all duration-200 hover:bg-red-100 hover:scale-105 active:scale-95"
+                        className="rounded px-3 py-1 text-xs font-medium text-red-600 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-red-100 hover:scale-[1.02] active:scale-[0.98]"
                         title="حذف"
                       >
                         حذف
