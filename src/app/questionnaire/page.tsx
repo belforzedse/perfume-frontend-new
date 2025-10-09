@@ -13,7 +13,11 @@ import {
   createInitialAnswers,
   serializeAnswers,
 } from "@/lib/questionnaire";
-import { useFadeScaleVariants, useStaggeredListVariants } from "@/lib/motion";
+import {
+  signatureTransitions,
+  useFadeScaleVariants,
+  useStaggeredListVariants,
+} from "@/lib/motion";
 
 const BTN_BASE =
   "question-option text-base sm:text-lg font-semibold transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] tap-highlight touch-target touch-feedback";
@@ -111,7 +115,13 @@ export default function Questionnaire() {
     delayChildren: 0.14,
     staggerChildren: 0.08,
   });
-  const optionVariants = useFadeScaleVariants({ y: 26, scale: 0.94, blur: 14 });
+  const optionVariants = useFadeScaleVariants({
+    y: 26,
+    scale: 0.94,
+    blur: 14,
+    duration: signatureTransitions.surface.duration ?? 0.68,
+    ease: signatureTransitions.surface.ease,
+  });
 
   useEffect(() => {
     setLimitMessage(null);

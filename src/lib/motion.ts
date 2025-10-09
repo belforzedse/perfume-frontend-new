@@ -4,6 +4,7 @@ import { type Transition, type Variants, useReducedMotion } from "framer-motion"
 export const easings = {
   luxury: [0.19, 0.76, 0.32, 1] as const,
   soft: [0.22, 0.61, 0.36, 1] as const,
+  signature: [0.16, 1, 0.3, 1] as const,
 };
 
 export const durations = {
@@ -30,6 +31,179 @@ export const transitions = {
     restSpeed: 0.001,
   } satisfies Transition,
 };
+
+export const signatureHoverTransition: Transition = {
+  duration: 0.45,
+  ease: easings.signature,
+};
+
+export const signatureTransitions = {
+  page: {
+    duration: (durations.relaxed + 0.74) / 2,
+    ease: easings.signature,
+  } satisfies Transition,
+  surface: {
+    duration: (durations.moderate + 0.6) / 2,
+    ease: easings.signature,
+  } satisfies Transition,
+  section: {
+    duration: 0.6,
+    ease: easings.signature,
+  } satisfies Transition,
+  listItem: {
+    duration: 0.45,
+    ease: easings.signature,
+  } satisfies Transition,
+  listItemExit: {
+    duration: 0.3,
+    ease: easings.signature,
+  } satisfies Transition,
+  status: {
+    duration: 0.4,
+    ease: easings.signature,
+  } satisfies Transition,
+  statusExit: {
+    duration: 0.25,
+    ease: easings.signature,
+  } satisfies Transition,
+  hover: signatureHoverTransition,
+};
+
+const signatureSectionVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 24,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: signatureTransitions.section,
+  },
+};
+
+const signatureListItemVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 16,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: signatureTransitions.listItem,
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    transition: signatureTransitions.listItemExit,
+  },
+};
+
+const signatureStatusVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: -12,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: signatureTransitions.status,
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    transition: signatureTransitions.statusExit,
+  },
+};
+
+const signatureStaggerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const signatureDisabledSectionVariants: Variants = {
+  hidden: {
+    opacity: 1,
+    y: 0,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0 },
+  },
+};
+
+const signatureDisabledVariants: Variants = {
+  hidden: {
+    opacity: 1,
+    y: 0,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0 },
+  },
+  exit: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0 },
+  },
+};
+
+const signatureDisabledStaggerVariants: Variants = {
+  hidden: {},
+  visible: {},
+};
+
+export const signatureVariants = {
+  section: signatureSectionVariants,
+  listItem: signatureListItemVariants,
+  status: signatureStatusVariants,
+  stagger: signatureStaggerVariants,
+} as const;
+
+const signatureDisabledVariantSet = {
+  section: signatureDisabledSectionVariants,
+  listItem: signatureDisabledVariants,
+  status: signatureDisabledVariants,
+  stagger: signatureDisabledStaggerVariants,
+} as const;
+
+function buildSignatureMotionVariants(shouldReduceMotion: boolean) {
+  if (shouldReduceMotion) {
+    return {
+      ...signatureDisabledVariantSet,
+      transition: NOOP_TRANSITION,
+      ease: easings.signature,
+    } as const;
+  }
+
+  return {
+    ...signatureVariants,
+    transition: signatureHoverTransition,
+    ease: easings.signature,
+  } as const;
+}
+
+export function resolveSignatureMotion(shouldReduceMotion: boolean) {
+  return {
+    ...buildSignatureMotionVariants(shouldReduceMotion),
+    shouldReduce: shouldReduceMotion,
+  } as const;
+}
+
+export function useSignatureMotionVariants() {
+  const shouldReduceMotion = useReducedMotion();
+
+  return useMemo(
+    () => resolveSignatureMotion(shouldReduceMotion),
+    [shouldReduceMotion]
+  );
+}
 
 const NOOP_TRANSITION: Transition = { duration: 0 };
 
@@ -99,9 +273,9 @@ export function useFadeScaleVariants({
   y = 22,
   scale = 0.97,
   blur = 10,
-  duration = durations.moderate,
+  duration = signatureTransitions.surface.duration ?? durations.moderate,
   delay = 0,
-  ease = easings.luxury,
+  ease = signatureTransitions.surface.ease ?? easings.signature,
   exitY = -16,
 }: {
   y?: number;

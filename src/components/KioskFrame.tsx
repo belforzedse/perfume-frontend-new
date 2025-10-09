@@ -8,6 +8,7 @@ import IdleTimer from "@/components/IdleTimer";
 import {
   durations,
   easings,
+  signatureTransitions,
   transitions,
   useMotionPreference,
   useMotionSafeTransition,
@@ -38,15 +39,19 @@ export default function KioskFrame({
   const idleTimerRef = useRef<number | null>(null);
   const [timerKey, setTimerKey] = useState(0);
   const shouldReduceMotion = useMotionPreference();
-  const filterDuration = (transitions.page.duration ?? durations.relaxed) * 0.65;
+  const filterDuration =
+    (signatureTransitions.page.duration ?? durations.relaxed) * 0.62;
   const pageTransition = useMotionSafeTransition(
     () => ({
-      ...transitions.page,
+      ...signatureTransitions.page,
       scale: transitions.gentleSpring,
       filter: {
         delay: 0.12,
         duration: filterDuration,
-        ease: easings.soft,
+        ease:
+          signatureTransitions.hover.ease ??
+          signatureTransitions.surface.ease ??
+          easings.signature,
       },
     }),
     [filterDuration]
