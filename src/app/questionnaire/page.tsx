@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { toPersianNumbers } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import KioskFrame from "@/components/KioskFrame";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   QUESTION_FLOW,
   QuestionnaireAnswers,
@@ -13,9 +13,10 @@ import {
   createInitialAnswers,
   serializeAnswers,
 } from "@/lib/questionnaire";
+import { useFadeScaleVariants, useStaggeredListVariants } from "@/lib/motion";
 
 const BTN_BASE =
-  "question-option text-base sm:text-lg font-semibold animate-fade-in-up transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] tap-highlight touch-target touch-feedback";
+  "question-option text-base sm:text-lg font-semibold transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] tap-highlight touch-target touch-feedback";
 
 const formatNumber = (value: number) => toPersianNumbers(String(value));
 
@@ -100,6 +101,11 @@ export default function Questionnaire() {
   const questions = QUESTION_FLOW;
   const currentQuestion = questions[currentStep];
   const totalQuestions = questions.length;
+  const optionsContainerVariants = useStaggeredListVariants({
+    delayChildren: 0.14,
+    staggerChildren: 0.08,
+  });
+  const optionVariants = useFadeScaleVariants({ y: 26, scale: 0.94, blur: 14 });
 
   useEffect(() => {
     setLimitMessage(null);
@@ -279,9 +285,14 @@ export default function Questionnaire() {
           >
             <div className="mb-2 hidden text-xs font-medium text-muted lg:block">گزینه‌های خود را لمس کنید</div>
             <div className="flex-1 min-h-0 pr-1">
-              <div
+              <motion.div
+                key={currentQuestion.key}
                 className="grid w-full gap-2.5 sm:gap-3 md:gap-4"
                 style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
+                variants={optionsContainerVariants}
+                initial="hidden"
+                animate="show"
+                exit="exit"
               >
                 {currentQuestion.options.map((option) => {
                   const values = answers[currentQuestion.key];
@@ -291,11 +302,12 @@ export default function Questionnaire() {
                     typeof currentQuestion.maxSelections === "number" &&
                     values.length >= currentQuestion.maxSelections;
                   return (
-                    <button
+                    <motion.button
                       key={option.value}
                       onClick={() => toggle(option.value)}
                       disabled={disabled}
                       aria-pressed={isSelected}
+                      variants={optionVariants}
                       className={`${BTN_BASE} ${
                         isSelected ? "question-option--selected" : "question-option--default"
                       } ${disabled ? "question-option--disabled" : ""} min-h-[56px] text-sm sm:min-h-[60px] sm:text-base md:min-h-[68px] md:text-lg`}
@@ -304,7 +316,7 @@ export default function Questionnaire() {
                       {currentQuestion.type === "multiple" && isSelected && (
                         <span className="rounded-full bg-white/70 px-2 py-0.5 text-[0.7rem] text-muted">انتخاب شده</span>
                       )}
-                    </button>
+                    </motion.button>
                   );
                 })}
                 {currentQuestion.options.length === 0 && (
@@ -312,7 +324,7 @@ export default function Questionnaire() {
                     گزینه‌ای یافت نشد.
                   </div>
                 )}
-              </div>
+              </motion.div>
             </div>
           </section>
 

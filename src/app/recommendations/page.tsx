@@ -11,6 +11,8 @@ import {
   type QuestionnaireAnswers,
 } from "@/lib/questionnaire";
 import { rankPerfumes, type RankedPerfume } from "@/lib/perfume-matcher";
+import { motion } from "framer-motion";
+import { useFadeScaleVariants, useStaggeredListVariants } from "@/lib/motion";
 
 const formatNumber = (value: number) => toPersianNumbers(String(value));
 
@@ -127,6 +129,8 @@ function RecommendationsContent() {
   const [compact, setCompact] = useState<CompactMode>("normal");
   const [refreshToken, setRefreshToken] = useState(0);
   const headingId = "recommendations-heading";
+  const listVariants = useStaggeredListVariants({ delayChildren: 0.18, staggerChildren: 0.1 });
+  const cardVariants = useFadeScaleVariants({ y: 28, scale: 0.94, blur: 18 });
 
   useEffect(() => {
     const updateCompact = () => {
@@ -348,7 +352,12 @@ function RecommendationsContent() {
           </section>
         )}
 
-        <section className="flex flex-1 min-h-0 flex-col overflow-hidden text-right">
+        <motion.section
+          className="flex flex-1 min-h-0 flex-col overflow-hidden text-right"
+          variants={listVariants}
+          initial="hidden"
+          animate="show"
+        >
           {recommendations.length > 0 && (
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted sm:text-xs">
               <span>برای ذخیره یا اشتراک‌گذاری، کارت هر عطر را لمس کنید.</span>
@@ -366,13 +375,13 @@ function RecommendationsContent() {
             >
               {recommendations.length > 0 ? (
                 recommendations.map((perfume, index) => (
-                  <div
+                  <motion.div
                     key={perfume.id}
                     className="h-full min-h-[200px]"
-                    style={{ animation: `fade-in-up 0.5s ease-out ${index * 0.1}s both` }}
+                    variants={cardVariants}
                   >
                     <MatchCard perfume={perfume} order={index + 1} compact={compact} />
-                  </div>
+                  </motion.div>
                 ))
               ) : (
                 <div className="glass-surface col-span-full flex h-full flex-col items-center justify-center gap-3 rounded-2xl p-6 text-xs text-muted sm:text-sm">
@@ -384,7 +393,7 @@ function RecommendationsContent() {
               )}
             </div>
           </div>
-        </section>
+        </motion.section>
       </div>
     </main>
   );

@@ -2,9 +2,16 @@
 
 import React, { startTransition, useEffect, useRef, useState, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import IdleTimer from "@/components/IdleTimer";
+import {
+  durations,
+  easings,
+  transitions,
+  useMotionPreference,
+  useMotionSafeTransition,
+} from "@/lib/motion";
 
 const QUESTIONNAIRE_TIMEOUT_MS = 30_000; // 30 seconds
 const RECOMMENDATIONS_TIMEOUT_MS = 120_000; // 2 minutes
@@ -30,7 +37,20 @@ export default function KioskFrame({
   const pathname = usePathname();
   const idleTimerRef = useRef<number | null>(null);
   const [timerKey, setTimerKey] = useState(0);
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useMotionPreference();
+  const filterDuration = (transitions.page.duration ?? durations.relaxed) * 0.65;
+  const pageTransition = useMotionSafeTransition(
+    () => ({
+      ...transitions.page,
+      scale: transitions.gentleSpring,
+      filter: {
+        delay: 0.12,
+        duration: filterDuration,
+        ease: easings.soft,
+      },
+    }),
+    [filterDuration]
+  );
 
   const isHome = pathname === "/";
   const isQuestionnaire = pathname === "/questionnaire";
@@ -181,7 +201,7 @@ export default function KioskFrame({
           initial={
             shouldReduceMotion
               ? false
-              : { opacity: 0, y: 22, scale: 0.988, filter: "blur(6px)" }
+              : { opacity: 0, y: 26, scale: 0.984, filter: "blur(10px)" }
           }
           animate={
             shouldReduceMotion
@@ -191,9 +211,9 @@ export default function KioskFrame({
           exit={
             shouldReduceMotion
               ? { opacity: 1 }
-              : { opacity: 0, y: -16, scale: 0.99, filter: "blur(6px)" }
+              : { opacity: 0, y: -18, scale: 0.988, filter: "blur(8px)" }
           }
-          transition={{ duration: 0.55, ease: [0.22, 0.61, 0.36, 1] }}
+          transition={pageTransition}
         >
           {children}
         </motion.div>

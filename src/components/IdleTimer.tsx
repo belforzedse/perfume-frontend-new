@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { durations, useFadeScaleVariants } from "@/lib/motion";
 
 interface IdleTimerProps {
   timeoutMs: number;
@@ -11,6 +13,7 @@ interface IdleTimerProps {
 export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProps) {
   const [timeRemaining, setTimeRemaining] = useState(timeoutMs);
   const [isVisible, setIsVisible] = useState(false);
+  const timerVariants = useFadeScaleVariants({ y: 16, scale: 0.92, blur: 12, duration: durations.moderate });
 
   // Reset when component mounts or timeoutMs changes
   useEffect(() => {
@@ -52,7 +55,13 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
   const progress = (timeRemaining / timeoutMs) * 100;
 
   return (
-    <div className="fixed bottom-4 left-4 z-50 animate-fade-in">
+    <motion.div
+      className="fixed bottom-4 left-4 z-50"
+      variants={timerVariants}
+      initial="hidden"
+      animate="show"
+      exit="exit"
+    >
       <div className="glass-surface rounded-2xl px-4 py-3 shadow-lg backdrop-blur-xl border border-white/30 flex items-center justify-center">
         {/* Circular Progress */}
         <div className="relative w-10 h-10 flex items-center justify-center">
@@ -90,6 +99,6 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
