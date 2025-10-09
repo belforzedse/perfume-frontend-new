@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import TapIndicator from "@/components/TapIndicator";
 
 interface StartQuestionnaireButtonProps {
   className?: string;
@@ -10,21 +9,23 @@ interface StartQuestionnaireButtonProps {
 export default function StartQuestionnaireButton({
   className = "",
 }: StartQuestionnaireButtonProps) {
+  const wrapperClassName = ["w-full", "max-w-sm", className].filter(Boolean).join(" ");
+
   return (
-    <div className={`relative w-full max-w-sm ${className}`}>
+    <div className={wrapperClassName}>
       <Link
         href="/questionnaire"
         prefetch={false}
-        className="btn tap-highlight touch-target touch-feedback z-10 flex w-full flex-col gap-1.5 rounded-2xl px-6 py-4 text-base font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-95 xs:px-7 xs:py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:text-lg md:px-10 md:py-6 lg:px-12"
+        className="glass-chip tap-highlight touch-target touch-feedback flex w-full flex-col items-center gap-3 rounded-3xl px-6 py-5 text-center text-[var(--color-foreground)] transition-colors xs:px-7 xs:py-6 sm:px-8 sm:py-7"
         aria-label="شروع پرسشنامه و رفتن به فرم انتخاب عطر"
       >
-        <span className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-          <span>شروع پرسشنامه</span>
-          <span className="text-xs font-normal text-white/90 sm:text-sm">
-            پاسخ دهید و پیشنهاد اختصاصی دریافت کنید
+        <span className="flex flex-col gap-1">
+          <span className="text-lg font-semibold sm:text-xl">شروع پرسشنامه</span>
+          <span className="text-sm font-normal text-[var(--color-foreground-muted)] sm:text-base">
+            چند پاسخ کوتاه و نتیجه فوری
           </span>
         </span>
-        <span className="flex items-center gap-2 text-sm sm:text-base">
+        <span className="flex items-center justify-center gap-2 text-sm font-semibold text-[var(--color-accent-strong)] sm:text-base">
           <span>شروع</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -43,10 +44,6 @@ export default function StartQuestionnaireButton({
           </svg>
         </span>
       </Link>
-      <TapIndicator
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        size={180}
-      />
     </div>
   );
 }
