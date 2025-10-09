@@ -328,7 +328,7 @@ function RecommendationsContent() {
         </header>
 
         {topMatch && (
-          <section className="glass-surface flex flex-col gap-2 rounded-2xl px-4 py-4 text-right text-xs text-muted sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:px-5 sm:text-sm">
+          <section className="glass-surface hidden flex-col gap-2 rounded-2xl px-4 py-4 text-right text-xs text-muted sm:flex sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:px-5 sm:text-sm">
             <div className="space-y-1">
               <p className="m-0 text-xs font-semibold text-[var(--color-accent)] sm:text-sm">بهترین هماهنگی</p>
               <p className="m-0 text-base font-semibold text-[var(--color-foreground)] sm:text-lg">
@@ -345,6 +345,31 @@ function RecommendationsContent() {
             {topMatch.reasons.length > 0 && (
               <ul className="m-0 list-disc space-y-1 pr-4">
                 {topMatch.reasons.slice(0, 2).map((reason) => (
+                  <li key={reason}>{reason}</li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
+
+        {topMatch && (
+          <section className="glass-surface flex flex-col gap-2 rounded-2xl px-4 py-4 text-right text-xs text-muted sm:hidden">
+            <div className="space-y-1">
+              <p className="m-0 text-xs font-semibold text-[var(--color-accent)]">بهترین هماهنگی</p>
+              <p className="m-0 text-base font-semibold text-[var(--color-foreground)]">
+                {topMatch.nameFa && topMatch.nameFa.trim().length > 0 ? topMatch.nameFa : topMatch.nameEn}
+              </p>
+              <p className="m-0">درصد تطابق: {formatNumber(topMatch.matchPercentage)}٪</p>
+              {typeof topMatch.confidence === "number" && topMatch.confidence > 0 && (
+                <p className="m-0">اطمینان سیستم: {formatNumber(Math.round(topMatch.confidence))}٪</p>
+              )}
+              {(topMatch.collection || topMatch.family) && (
+                <p className="m-0 text-[11px]">{[topMatch.collection, topMatch.family].filter(Boolean).join(" • ")}</p>
+              )}
+            </div>
+            {topMatch.reasons.length > 0 && (
+              <ul className="m-0 list-disc space-y-1 pr-4">
+                {topMatch.reasons.slice(0, 1).map((reason) => (
                   <li key={reason}>{reason}</li>
                 ))}
               </ul>
