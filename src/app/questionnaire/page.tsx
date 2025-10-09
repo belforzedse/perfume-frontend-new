@@ -18,6 +18,12 @@ import { useFadeScaleVariants, useStaggeredListVariants } from "@/lib/motion";
 const BTN_BASE =
   "question-option text-base sm:text-lg font-semibold transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] tap-highlight touch-target touch-feedback";
 
+const ICON_BUTTON_BASE =
+  "inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-[var(--color-foreground)] transition-colors duration-200 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] disabled:pointer-events-none disabled:opacity-40 tap-highlight touch-target touch-feedback";
+
+const NAV_BUTTON_BASE =
+  "hidden items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-[var(--color-foreground)] transition-colors duration-200 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] disabled:pointer-events-none disabled:opacity-50 tap-highlight touch-target touch-feedback sm:inline-flex sm:px-5 sm:py-2.5 sm:text-base md:text-lg";
+
 const formatNumber = (value: number) => toPersianNumbers(String(value));
 
 const AUTO_ADVANCE_CONFIRMATION_DURATION = 450;
@@ -126,6 +132,22 @@ export default function Questionnaire() {
       autoAdvanceStartTimestampRef.current = null;
     };
   }, []);
+
+  const reset = useCallback((nextAnswers: QuestionnaireAnswers) => {
+    setAnswers(nextAnswers);
+  }, []);
+
+  const handleReset = useCallback(() => {
+    if (autoAdvanceAnimationFrameRef.current !== null) {
+      window.cancelAnimationFrame(autoAdvanceAnimationFrameRef.current);
+      autoAdvanceAnimationFrameRef.current = null;
+    }
+    autoAdvanceStartTimestampRef.current = null;
+    setShowAutoAdvanceConfirmation(false);
+    setLimitMessage(null);
+    reset(createInitialAnswers());
+    setCurrentStep(0);
+  }, [reset]);
 
   const next = useCallback(
     (overrideAnswers?: QuestionnaireAnswers) => {
@@ -330,21 +352,169 @@ export default function Questionnaire() {
             </div>
           </section>
 
-          <div className="grid grid-cols-1 gap-2 text-right xs:grid-cols-2">
-            <button
-              onClick={back}
-              disabled={currentStep === 0}
-              className="btn-ghost tap-highlight touch-target touch-feedback text-sm sm:text-base"
-            >
-              بازگشت
-            </button>
-            <button
-              onClick={() => next()}
-              disabled={!canProceed}
-              className="btn tap-highlight touch-target touch-feedback text-sm sm:text-base disabled:cursor-not-allowed"
-            >
-              {currentStep === totalQuestions - 1 ? "مشاهده پیشنهادها" : "بعدی"}
-            </button>
+          <div className="flex items-center justify-between gap-3 text-right">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={back}
+                disabled={currentStep === 0}
+                aria-label="بازگشت به سوال قبلی"
+                className={`${ICON_BUTTON_BASE} sm:hidden`}
+              >
+                <svg
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-5 w-5"
+                >
+                  <path
+                    d="M7.5 5.25 12.5 10 7.5 14.75"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={back}
+                disabled={currentStep === 0}
+                className={NAV_BUTTON_BASE}
+              >
+                <span>سوال قبلی</span>
+                <svg
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-5 w-5"
+                >
+                  <path
+                    d="M7.5 5.25 12.5 10 7.5 14.75"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleReset}
+                aria-label="شروع مجدد پرسشنامه"
+                className={`${ICON_BUTTON_BASE} sm:hidden`}
+              >
+                <svg
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-5 w-5"
+                >
+                  <path
+                    d="M5.25 8.5V5.75h2.75M14.75 11.5v2.75H12"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6.5 13.5a5 5 0 0 0 8.5-3.5M13.5 6.5a5 5 0 0 0-8.5 3.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className={NAV_BUTTON_BASE}
+              >
+                <svg
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-5 w-5"
+                >
+                  <path
+                    d="M5.25 8.5V5.75h2.75M14.75 11.5v2.75H12"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6.5 13.5a5 5 0 0 0 8.5-3.5M13.5 6.5a5 5 0 0 0-8.5 3.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>شروع مجدد</span>
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => next()}
+                disabled={!canProceed}
+                aria-label={
+                  currentStep === totalQuestions - 1
+                    ? "مشاهده پیشنهادها"
+                    : "سوال بعدی"
+                }
+                className={`${ICON_BUTTON_BASE} sm:hidden`}
+              >
+                <svg
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-5 w-5"
+                >
+                  <path
+                    d="M12.5 5.25 7.75 10 12.5 14.75"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => next()}
+                disabled={!canProceed}
+                className={NAV_BUTTON_BASE}
+              >
+                <svg
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-5 w-5"
+                >
+                  <path
+                    d="M12.5 5.25 7.75 10 12.5 14.75"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>
+                  {currentStep === totalQuestions - 1 ? "مشاهده پیشنهادها" : "سوال بعدی"}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </main>
