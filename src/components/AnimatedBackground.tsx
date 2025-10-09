@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import type { MotionProps, Target, Transition } from "framer-motion";
 import { memo, useEffect, useState } from "react";
 
 type AuroraAnimationKeyframes = {
@@ -81,12 +82,14 @@ const leafTransition: RepeatingTransition = {
   times: [0, 0.52, 1],
 };
 
+type MotionSubset = Pick<MotionProps, "initial" | "animate" | "transition">;
+
 const createAuroraMotionProps = (
   animation: AuroraAnimationKeyframes,
   transition: RepeatingTransition,
   delay = 0,
 ) => {
-  const initial: Record<string, unknown> = {
+  const initial: Target = {
     opacity: animation.opacity[0],
     scale: animation.scale[0],
     x: animation.x[0],
@@ -97,7 +100,7 @@ const createAuroraMotionProps = (
     initial.rotate = animation.rotate[0];
   }
 
-  const animate: Record<string, unknown> = {
+  const animate: Target = {
     opacity: animation.opacity,
     scale: animation.scale,
     x: animation.x,
@@ -108,7 +111,7 @@ const createAuroraMotionProps = (
     animate.rotate = animation.rotate;
   }
 
-  const transitionProps: Record<string, unknown> = {
+  const transitionProps: Record<string, Transition> = {
     opacity: { ...transition, delay },
     scale: { ...transition, delay },
     x: { ...transition, delay },
@@ -123,7 +126,7 @@ const createAuroraMotionProps = (
     initial,
     animate,
     transition: transitionProps,
-  };
+  } satisfies MotionSubset;
 };
 
 const BASE_AURORA_MOTION_PROPS = createAuroraMotionProps(
