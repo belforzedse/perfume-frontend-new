@@ -12,7 +12,11 @@ import {
 } from "@/lib/questionnaire";
 import { rankPerfumes, type RankedPerfume } from "@/lib/perfume-matcher";
 import { motion } from "framer-motion";
-import { useFadeScaleVariants, useStaggeredListVariants } from "@/lib/motion";
+import {
+  signatureTransitions,
+  useFadeScaleVariants,
+  useStaggeredListVariants,
+} from "@/lib/motion";
 
 const formatNumber = (value: number) => toPersianNumbers(String(value));
 
@@ -130,7 +134,13 @@ function RecommendationsContent() {
   const [refreshToken, setRefreshToken] = useState(0);
   const headingId = "recommendations-heading";
   const listVariants = useStaggeredListVariants({ delayChildren: 0.18, staggerChildren: 0.1 });
-  const cardVariants = useFadeScaleVariants({ y: 28, scale: 0.94, blur: 18 });
+  const cardVariants = useFadeScaleVariants({
+    y: 28,
+    scale: 0.94,
+    blur: 18,
+    duration: signatureTransitions.surface.duration ?? 0.68,
+    ease: signatureTransitions.surface.ease,
+  });
 
   useEffect(() => {
     const updateCompact = () => {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { durations, useFadeScaleVariants } from "@/lib/motion";
+import { durations, signatureTransitions, useFadeScaleVariants } from "@/lib/motion";
 
 interface IdleTimerProps {
   timeoutMs: number;
@@ -13,7 +13,13 @@ interface IdleTimerProps {
 export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProps) {
   const [timeRemaining, setTimeRemaining] = useState(timeoutMs);
   const [isVisible, setIsVisible] = useState(false);
-  const timerVariants = useFadeScaleVariants({ y: 16, scale: 0.92, blur: 12, duration: durations.moderate });
+  const timerVariants = useFadeScaleVariants({
+    y: 16,
+    scale: 0.92,
+    blur: 12,
+    duration: signatureTransitions.surface.duration ?? durations.moderate,
+    ease: signatureTransitions.surface.ease,
+  });
 
   // Reset when component mounts or timeoutMs changes
   useEffect(() => {
