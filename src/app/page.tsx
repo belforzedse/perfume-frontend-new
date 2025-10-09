@@ -11,9 +11,9 @@ export default function HomePage() {
 
   return (
     <KioskFrame>
-      <main className="flex w-full justify-center px-4 py-6 sm:px-6 lg:px-10">
+      <main className="flex w-full justify-center px-4 py-8 sm:px-6 lg:px-12">
         <motion.article
-          className="glass-card page-panel relative flex w-full max-w-4xl flex-col items-center text-center"
+          className="glass-card page-panel relative flex w-full max-w-4xl flex-col items-center gap-10 px-6 py-10 text-center sm:px-10 lg:gap-14 lg:py-14"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 28, scale: 0.985, filter: "blur(8px)" }}
           animate={
             shouldReduceMotion
@@ -27,33 +27,33 @@ export default function HomePage() {
           }
           transition={{ duration: 0.55, ease: easing }}
         >
-          <Image
-            src="/logo.webp"
-            alt="لوگوی فروشگاه"
-            width={320}
-            height={320}
-            priority
-            className="w-full max-w-[180px] rounded-[26px] border border-white/55 bg-white/80 p-5 object-contain shadow-[0_16px_42px_rgba(28,24,21,0.08)]"
-          />
-          <section className="flex w-full max-w-2xl flex-col items-center gap-8 text-center">
+          <div className="relative flex items-center justify-center">
+            <div className="pointer-events-none absolute -inset-4 rounded-[46px] bg-gradient-to-br from-white/40 via-white/10 to-transparent blur-xl" aria-hidden />
+            <div className="glass-card relative rounded-[38px] border border-white/60 bg-white/80 p-6 shadow-[0_22px_48px_rgba(28,24,21,0.1)] sm:p-8">
+              <Image
+                src="/logo.webp"
+                alt="لوگوی فروشگاه"
+                width={360}
+                height={360}
+                priority
+                className="w-full max-w-[220px] object-contain sm:max-w-[260px]"
+              />
+            </div>
+          </div>
+          <section className="flex w-full max-w-2xl flex-col items-center gap-10 text-center">
             <motion.header
-              className="space-y-5"
+              className="space-y-6"
               initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
               animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
               transition={{ duration: 0.5, ease: easing, delay: shouldReduceMotion ? 0 : 0.08 }}
             >
-              <span className="glass-section inline-flex items-center justify-center rounded-full px-5 py-1.5 text-sm font-medium text-[var(--color-foreground-muted)] tracking-tight">
-                پرسشنامه عطری گندم
-              </span>
-              <div className="space-y-4">
-                <h1 className="m-0 text-[2.15rem] font-semibold leading-[1.12] text-[var(--color-foreground)] xs:text-[2.35rem] sm:text-[2.7rem] lg:text-[2.85rem]">
-                  سلیقه عطری خود را کشف کنید
-                </h1>
-                <p className="m-0 max-w-xl text-sm text-muted sm:text-base">
-                  تجربه‌ای شفاف و سریع برای انتخاب رایحه‌ای که با حال‌وهوای شما هماهنگ است.
-                </p>
-              </div>
+              <h1 className="m-0 text-[2.35rem] font-semibold leading-[1.05] text-[var(--color-foreground)] xs:text-[2.6rem] sm:text-[3rem] lg:text-[3.2rem]">
+                سلیقه عطری خود را کشف کنید
+              </h1>
+              <p className="m-0 max-w-xl text-base text-muted sm:text-lg">
+                تجربه‌ای شفاف و سریع برای انتخاب رایحه‌ای که با حال‌وهوای شما هماهنگ است.
+              </p>
             </motion.header>
           </section>
 
