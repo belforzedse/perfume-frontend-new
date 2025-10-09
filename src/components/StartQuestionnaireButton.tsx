@@ -12,29 +12,30 @@ const MotionLink = motion.create(Link);
 export default function StartQuestionnaireButton({
   className = "",
 }: StartQuestionnaireButtonProps) {
-  const wrapperClassName = ["w-full", "max-w-sm", className].filter(Boolean).join(" ");
+  const wrapperClassName = ["w-full", className].filter(Boolean).join(" ");
   const shouldReduceMotion = useReducedMotion();
 
   const baseShimmer =
-    "linear-gradient(120deg, rgba(255,255,255,0.86) 0%, rgba(255,255,255,0.72) 45%, rgba(255,255,255,0.9) 100%)";
+    "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.18) 48%, rgba(255,255,255,0.58) 100%)";
   const rippleOverlay =
-    "radial-gradient(circle at center, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.78) 55%, rgba(255,255,255,0.6) 100%)";
+    "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.18) 60%, transparent 100%)";
 
   const interactiveProps = shouldReduceMotion
     ? {}
     : {
         whileHover: {
-          backgroundPosition: "100% 50%",
-          boxShadow: "0 22px 48px rgba(28, 24, 21, 0.16)",
+          backgroundPosition: "120% 50%",
+          boxShadow: "0 28px 68px rgba(26, 22, 18, 0.22)",
+          scale: 1.015,
         },
         whileTap: {
-          scale: 0.97,
+          scale: 0.985,
           backgroundImage: `${rippleOverlay}, ${baseShimmer}`,
-          boxShadow: "0 16px 36px rgba(28, 24, 21, 0.18)",
+          boxShadow: "0 22px 54px rgba(26, 22, 18, 0.24)",
         },
         transition: {
-          duration: 0.45,
-          ease: [0.22, 0.61, 0.36, 1] as const,
+          duration: 0.55,
+          ease: [0.16, 1, 0.3, 1] as const,
         },
       };
 
@@ -43,7 +44,7 @@ export default function StartQuestionnaireButton({
       <MotionLink
         href="/questionnaire"
         prefetch={false}
-        className="glass-chip tap-highlight touch-target touch-feedback flex w-full flex-col items-center gap-3 rounded-3xl px-6 py-5 text-center text-[var(--color-foreground)] transition-colors xs:px-7 xs:py-6 sm:px-8 sm:py-7"
+        className="tap-highlight touch-target touch-feedback group relative isolate flex w-full flex-col items-center gap-4 overflow-hidden rounded-full border border-white/25 bg-white/10 px-7 py-6 text-center text-[var(--color-foreground)] shadow-[0_22px_60px_rgba(26,22,18,0.16)] backdrop-blur-xl transition-[box-shadow,transform] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent-strong)] xs:px-9 xs:py-7 sm:flex-row sm:items-center sm:justify-between sm:px-11 sm:py-8"
         aria-label="شروع پرسشنامه و رفتن به فرم انتخاب عطر"
         style={{
           backgroundImage: shouldReduceMotion ? undefined : baseShimmer,
@@ -52,29 +53,35 @@ export default function StartQuestionnaireButton({
         }}
         {...interactiveProps}
       >
-        <span className="flex flex-col gap-1">
+        <span className="flex flex-col gap-1 sm:text-left">
           <span className="text-lg font-semibold sm:text-xl">شروع پرسشنامه</span>
           <span className="text-sm font-normal text-[var(--color-foreground-muted)] sm:text-base">
             چند پاسخ کوتاه و نتیجه فوری
           </span>
         </span>
-        <span className="flex items-center justify-center gap-2 text-sm font-semibold text-[var(--color-accent-strong)] sm:text-base">
-          <span>شروع</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            className="h-5 w-5"
+        <span className="relative flex items-center justify-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(120deg,rgba(255,147,92,0.95),rgba(255,109,135,0.95),rgba(255,147,92,0.95))] px-5 py-2 text-sm font-semibold text-white shadow-[0_0_25px_rgba(255,129,110,0.45)] ring-1 ring-white/40 transition-[box-shadow,filter,transform] group-hover:brightness-110 group-hover:shadow-[0_0_32px_rgba(255,129,110,0.55)] group-active:scale-95 sm:text-base">
+            <span className="drop-shadow-[0_3px_6px_rgba(0,0,0,0.18)]">شروع</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              className="h-5 w-5 text-white"
+              aria-hidden
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 12h12m0 0-4-4m4 4-4 4"
+              />
+            </svg>
+          </span>
+          <span
+            className="pointer-events-none absolute inset-0 rounded-full bg-white/20 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-70"
             aria-hidden
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 12h12m0 0-4-4m4 4-4 4"
-            />
-          </svg>
+          />
         </span>
       </MotionLink>
     </div>
