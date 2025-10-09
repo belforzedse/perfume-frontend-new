@@ -105,11 +105,12 @@ export default function AdminCollectionsPage() {
 
         {status && (
           <div
-            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm ${
+            className={`rounded-[var(--radius-base)] px-4 py-3 text-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               status.type === "success"
                 ? "bg-green-100 text-green-800"
                 : "bg-red-100 text-red-800"
             }`}
+            style={{ animation: "fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1)" }}
           >
             {status.message}
           </div>
@@ -119,7 +120,7 @@ export default function AdminCollectionsPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-[var(--radius-base)] bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[var(--color-accent-strong)] disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex items-center justify-center rounded-[var(--radius-base)] bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--color-accent-strong)] hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
           >
             {isSubmitting ? "در حال ارسال..." : "ثبت کالکشن"}
           </button>
@@ -156,7 +157,7 @@ export default function AdminCollectionsPage() {
               .map((collection) => (
                 <li
                   key={collection.id}
-                  className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)] hover:shadow-md transition-shadow"
+                  className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-[var(--shadow-strong)] hover:-translate-y-0.5"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-semibold text-[var(--color-foreground)]">{collection.name}</p>

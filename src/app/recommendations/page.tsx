@@ -40,7 +40,7 @@ const MatchCard = ({
   const englishName = perfume.nameEn?.trim();
 
   return (
-    <article className="glass-card glass-card--muted flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right transition-all duration-300 hover:scale-[1.02] cursor-pointer">
+    <article className="glass-card glass-card--muted flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.01] cursor-pointer">
       <header className="flex items-center justify-between text-muted">
         <span className="rounded-full border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1 text-[10px] sm:text-xs font-medium text-[var(--color-foreground)] bg-white/5">
           {formatNumber(order)}
@@ -53,7 +53,7 @@ const MatchCard = ({
       {perfume.image && (
         <div className="flex flex-grow items-center justify-center group">
           <div
-            className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm transition-transform duration-300 group-hover:scale-105"
+            className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
             style={{ height: imageHeight }}
           >
             <Image

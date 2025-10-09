@@ -25,16 +25,16 @@ export default function StartQuestionnaireButton({
     : {
         whileHover: {
           backgroundPosition: "120% 50%",
-          boxShadow: "0 28px 68px rgba(26, 22, 18, 0.22)",
-          scale: 1.015,
+          boxShadow: "0 30px 72px rgba(26, 22, 18, 0.2)",
+          scale: 1.008,
         },
         whileTap: {
-          scale: 0.985,
+          scale: 0.992,
           backgroundImage: `${rippleOverlay}, ${baseShimmer}`,
-          boxShadow: "0 22px 54px rgba(26, 22, 18, 0.24)",
+          boxShadow: "0 24px 58px rgba(26, 22, 18, 0.24)",
         },
         transition: {
-          duration: 0.55,
+          duration: 0.75,
           ease: [0.16, 1, 0.3, 1] as const,
         },
       };
@@ -44,7 +44,7 @@ export default function StartQuestionnaireButton({
       <MotionLink
         href="/questionnaire"
         prefetch={false}
-        className="tap-highlight touch-target touch-feedback group relative isolate flex w-full flex-col items-center gap-4 overflow-hidden rounded-full border border-white/25 bg-white/10 px-7 py-6 text-center text-[var(--color-foreground)] shadow-[0_22px_60px_rgba(26,22,18,0.16)] backdrop-blur-xl transition-[box-shadow,transform] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent-strong)] xs:px-9 xs:py-7 sm:flex-row sm:items-center sm:justify-between sm:px-11 sm:py-8"
+        className="tap-highlight touch-target touch-feedback group relative isolate flex w-full flex-col items-center gap-4 overflow-hidden rounded-full border border-white/25 bg-white/10 px-7 py-6 text-center text-[var(--color-foreground)] shadow-[0_22px_60px_rgba(26,22,18,0.16)] backdrop-blur-xl transition-[box-shadow,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent-strong)] xs:px-9 xs:py-7 sm:flex-row sm:items-center sm:justify-between sm:px-11 sm:py-8"
         aria-label="شروع پرسشنامه و رفتن به فرم انتخاب عطر"
         style={{
           backgroundImage: shouldReduceMotion ? undefined : baseShimmer,
@@ -60,7 +60,7 @@ export default function StartQuestionnaireButton({
           </span>
         </span>
         <span className="relative flex items-center justify-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(120deg,rgba(255,147,92,0.95),rgba(255,109,135,0.95),rgba(255,147,92,0.95))] px-5 py-2 text-sm font-semibold text-white shadow-[0_0_25px_rgba(255,129,110,0.45)] ring-1 ring-white/40 transition-[box-shadow,filter,transform] group-hover:brightness-110 group-hover:shadow-[0_0_32px_rgba(255,129,110,0.55)] group-active:scale-95 sm:text-base">
+          <span className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(120deg,rgba(255,147,92,0.95),rgba(255,109,135,0.95),rgba(255,147,92,0.95))] px-5 py-2 text-sm font-semibold text-white shadow-[0_0_25px_rgba(255,129,110,0.45)] ring-1 ring-white/40 transition-[box-shadow,filter,transform] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:brightness-[1.08] group-hover:shadow-[0_0_36px_rgba(255,129,110,0.5)] group-active:scale-[0.98] sm:text-base">
             <span className="drop-shadow-[0_3px_6px_rgba(0,0,0,0.18)]">شروع</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +79,7 @@ export default function StartQuestionnaireButton({
             </svg>
           </span>
           <span
-            className="pointer-events-none absolute inset-0 rounded-full bg-white/20 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-70"
+            className="pointer-events-none absolute inset-0 rounded-full bg-white/20 opacity-0 blur-2xl transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-70"
             aria-hidden
           />
         </span>

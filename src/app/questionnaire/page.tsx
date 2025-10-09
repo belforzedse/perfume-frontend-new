@@ -15,7 +15,7 @@ import {
 } from "@/lib/questionnaire";
 
 const BTN_BASE =
-  "question-option text-base sm:text-lg font-semibold animate-fade-in-up transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] tap-highlight touch-target touch-feedback";
+  "question-option text-base sm:text-lg font-semibold animate-fade-in-up transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(255,255,255,0.45)] tap-highlight touch-target touch-feedback";
 
 const formatNumber = (value: number) => toPersianNumbers(String(value));
 

@@ -105,7 +105,7 @@ export default function AdminDashboardPage() {
           <Link
             key={card.href}
             href={card.href}
-            className="group relative overflow-hidden rounded-xl sm:rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/80 p-5 md:p-6 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-strong)] hover:border-[var(--color-accent)]/50 min-h-[140px]"
+            className="group relative overflow-hidden rounded-xl sm:rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/80 p-5 md:p-6 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-strong)] hover:border-[var(--color-accent)]/40 min-h-[140px]"
           >
             <div className="flex h-full flex-col gap-3">
               <div className="text-3xl">{card.icon}</div>
@@ -117,7 +117,7 @@ export default function AdminDashboardPage() {
                 ورود به صفحه <span aria-hidden>↗</span>
               </span>
             </div>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-strong)] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-strong)] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] origin-left" />
           </Link>
         ))}
       </div>
