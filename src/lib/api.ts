@@ -269,35 +269,61 @@ const toPerfume = (item: unknown): Perfume | null => {
   };
 };
 
+const PERFUME_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+let perfumeListCache: Perfume[] | null = null;
+let perfumeListCacheTime = 0;
+let perfumeListPromise: Promise<Perfume[]> | null = null;
+
 export async function getPerfumes(): Promise<Perfume[]> {
-  try {
-    const collected: Perfume[] = [];
-    let page = 1;
-    let pageCount = 1;
+  const now = Date.now();
 
-    do {
-      const endpoint = buildPerfumeListPath(page);
-      const json = await fetchJson<StrapiCollectionResponse>(endpoint);
-
-      if (Array.isArray(json.data)) {
-        json.data.map(toPerfume).forEach((perfume) => {
-          if (perfume) {
-            collected.push(perfume);
-          }
-        });
-      }
-
-      pageCount = json.meta?.pagination?.pageCount ?? 1;
-      page += 1;
-    } while (page <= pageCount);
-
-    return collected;
-  } catch (error) {
-    console.error("Error fetching perfumes:", error);
-    throw error instanceof Error
-      ? error
-      : new Error("Unknown error fetching perfumes");
+  if (perfumeListCache && now - perfumeListCacheTime < PERFUME_CACHE_TTL_MS) {
+    return perfumeListCache;
   }
+
+  if (perfumeListPromise) {
+    return perfumeListPromise;
+  }
+
+  perfumeListPromise = (async () => {
+    try {
+      const collected: Perfume[] = [];
+      let page = 1;
+      let pageCount = 1;
+
+      do {
+        const endpoint = buildPerfumeListPath(page);
+        const json = await fetchJson<StrapiCollectionResponse>(endpoint);
+
+        if (Array.isArray(json.data)) {
+          json.data.map(toPerfume).forEach((perfume) => {
+            if (perfume) {
+              collected.push(perfume);
+            }
+          });
+        }
+
+        pageCount = json.meta?.pagination?.pageCount ?? 1;
+        page += 1;
+      } while (page <= pageCount);
+
+      perfumeListCache = collected;
+      perfumeListCacheTime = Date.now();
+      return collected;
+    } catch (error) {
+      perfumeListCache = null;
+      perfumeListCacheTime = 0;
+      console.error("Error fetching perfumes:", error);
+      throw error instanceof Error
+        ? error
+        : new Error("Unknown error fetching perfumes");
+    } finally {
+      perfumeListPromise = null;
+    }
+  })();
+
+  return perfumeListPromise;
 }
 
 const buildFieldQuery = (field: PerfumeAttributeKey, page: number) => {
