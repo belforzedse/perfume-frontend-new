@@ -272,7 +272,7 @@ export function useStaggeredListVariants({
 export function useFadeScaleVariants({
   y = 22,
   scale = 0.97,
-  blur = 10,
+  blur,
   duration = signatureTransitions.surface.duration ?? durations.moderate,
   delay = 0,
   ease = signatureTransitions.surface.ease ?? easings.signature,
@@ -297,13 +297,17 @@ export function useFadeScaleVariants({
               opacity: 0,
               y,
               scale,
-              filter: `blur(${blur}px)` as const,
+              ...(typeof blur === "number" && blur > 0
+                ? { filter: `blur(${blur}px)` as const }
+                : {}),
             },
             show: {
               opacity: 1,
               y: 0,
               scale: 1,
-              filter: "blur(0px)",
+              ...(typeof blur === "number" && blur > 0
+                ? { filter: "blur(0px)" as const }
+                : {}),
               transition: {
                 duration,
                 ease,
@@ -314,7 +318,11 @@ export function useFadeScaleVariants({
               opacity: 0,
               y: exitY,
               scale: 0.985,
-              filter: `blur(${Math.max(blur - 2, 2)}px)` as const,
+              ...(typeof blur === "number" && blur > 0
+                ? {
+                    filter: `blur(${Math.max(blur - 2, 2)}px)` as const,
+                  }
+                : {}),
               transition: {
                 duration: Math.max(duration * 0.75, 0.2),
                 ease,
