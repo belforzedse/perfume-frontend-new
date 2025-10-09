@@ -181,12 +181,12 @@ async function fetchJson<T>(endpoint: string): Promise<T> {
   const isServer = typeof window === "undefined";
   const baseUrl = isServer ? API_URL : "/api/strapi";
   const url = `${baseUrl}${endpoint}`;
-  const headers: HeadersInit = {};
+  const headers = new Headers();
 
   if (isServer) {
     const token = SERVER_STRAPI_TOKEN || STRAPI_TOKEN;
     if (token) {
-      headers.Authorization = `Bearer ${token}`;
+      headers.set("Authorization", `Bearer ${token}`);
     }
   }
 
