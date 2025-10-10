@@ -89,6 +89,37 @@ const leafTransition: RepeatingTransition = {
   times: [0, 0.52, 1],
 };
 
+const streakAnimation: AuroraAnimationKeyframes = {
+  opacity: [0.16, 0.32, 0.22, 0.3] as number[],
+  scale: [0.92, 1.08, 1.02, 0.96] as number[],
+  x: [18, 22, 16, 20] as number[],
+  y: [-8, -2, -6, -10] as number[],
+  rotate: [-8, -2, -6, -10] as number[],
+};
+
+const streakTransition: RepeatingTransition = {
+  duration: 38,
+  ease: "easeInOut" as const,
+  repeat: Infinity,
+  repeatType: "mirror" as const,
+  times: [0, 0.28, 0.64, 1],
+};
+
+const ringAnimation: AuroraAnimationKeyframes = {
+  opacity: [0.08, 0.2, 0.12, 0.24, 0.1] as number[],
+  scale: [0.88, 1.04, 0.92, 1.08, 0.94] as number[],
+  x: [-26, -20, -24, -18, -26] as number[],
+  y: [24, 20, 28, 18, 24] as number[],
+};
+
+const ringTransition: RepeatingTransition = {
+  duration: 56,
+  ease: "easeInOut" as const,
+  repeat: Infinity,
+  repeatType: "mirror" as const,
+  times: [0, 0.22, 0.48, 0.78, 1],
+};
+
 const useAuroraAnimation = (
   animation: AuroraAnimationKeyframes,
   transition: RepeatingTransition,
@@ -198,6 +229,8 @@ const AnimatedBackground = memo(function AnimatedBackground() {
   );
   const haloStyle = useAuroraAnimation(haloAnimation, haloTransition, 0.25, isAnimated);
   const leafStyle = useAuroraAnimation(leafAnimation, leafTransition, 0.32, isAnimated);
+  const streakStyle = useAuroraAnimation(streakAnimation, streakTransition, 0.18, isAnimated);
+  const ringStyle = useAuroraAnimation(ringAnimation, ringTransition, 0.28, isAnimated);
 
   return (
     <LazyMotion features={domAnimation}>
@@ -220,6 +253,16 @@ const AnimatedBackground = memo(function AnimatedBackground() {
               className="absolute right-[12%] top-[18%] h-[420px] w-[460px] rotate-[18deg] rounded-[120px] bg-[linear-gradient(135deg,rgba(255,236,190,0.62)_0%,rgba(255,207,160,0.55)_40%,rgba(255,255,255,0.48)_100%)] shadow-[0_36px_110px_rgba(243,198,142,0.4)] mix-blend-screen"
               style={haloStyle}
             />
+            <m.div
+              aria-hidden
+              className="pointer-events-none absolute right-[18%] top-[12%] h-[320px] w-[220px] -rotate-[28deg] rounded-[100px] bg-[linear-gradient(110deg,rgba(255,255,255,0.32)_0%,rgba(255,199,155,0.26)_36%,rgba(238,151,170,0.24)_100%)] opacity-70 mix-blend-screen"
+              style={streakStyle}
+            />
+            <m.div
+              aria-hidden
+              className="pointer-events-none absolute left-[8%] bottom-[20%] h-[360px] w-[360px] rounded-full border border-white/30 bg-[radial-gradient(circle,rgba(247,255,247,0.12)_0%,rgba(189,214,193,0.16)_45%,rgba(255,255,255,0.04)_100%)] opacity-70 mix-blend-screen"
+              style={ringStyle}
+            />
             <m.svg
               aria-hidden
               className="absolute left-[10%] top-[12%] h-[340px] w-[340px] text-[#9dbb9f]"
@@ -235,6 +278,8 @@ const AnimatedBackground = memo(function AnimatedBackground() {
           <>
             <div className="absolute left-1/3 top-[18%] h-[420px] w-[560px] -rotate-[22deg] rounded-[72px] bg-[linear-gradient(115deg,rgba(255,196,132,0.66)_0%,rgba(241,140,140,0.5)_45%,rgba(255,255,255,0.45)_100%)] opacity-80 mix-blend-screen" />
             <div className="absolute right-[12%] top-[36%] h-[360px] w-[420px] rotate-[18deg] rounded-[72px] bg-[linear-gradient(140deg,rgba(140,179,166,0.65)_0%,rgba(219,234,206,0.55)_52%,rgba(255,255,255,0.4)_100%)] opacity-85 mix-blend-screen" />
+            <div className="pointer-events-none absolute right-[18%] top-[20%] h-[280px] w-[200px] -rotate-[28deg] rounded-[90px] bg-[linear-gradient(110deg,rgba(255,255,255,0.28)_0%,rgba(255,205,164,0.22)_40%,rgba(235,163,176,0.18)_100%)] opacity-65 mix-blend-screen" />
+            <div className="pointer-events-none absolute left-[8%] bottom-[18%] h-[320px] w-[320px] rounded-full border border-white/25 bg-[radial-gradient(circle,rgba(244,255,244,0.1)_0%,rgba(187,210,190,0.14)_45%,rgba(255,255,255,0.04)_100%)] opacity-65 mix-blend-screen" />
           </>
         )}
       </div>
