@@ -73,6 +73,8 @@ const normaliseNotes = (items: string[]): string[] =>
     ),
   );
 
+const normaliseText = (value?: string | null) => value?.toLowerCase() ?? "";
+
 interface NotesFieldProps {
   label: string;
   helper: string;
@@ -172,6 +174,32 @@ export default function AdminProductsPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const { section, listItem, status: statusVariants, stagger, transition, ease, shouldReduce } =
     useAdminMotionVariants();
+
+  const trimmedSearchTerm = searchTerm.trim();
+
+  const filteredPerfumes = useMemo(() => {
+    if (!trimmedSearchTerm) {
+      return perfumes;
+    }
+
+    const normalisedSearch = trimmedSearchTerm.toLowerCase();
+
+    return perfumes.filter((perfume) => {
+      const nameFa = normaliseText(perfume.name_fa);
+      const nameEn = normaliseText(perfume.name_en);
+      const brandName = normaliseText(perfume.brand?.name);
+      const collectionName = normaliseText(perfume.collection?.name);
+
+      return (
+        nameFa.includes(normalisedSearch) ||
+        nameEn.includes(normalisedSearch) ||
+        brandName.includes(normalisedSearch) ||
+        collectionName.includes(normalisedSearch)
+      );
+    });
+  }, [perfumes, trimmedSearchTerm]);
+
+  const hasSearchTerm = trimmedSearchTerm.length > 0;
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -658,126 +686,115 @@ export default function AdminProductsPage() {
         ) : (
           <motion.ul className="grid gap-4 md:grid-cols-2" variants={stagger}>
             <AnimatePresence>
-              {perfumes
-                .filter((perfume) =>
-                  perfume.name_fa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  perfume.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  perfume.brand?.name.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-                .map((perfume) => (
-                  <motion.li
-                    key={perfume.id}
-                    className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)]"
-                    layout
-                    variants={listItem}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    whileHover={
-                      shouldReduce
-                        ? undefined
-                        : {
-                            scale: 1.01,
-                            boxShadow: "var(--shadow-strong)",
-                            borderColor: "rgba(183, 146, 90, 0.4)",
-                            transition: { duration: 0.4, ease },
-                          }
-                    }
-                    whileTap={
-                      shouldReduce
-                        ? undefined
-                        : {
-                            scale: 0.99,
-                            transition: { duration: 0.2, ease },
-                          }
-                    }
-                    transition={transition}
-                  >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    {perfume.image && (
-                      <img
-                        src={perfume.image}
-                        alt={perfume.name_fa}
-                        className="h-16 w-16 rounded-[var(--radius-base)] object-cover"
-                      />
-                    )}
-                    <div>
-                      <p className="font-semibold text-[var(--color-foreground)]">{perfume.name_fa}</p>
-                      <p className="text-xs text-[var(--color-foreground-subtle)]">{perfume.name_en}</p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="text-xs text-[var(--color-foreground-muted)]">
-                      {perfume.brand && <p>برند: {perfume.brand.name}</p>}
-                      {perfume.collection && <p>کالکشن: {perfume.collection.name}</p>}
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(perfume)}
-                        className="rounded px-3 py-1 text-xs font-medium text-blue-600 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-blue-100 hover:scale-[1.02] active:scale-[0.98]"
-                        title="ویرایش"
-                      >
-                        ویرایش
-                      </button>
-                      <button
-                        onClick={() => handleDelete(perfume)}
-                        className="rounded px-3 py-1 text-xs font-medium text-red-600 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-red-100 hover:scale-[1.02] active:scale-[0.98]"
-                        title="حذف"
-                      >
-                        حذف
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-3 grid gap-2 text-xs text-[var(--color-foreground-muted)]">
-                  <p>
-                    جنسیت: {perfume.gender ?? "---"} | فصل: {perfume.season ?? "---"}
-                  </p>
-                  <p>
-                    خانواده: {perfume.family ?? "---"} | کاراکتر: {perfume.character ?? "---"}
-                  </p>
-                  <div className="space-y-1">
-                    <p className="font-medium text-[var(--color-foreground)]">نت‌ها</p>
-                    <div className="grid gap-1 md:grid-cols-3">
+              {filteredPerfumes.map((perfume) => (
+                <motion.li
+                  key={perfume.id}
+                  className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-[var(--color-background-soft)]/70 p-4 text-sm shadow-[var(--shadow-soft)]"
+                  layout
+                  variants={listItem}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  whileHover={
+                    shouldReduce
+                      ? undefined
+                      : {
+                          scale: 1.01,
+                          boxShadow: "var(--shadow-strong)",
+                          borderColor: "rgba(183, 146, 90, 0.4)",
+                          transition: { duration: 0.4, ease },
+                        }
+                  }
+                  whileTap={
+                    shouldReduce
+                      ? undefined
+                      : {
+                          scale: 0.99,
+                          transition: { duration: 0.2, ease },
+                        }
+                  }
+                  transition={transition}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      {perfume.image && (
+                        <img
+                          src={perfume.image}
+                          alt={perfume.name_fa}
+                          className="h-16 w-16 rounded-[var(--radius-base)] object-cover"
+                        />
+                      )}
                       <div>
-                        <p className="text-[var(--color-foreground)]">آغازی</p>
-                        <p>{perfume.notes.top.join("، ") || "---"}</p>
+                        <p className="font-semibold text-[var(--color-foreground)]">{perfume.name_fa}</p>
+                        <p className="text-xs text-[var(--color-foreground-subtle)]">{perfume.name_en}</p>
                       </div>
-                      <div>
-                        <p className="text-[var(--color-foreground)]">میانی</p>
-                        <p>{perfume.notes.middle.join("، ") || "---"}</p>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <div className="text-xs text-[var(--color-foreground-muted)]">
+                        {perfume.brand && <p>برند: {perfume.brand.name}</p>}
+                        {perfume.collection && <p>کالکشن: {perfume.collection.name}</p>}
                       </div>
-                      <div>
-                        <p className="text-[var(--color-foreground)]">پایانی</p>
-                        <p>{perfume.notes.base.join("، ") || "---"}</p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(perfume)}
+                          className="rounded px-3 py-1 text-xs font-medium text-blue-600 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-blue-100 hover:scale-[1.02] active:scale-[0.98]"
+                          title="ویرایش"
+                        >
+                          ویرایش
+                        </button>
+                        <button
+                          onClick={() => handleDelete(perfume)}
+                          className="rounded px-3 py-1 text-xs font-medium text-red-600 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-red-100 hover:scale-[1.02] active:scale-[0.98]"
+                          title="حذف"
+                        >
+                          حذف
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
-                  </motion.li>
-                ))}
+                  <div className="mt-3 grid gap-2 text-xs text-[var(--color-foreground-muted)]">
+                    <p>
+                      جنسیت: {perfume.gender ?? "---"} | فصل: {perfume.season ?? "---"}
+                    </p>
+                    <p>
+                      خانواده: {perfume.family ?? "---"} | کاراکتر: {perfume.character ?? "---"}
+                    </p>
+                    <div className="space-y-1">
+                      <p className="font-medium text-[var(--color-foreground)]">نت‌ها</p>
+                      <div className="grid gap-1 md:grid-cols-3">
+                        <div>
+                          <p className="text-[var(--color-foreground)]">آغازی</p>
+                          <p>{perfume.notes.top.join("، ") || "---"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[var(--color-foreground)]">میانی</p>
+                          <p>{perfume.notes.middle.join("، ") || "---"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[var(--color-foreground)]">پایانی</p>
+                          <p>{perfume.notes.base.join("، ") || "---"}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.li>
+              ))}
             </AnimatePresence>
           </motion.ul>
         )}
 
         <AnimatePresence mode="wait">
-          {searchTerm &&
-            perfumes.filter((perfume) =>
-              perfume.name_fa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              perfume.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              perfume.brand?.name.toLowerCase().includes(searchTerm.toLowerCase())
-            ).length === 0 && (
-              <motion.p
-                className="py-8 text-center text-sm text-[var(--color-foreground-muted)]"
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={statusVariants}
-              >
-                محصولی با این نام یافت نشد.
-              </motion.p>
-            )}
+          {hasSearchTerm && filteredPerfumes.length === 0 && (
+            <motion.p
+              className="py-8 text-center text-sm text-[var(--color-foreground-muted)]"
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={statusVariants}
+            >
+              محصولی با این نام یافت نشد.
+            </motion.p>
+          )}
         </AnimatePresence>
       </div>
     </motion.section>
