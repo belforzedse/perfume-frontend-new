@@ -1225,21 +1225,6 @@ input.slider-thumb-accent::-moz-range-track {
   }
 }
 
-@keyframes halo-glow {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1.02);
-    opacity: 0.18;
-  }
-  50% {
-    transform: translate3d(-4%, -6%, 0) scale(1.12);
-    opacity: 0.3;
-  }
-  100% {
-    transform: translate3d(6%, 4%, 0) scale(1.04);
-    opacity: 0.2;
-  }
-}
-
 @keyframes orbit-spin {
   from {
     transform: rotate(0deg);
@@ -1259,13 +1244,6 @@ input.slider-thumb-accent::-moz-range-track {
   .animate-aurora-layer-delayed {
     animation: aurora-shift 32s ease-in-out infinite alternate;
     animation-delay: -12s;
-    animation-fill-mode: both;
-    will-change: transform, opacity;
-  }
-
-  .animate-halo-layer {
-    animation: halo-glow 26s ease-in-out infinite alternate;
-    animation-delay: -6s;
     animation-fill-mode: both;
     will-change: transform, opacity;
   }
