@@ -163,6 +163,11 @@ const useAuroraAnimation = (
  * animations. When any of those signals are present (or motion reduction is requested)
  * the static fallback markup is rendered so that other pages can safely reuse this
  * component without worrying about device capability checks.
+ *
+ * Gradient and glow hues are sourced from the neutral + accent CSS tokens declared in
+ * `globals.css`. Those variables intentionally lean on softened, desaturated mixes of
+ * the base palette so that the fallback shapes remain subtle behind glass cards while
+ * still echoing the warm brand accent on tablets and other low-power devices.
  */
 const AnimatedBackground = memo(function AnimatedBackground() {
   const shouldReduceMotion = useReducedMotion();
@@ -218,28 +223,43 @@ const AnimatedBackground = memo(function AnimatedBackground() {
   return (
     <LazyMotion features={domAnimation}>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,250,244,0.8)_0%,rgba(247,239,224,0.85)_48%,rgba(236,230,216,0.95)_100%)]" />
+        <div className="absolute inset-0" style={{ background: "var(--aurora-canvas-gradient)" }} />
         {isAnimated ? (
           <>
             <m.div
               aria-hidden
-              className="absolute left-[44%] top-[12%] h-[520px] w-[620px] -translate-x-1/2 -rotate-[22deg] rounded-[120px] bg-[linear-gradient(120deg,rgba(255,193,135,0.65)_0%,rgba(238,144,154,0.55)_42%,rgba(255,255,255,0.5)_100%)] shadow-[0_48px_140px_rgba(217,144,128,0.35)] mix-blend-screen"
-              style={baseAuroraStyle}
+              className="absolute left-[44%] top-[12%] h-[520px] w-[620px] -translate-x-1/2 -rotate-[22deg] rounded-[120px] mix-blend-screen"
+              style={{
+                ...baseAuroraStyle,
+                background: "var(--aurora-primary-gradient)",
+                boxShadow: "var(--aurora-primary-shadow)",
+              }}
             />
             <m.div
               aria-hidden
-              className="absolute left-[18%] top-[42%] h-[460px] w-[540px] -rotate-[12deg] rounded-[130px] bg-[linear-gradient(145deg,rgba(125,170,157,0.6)_0%,rgba(168,205,185,0.5)_35%,rgba(247,255,215,0.45)_100%)] shadow-[0_42px_120px_rgba(120,169,150,0.38)] mix-blend-screen"
-              style={delayedAuroraStyle}
+              className="absolute left-[18%] top-[42%] h-[460px] w-[540px] -rotate-[12deg] rounded-[130px] mix-blend-screen"
+              style={{
+                ...delayedAuroraStyle,
+                background: "var(--aurora-secondary-gradient)",
+                boxShadow: "var(--aurora-secondary-shadow)",
+              }}
             />
             <m.div
               aria-hidden
-              className="pointer-events-none absolute right-[16%] top-[12%] h-[320px] w-[240px] -rotate-[28deg] rounded-[100px] bg-[linear-gradient(110deg,rgba(255,255,255,0.32)_0%,rgba(255,199,155,0.26)_36%,rgba(238,151,170,0.24)_100%)] opacity-70 mix-blend-screen"
-              style={streakStyle}
+              className="pointer-events-none absolute right-[16%] top-[12%] h-[320px] w-[240px] -rotate-[28deg] rounded-[100px] opacity-70 mix-blend-screen"
+              style={{
+                ...streakStyle,
+                background: "var(--aurora-streak-gradient)",
+              }}
             />
             <m.div
               aria-hidden
-              className="pointer-events-none absolute left-[10%] bottom-[20%] h-[360px] w-[360px] rounded-full border border-white/30 bg-[radial-gradient(circle,rgba(247,255,247,0.12)_0%,rgba(189,214,193,0.16)_45%,rgba(255,255,255,0.04)_100%)] opacity-70 mix-blend-screen"
-              style={ringStyle}
+              className="pointer-events-none absolute left-[10%] bottom-[20%] h-[360px] w-[360px] rounded-full border opacity-70 mix-blend-screen"
+              style={{
+                ...ringStyle,
+                background: "var(--aurora-ring-gradient)",
+                borderColor: "var(--aurora-ring-border)",
+              }}
             />
             <m.svg
               aria-hidden
@@ -254,9 +274,18 @@ const AnimatedBackground = memo(function AnimatedBackground() {
           </>
         ) : (
           <>
-            <div className="absolute left-[42%] top-[18%] h-[420px] w-[560px] -translate-x-1/2 -rotate-[22deg] rounded-[72px] bg-[linear-gradient(115deg,rgba(255,196,132,0.66)_0%,rgba(241,140,140,0.5)_45%,rgba(255,255,255,0.45)_100%)] opacity-80 mix-blend-screen" />
-            <div className="pointer-events-none absolute right-[16%] top-[20%] h-[280px] w-[220px] -rotate-[28deg] rounded-[90px] bg-[linear-gradient(110deg,rgba(255,255,255,0.28)_0%,rgba(255,205,164,0.22)_40%,rgba(235,163,176,0.18)_100%)] opacity-65 mix-blend-screen" />
-            <div className="pointer-events-none absolute left-[10%] bottom-[18%] h-[320px] w-[320px] rounded-full border border-white/25 bg-[radial-gradient(circle,rgba(244,255,244,0.1)_0%,rgba(187,210,190,0.14)_45%,rgba(255,255,255,0.04)_100%)] opacity-65 mix-blend-screen" />
+            <div
+              className="absolute left-[42%] top-[18%] h-[420px] w-[560px] -translate-x-1/2 -rotate-[22deg] rounded-[72px] opacity-55 mix-blend-screen blur-[1.6px]"
+              style={{ background: "var(--aurora-primary-gradient)", boxShadow: "var(--aurora-primary-shadow)" }}
+            />
+            <div
+              className="pointer-events-none absolute right-[16%] top-[20%] h-[280px] w-[220px] -rotate-[28deg] rounded-[90px] opacity-50 mix-blend-screen blur-[1.4px]"
+              style={{ background: "var(--aurora-streak-gradient)" }}
+            />
+            <div
+              className="pointer-events-none absolute left-[10%] bottom-[18%] h-[320px] w-[320px] rounded-full border opacity-55 mix-blend-screen blur-[1px]"
+              style={{ background: "var(--aurora-ring-gradient)", borderColor: "var(--aurora-ring-border)" }}
+            />
           </>
         )}
       </div>

@@ -95,6 +95,39 @@
   --glass-glow-chip: radial-gradient(120% 120% at 80% 10%, rgba(216, 180, 103, 0.32) 0%, rgba(216, 180, 103, 0) 65%);
   --glass-sparkle-overlay: radial-gradient(120% 160% at 18% -10%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 65%);
   --glass-sheen-overlay: linear-gradient(120deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.16) 38%, rgba(255, 255, 255, 0) 72%);
+  --aurora-canvas-gradient: radial-gradient(
+      circle at top,
+      color-mix(in srgb, var(--background-contrast) 82%, transparent) 0%,
+      color-mix(in srgb, var(--background-soft) 88%, transparent) 48%,
+      color-mix(in srgb, var(--background-strong) 90%, transparent) 100%
+    );
+  --aurora-primary-gradient: linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--accent) 36%, var(--background-contrast)) 0%,
+      color-mix(in srgb, var(--accent-strong) 28%, var(--background-soft)) 42%,
+      color-mix(in srgb, var(--background-contrast) 40%, transparent) 100%
+    );
+  --aurora-secondary-gradient: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--accent-soft) 40%, var(--background-soft)) 0%,
+      color-mix(in srgb, var(--background-strong) 30%, transparent) 35%,
+      color-mix(in srgb, var(--background-contrast) 32%, transparent) 100%
+    );
+  --aurora-streak-gradient: linear-gradient(
+      110deg,
+      color-mix(in srgb, var(--background-contrast) 26%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 20%, transparent) 40%,
+      color-mix(in srgb, var(--accent-strong) 18%, transparent) 100%
+    );
+  --aurora-ring-gradient: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent-soft) 42%, transparent) 0%,
+      color-mix(in srgb, var(--background-soft) 26%, transparent) 45%,
+      color-mix(in srgb, var(--background-contrast) 15%, transparent) 100%
+    );
+  --aurora-primary-shadow: 0 48px 140px color-mix(in srgb, var(--accent-soft) 75%, transparent);
+  --aurora-secondary-shadow: 0 42px 120px color-mix(in srgb, var(--accent-soft) 62%, transparent);
+  --aurora-ring-border: color-mix(in srgb, var(--glass-border-card) 86%, transparent);
   --glass-shadow-card: 0 20px 48px rgba(var(--shadow-color) / 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.45);
   --glass-shadow-panel: 0 28px 64px rgba(var(--shadow-color) / 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.38);
   --glass-shadow-chip: 0 16px 36px rgba(var(--shadow-color) / 0.12);
