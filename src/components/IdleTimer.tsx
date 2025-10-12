@@ -58,20 +58,26 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
   if (!isVisible || !isActive || timeoutMs === 0) return null;
 
   const seconds = Math.max(0, Math.ceil(timeRemaining / 1000));
-  const progress = (timeRemaining / timeoutMs) * 100;
+  const progress = Math.min(100, Math.max(0, (timeRemaining / timeoutMs) * 100));
+  const urgency = seconds <= 10 ? "critical" : seconds <= 20 ? "warning" : "idle";
+  const circumference = 2 * Math.PI * 15.5;
 
   return (
     <motion.div
-      className="fixed bottom-4 left-4 z-50"
+      className="fixed bottom-4 right-4 z-50"
       variants={timerVariants}
       initial="hidden"
       animate="show"
       exit="exit"
     >
-      <div className="glass-surface rounded-2xl px-4 py-3 shadow-lg backdrop-blur-xl border border-white/30 flex items-center justify-center">
+      <div
+        className="idle-timer glass-chip glass-chip--compact glass-chip--pill focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent-strong)] focus-visible:outline-offset-2"
+        data-urgency={urgency}
+        tabIndex={-1}
+      >
         {/* Circular Progress */}
         <div className="relative w-10 h-10 flex items-center justify-center">
-          <svg className="w-10 h-10 -rotate-90" viewBox="0 0 36 36">
+          <svg className="idle-timer__ring w-10 h-10 -rotate-90" viewBox="0 0 36 36">
             {/* Background circle */}
             <circle
               cx="18"
@@ -80,7 +86,8 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
-              className="text-gray-300/30"
+              className="idle-timer__track"
+              strokeDasharray={circumference}
             />
             {/* Progress circle */}
             <circle
@@ -90,17 +97,13 @@ export default function IdleTimer({ timeoutMs, onIdle, isActive }: IdleTimerProp
               fill="none"
               stroke="currentColor"
               strokeWidth="2.5"
-              strokeDasharray={`${2 * Math.PI * 15.5}`}
-              strokeDashoffset={`${2 * Math.PI * 15.5 * (1 - progress / 100)}`}
-              className={`transition-all duration-1000 ${
-                seconds <= 10 ? 'text-red-500' : seconds <= 20 ? 'text-orange-500' : 'text-[var(--color-accent)]'
-              }`}
+              strokeDasharray={circumference}
+              strokeDashoffset={circumference * (1 - progress / 100)}
+              className="idle-timer__progress"
               strokeLinecap="round"
             />
           </svg>
-          <span className={`absolute text-xs font-semibold ${
-            seconds <= 10 ? 'text-red-600' : 'text-[var(--color-foreground-muted)]'
-          }`}>
+          <span className="idle-timer__label absolute text-xs font-semibold">
             {seconds}
           </span>
         </div>

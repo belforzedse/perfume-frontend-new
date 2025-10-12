@@ -674,6 +674,69 @@
     opacity: 0.6;
   }
 
+  .idle-timer {
+    --idle-timer-ambient-glow: var(--glass-glow-chip);
+    --idle-timer-ring-color: color-mix(in srgb, var(--color-accent) 90%, white 10%);
+    --idle-timer-ring-opacity: 0.64;
+    --idle-timer-track-opacity: 0.2;
+    --idle-timer-label-color: color-mix(in srgb, var(--accent-contrast) 70%, var(--color-foreground-muted) 30%);
+    --idle-timer-label-opacity: 0.85;
+    --glass-base-chip: color-mix(in srgb, var(--glass-base-card) 92%, transparent);
+    --glass-border-chip: color-mix(in srgb, var(--color-border) 58%, rgba(255, 255, 255, 0.7));
+    --glass-glow-chip: var(--idle-timer-ambient-glow);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1rem;
+    min-width: 3.25rem;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(calc(var(--glass-blur-chip) + 2px)) saturate(155%);
+    -webkit-backdrop-filter: blur(calc(var(--glass-blur-chip) + 2px)) saturate(155%);
+    transition: box-shadow 220ms ease, background 220ms ease;
+  }
+
+  .idle-timer[data-urgency="warning"] {
+    --idle-timer-ring-opacity: 0.78;
+    --idle-timer-track-opacity: 0.24;
+    --idle-timer-label-opacity: 0.92;
+    --idle-timer-ambient-glow: color-mix(in srgb, var(--color-accent-soft) 85%, transparent);
+    --glass-border-chip: color-mix(in srgb, var(--color-accent) 35%, rgba(255, 255, 255, 0.78));
+  }
+
+  .idle-timer[data-urgency="critical"] {
+    --idle-timer-ring-opacity: 0.92;
+    --idle-timer-track-opacity: 0.32;
+    --idle-timer-label-color: color-mix(in srgb, var(--accent-contrast) 85%, var(--color-foreground) 15%);
+    --idle-timer-label-opacity: 1;
+    --idle-timer-ambient-glow: color-mix(in srgb, var(--color-accent) 42%, rgba(255, 110, 64, 0.32));
+    --glass-border-chip: color-mix(in srgb, var(--color-accent) 45%, rgba(255, 255, 255, 0.82));
+  }
+
+  .idle-timer__ring {
+    color: var(--idle-timer-ring-color);
+    filter: drop-shadow(0 12px 28px rgba(var(--shadow-color) / 0.12));
+    transition: color 220ms ease;
+  }
+
+  .idle-timer__track {
+    stroke: color-mix(in srgb, var(--color-border) 68%, transparent);
+    stroke-opacity: var(--idle-timer-track-opacity);
+    transition: stroke-opacity 220ms ease, stroke 220ms ease;
+  }
+
+  .idle-timer__progress {
+    stroke: currentColor;
+    stroke-opacity: var(--idle-timer-ring-opacity);
+    transition: stroke-dashoffset 620ms cubic-bezier(0.32, 0.94, 0.6, 1), stroke-opacity 220ms ease;
+  }
+
+  .idle-timer__label {
+    color: var(--idle-timer-label-color);
+    opacity: var(--idle-timer-label-opacity);
+    transition: color 220ms ease, opacity 220ms ease;
+    text-shadow: 0 10px 24px rgba(var(--shadow-color) / 0.18);
+  }
+
   .page-panel {
     width: min(100%, 960px);
     min-height: min(82vh, 900px);
