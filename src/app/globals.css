@@ -613,6 +613,32 @@
     --glass-glow-active: var(--glass-glow-chip);
   }
 
+  .glass-chip--compact {
+    padding-block: 0.3rem;
+    padding-inline: 0.75rem;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    gap: 0.35rem;
+  }
+
+  .glass-chip--pill {
+    border-radius: 999px;
+  }
+
+  .glass-chip--muted {
+    --glass-base-chip: color-mix(in srgb, var(--glass-base-card) 88%, transparent);
+    --glass-border-chip: color-mix(in srgb, var(--color-border) 68%, transparent);
+    --glass-glow-chip: radial-gradient(120% 120% at 80% 10%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 65%);
+    color: var(--color-foreground);
+  }
+
+  .glass-chip--accent {
+    --glass-base-chip: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    --glass-border-chip: color-mix(in srgb, var(--color-accent) 58%, white 18%);
+    --glass-glow-chip: radial-gradient(120% 120% at 80% 10%, color-mix(in srgb, var(--color-accent) 35%, transparent) 0%, rgba(255, 255, 255, 0) 65%);
+    color: var(--accent-contrast);
+  }
+
   .glass-chip::before,
   .glass-chip::after {
     content: "";
@@ -978,6 +1004,38 @@
     box-shadow: 0 16px 36px rgba(var(--shadow-color) / 0.1);
     backdrop-filter: blur(calc(var(--glass-blur-card) - 8px)) saturate(145%);
     -webkit-backdrop-filter: blur(calc(var(--glass-blur-card) - 8px)) saturate(145%);
+  }
+
+  .glass-surface--media {
+    border-radius: clamp(14px, 3vw, 18px);
+    background: color-mix(in srgb, var(--glass-base-card) 86%, rgba(255, 255, 255, 0.4));
+    border-color: color-mix(in srgb, var(--color-border) 62%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 12px 28px rgba(var(--shadow-color) / 0.12);
+  }
+
+  .tone-border-soft {
+    background: color-mix(in srgb, var(--color-border) 42%, transparent);
+  }
+
+  .tone-border-softer {
+    background: color-mix(in srgb, var(--color-border) 30%, transparent);
+  }
+
+  .tone-accent-soft {
+    background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+  }
+
+  .confidence-meter {
+    height: 0.375rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-border) 45%, transparent);
+    overflow: hidden;
+  }
+
+  .confidence-meter__fill {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: inherit;
   }
 }
 
