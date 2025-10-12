@@ -48,10 +48,10 @@ const MatchCard = ({
   return (
     <article className="glass-card glass-card--muted flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.01] cursor-pointer">
       <header className="flex items-center justify-between text-muted">
-        <span className="rounded-full border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 md:px-3 md:py-1 text-[10px] sm:text-xs font-medium text-[var(--color-foreground)] bg-white/5">
+        <span className="glass-chip glass-chip--compact glass-chip--pill glass-chip--muted px-2 sm:px-2.5 md:px-3 text-[10px] sm:text-xs font-medium">
           {formatNumber(order)}
         </span>
-        <span className="text-xs sm:text-sm font-semibold text-[var(--color-accent)] bg-[var(--color-accent)]/10 px-2 py-1 rounded-lg">
+        <span className="glass-chip glass-chip--compact glass-chip--pill glass-chip--accent text-xs sm:text-sm font-semibold">
           {formatNumber(perfume.matchPercentage)}٪
         </span>
       </header>
@@ -59,7 +59,7 @@ const MatchCard = ({
       {perfume.image && (
         <div className="flex flex-grow items-center justify-center group">
           <div
-            className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+            className="glass-surface glass-surface--media relative w-full overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
             style={{ height: imageHeight }}
           >
             <Image
@@ -110,11 +110,8 @@ const MatchCard = ({
                 {formatNumber(Math.round(perfume.confidence))}٪
               </span>
             </div>
-            <div className="h-1.5 w-full rounded-full bg-white/40">
-              <div
-                className="h-full rounded-full bg-[var(--color-accent)]/80"
-                style={{ width: `${perfume.confidence}%` }}
-              />
+            <div className="confidence-meter w-full">
+              <div className="confidence-meter__fill" style={{ width: `${perfume.confidence}%` }} />
             </div>
           </div>
         )}
@@ -258,18 +255,18 @@ function RecommendationsContent() {
               style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}
             >
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="glass-surface flex h-full flex-col justify-between rounded-2xl p-4 sm:p-5 animate-pulse">
+                <div key={i} className="glass-surface flex h-full flex-col gap-3 rounded-2xl p-4 sm:p-5 animate-pulse">
                   <div className="flex items-center justify-between">
-                    <div className="h-6 w-12 rounded-full bg-white/40 sm:h-7 sm:w-16" />
-                    <div className="h-5 w-12 rounded bg-white/35 sm:h-6" />
+                    <span className="glass-chip glass-chip--compact glass-chip--pill glass-chip--muted px-2 sm:px-2.5 md:px-3 text-[10px] sm:text-xs font-medium text-transparent opacity-60">00</span>
+                    <span className="glass-chip glass-chip--compact glass-chip--pill glass-chip--accent text-xs sm:text-sm font-semibold text-transparent opacity-60">00٪</span>
                   </div>
-                  <div className="flex flex-1 items-center justify-center">
-                    <div className="h-[100px] w-full rounded-xl bg-white/30 sm:h-[130px] md:h-[160px]" />
+                  <div className="glass-surface glass-surface--media flex flex-1 items-center justify-center">
+                    <div className="h-[100px] w-full rounded-[inherit] tone-border-soft sm:h-[130px] md:h-[160px]" />
                   </div>
                   <div className="space-y-2">
-                    <div className="h-4 w-3/4 rounded bg-white/35" />
-                    <div className="h-3 w-1/2 rounded bg-white/25" />
-                    <div className="h-3 w-2/3 rounded bg-white/20" />
+                    <div className="h-4 w-3/4 rounded tone-border-soft" />
+                    <div className="h-3 w-1/2 rounded tone-border-softer" />
+                    <div className="h-3 w-2/3 rounded tone-border-softer" />
                   </div>
                 </div>
               ))}

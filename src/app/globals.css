@@ -613,6 +613,32 @@
     --glass-glow-active: var(--glass-glow-chip);
   }
 
+  .glass-chip--compact {
+    padding-block: 0.3rem;
+    padding-inline: 0.75rem;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    gap: 0.35rem;
+  }
+
+  .glass-chip--pill {
+    border-radius: 999px;
+  }
+
+  .glass-chip--muted {
+    --glass-base-chip: color-mix(in srgb, var(--glass-base-card) 88%, transparent);
+    --glass-border-chip: color-mix(in srgb, var(--color-border) 68%, transparent);
+    --glass-glow-chip: radial-gradient(120% 120% at 80% 10%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 65%);
+    color: var(--color-foreground);
+  }
+
+  .glass-chip--accent {
+    --glass-base-chip: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    --glass-border-chip: color-mix(in srgb, var(--color-accent) 58%, white 18%);
+    --glass-glow-chip: radial-gradient(120% 120% at 80% 10%, color-mix(in srgb, var(--color-accent) 35%, transparent) 0%, rgba(255, 255, 255, 0) 65%);
+    color: var(--accent-contrast);
+  }
+
   .glass-chip::before,
   .glass-chip::after {
     content: "";
@@ -1015,72 +1041,36 @@
     -webkit-backdrop-filter: blur(calc(var(--glass-blur-card) - 8px)) saturate(145%);
   }
 
-  .glass-cta {
-    position: relative;
-    isolation: isolate;
+  .glass-surface--media {
+    border-radius: clamp(14px, 3vw, 18px);
+    background: color-mix(in srgb, var(--glass-base-card) 86%, rgba(255, 255, 255, 0.4));
+    border-color: color-mix(in srgb, var(--color-border) 62%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 12px 28px rgba(var(--shadow-color) / 0.12);
+  }
+
+  .tone-border-soft {
+    background: color-mix(in srgb, var(--color-border) 42%, transparent);
+  }
+
+  .tone-border-softer {
+    background: color-mix(in srgb, var(--color-border) 30%, transparent);
+  }
+
+  .tone-accent-soft {
+    background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+  }
+
+  .confidence-meter {
+    height: 0.375rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-border) 45%, transparent);
     overflow: hidden;
-    border-radius: var(--glass-radius-chip);
-    --glass-cta-base: var(--glass-base-chip);
-    --glass-cta-border: var(--glass-border-chip);
-    --glass-cta-highlight: var(--glass-highlight-chip);
-    --glass-cta-glow: var(--glass-glow-chip);
-    background: var(--glass-cta-base);
-    background-image: var(--glass-cta-glow), var(--glass-cta-highlight);
-    border: 1px solid var(--glass-cta-border);
-    box-shadow: 0 22px 60px rgba(var(--shadow-color) / 0.16);
-    backdrop-filter: blur(var(--glass-blur-chip)) saturate(165%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-chip)) saturate(165%);
-    transition:
-      background 350ms ease,
-      border-color 350ms ease,
-      box-shadow 350ms ease,
-      transform 350ms ease;
   }
 
-  .glass-cta::before,
-  .glass-cta::after {
-    content: "";
-    position: absolute;
-    inset: 0;
+  .confidence-meter__fill {
+    height: 100%;
+    background: var(--color-accent);
     border-radius: inherit;
-    pointer-events: none;
-    opacity: 0.65;
-    transition: opacity 250ms ease;
-  }
-
-  .glass-cta::before {
-    background: var(--glass-cta-highlight);
-    mix-blend-mode: screen;
-  }
-
-  .glass-cta::after {
-    background: var(--glass-cta-glow);
-  }
-
-  .glass-cta:is(:hover, :focus-visible) {
-    --glass-cta-base: color-mix(in srgb, var(--glass-base-chip) 88%, var(--accent) 12%);
-    --glass-cta-border: color-mix(in srgb, var(--glass-border-chip) 60%, var(--accent) 40%);
-    --glass-cta-highlight: color-mix(in srgb, var(--glass-highlight-chip) 85%, rgba(255, 255, 255, 0.12));
-    --glass-cta-glow: color-mix(in srgb, var(--glass-glow-chip) 82%, var(--accent-glow) 18%);
-    box-shadow: 0 30px 72px rgba(var(--shadow-color) / 0.2);
-  }
-
-  .glass-cta:is(:hover, :focus-visible)::before,
-  .glass-cta:is(:hover, :focus-visible)::after {
-    opacity: 0.82;
-  }
-
-  .glass-cta:active {
-    --glass-cta-base: color-mix(in srgb, var(--glass-base-chip) 80%, var(--accent) 20%);
-    --glass-cta-border: color-mix(in srgb, var(--glass-border-chip) 52%, var(--accent) 48%);
-    --glass-cta-highlight: color-mix(in srgb, var(--glass-highlight-chip) 78%, rgba(255, 255, 255, 0.18));
-    --glass-cta-glow: color-mix(in srgb, var(--glass-glow-chip) 75%, var(--accent-glow) 25%);
-    box-shadow: 0 24px 58px rgba(var(--shadow-color) / 0.24);
-  }
-
-  .glass-cta:active::before,
-  .glass-cta:active::after {
-    opacity: 0.78;
   }
 }
 
