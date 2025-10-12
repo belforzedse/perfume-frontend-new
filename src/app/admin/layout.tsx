@@ -55,28 +55,17 @@ export default function AdminLayout({
               <MotionLink
                 key={item.href}
                 href={item.href}
-                className="relative flex min-h-[44px] items-center justify-between gap-2 overflow-hidden whitespace-nowrap rounded-lg sm:rounded-[var(--radius-base)] px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm"
-                style={{
-                  color: active ? "#ffffff" : "var(--color-foreground-muted)",
-                }}
+                className={`relative flex min-h-[44px] items-center justify-between gap-2 overflow-hidden whitespace-nowrap rounded-lg sm:rounded-[var(--radius-base)] px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm transition-colors duration-300 ease-out admin-nav-link${active ? " admin-nav-link--active" : ""}`}
                 variants={itemVariants}
                 layout
                 transition={transition}
                 whileHover={
                   shouldReduce
                     ? undefined
-                    : active
-                      ? {
-                          y: -4,
-                          transition: { duration: 0.4, ease },
-                        }
-                      : {
-                          y: -4,
-                          backgroundColor: "rgba(236, 234, 229, 0.8)",
-                          color: "var(--color-foreground)",
-                          boxShadow: "var(--shadow-soft)",
-                          transition: { duration: 0.4, ease },
-                        }
+                    : {
+                        y: -4,
+                        transition: { duration: 0.4, ease },
+                      }
                 }
                 whileTap={
                   shouldReduce
@@ -96,7 +85,7 @@ export default function AdminLayout({
                 )}
                 <span className="relative z-10 font-medium">{item.label}</span>
                 {active && (
-                  <span className="relative z-10 text-[10px] sm:text-xs text-white">فعال</span>
+                  <span className="relative z-10 text-[10px] sm:text-xs text-[var(--color-surface)]">فعال</span>
                 )}
               </MotionLink>
             );
