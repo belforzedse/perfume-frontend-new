@@ -60,17 +60,17 @@
   --background-soft: #eceae5;
   --background-strong: #dedbd2;
   --background-contrast: #ffffff;
-  --foreground: #1c1815;
-  --foreground-muted: #6b6259;
-  --foreground-subtle: #9a9187;
-  --accent: #b7925a;
-  --accent-strong: #9f7a3e;
-  --accent-soft: rgba(183, 146, 90, 0.18);
-  --accent-contrast: #1a1713;
-  --accent-glow: rgba(183, 146, 90, 0.22);
+  --foreground: #2b2110;
+  --foreground-muted: #7b6a45;
+  --foreground-subtle: #9b875e;
+  --accent: #d8b467;
+  --accent-strong: #c89a3c;
+  --accent-soft: rgba(216, 180, 103, 0.18);
+  --accent-contrast: #231808;
+  --accent-glow: rgba(216, 180, 103, 0.22);
   --border: rgba(158, 147, 134, 0.24);
   --border-strong: rgba(158, 147, 134, 0.4);
-  --shadow-color: 24 20 17;
+  --shadow-color: 43 33 16;
   --radius-base: 18px;
   --radius-lg: 28px;
   --radius-pill: 999px;
@@ -90,9 +90,9 @@
   --glass-highlight-card: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.24) 35%, rgba(255, 255, 255, 0) 70%);
   --glass-highlight-panel: linear-gradient(140deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.32) 40%, rgba(255, 255, 255, 0) 80%);
   --glass-highlight-chip: linear-gradient(120deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.36) 55%, rgba(255, 255, 255, 0) 90%);
-  --glass-glow-card: radial-gradient(140% 120% at 82% 92%, rgba(183, 146, 90, 0.2) 0%, rgba(183, 146, 90, 0) 70%);
-  --glass-glow-panel: radial-gradient(160% 140% at 15% 110%, rgba(183, 146, 90, 0.22) 0%, rgba(183, 146, 90, 0) 70%);
-  --glass-glow-chip: radial-gradient(120% 120% at 80% 10%, rgba(183, 146, 90, 0.32) 0%, rgba(183, 146, 90, 0) 65%);
+  --glass-glow-card: radial-gradient(140% 120% at 82% 92%, rgba(216, 180, 103, 0.2) 0%, rgba(216, 180, 103, 0) 70%);
+  --glass-glow-panel: radial-gradient(160% 140% at 15% 110%, rgba(216, 180, 103, 0.22) 0%, rgba(216, 180, 103, 0) 70%);
+  --glass-glow-chip: radial-gradient(120% 120% at 80% 10%, rgba(216, 180, 103, 0.32) 0%, rgba(216, 180, 103, 0) 65%);
   --glass-sparkle-overlay: radial-gradient(120% 160% at 18% -10%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 65%);
   --glass-sheen-overlay: linear-gradient(120deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.16) 38%, rgba(255, 255, 255, 0) 72%);
   --glass-shadow-card: 0 20px 48px rgba(var(--shadow-color) / 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.45);
@@ -153,7 +153,7 @@
     min-height: 100dvh;
     background:
       radial-gradient(120% 120% at 85% 0%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 60%),
-      radial-gradient(140% 140% at 10% 100%, rgba(183, 146, 90, 0.16) 0%, rgba(183, 146, 90, 0) 65%),
+      radial-gradient(140% 140% at 10% 100%, rgba(216, 180, 103, 0.16) 0%, rgba(216, 180, 103, 0) 65%),
       var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
@@ -548,7 +548,7 @@
 
   .btn-ghost:hover,
   .btn-ghost:focus-visible {
-    border-color: rgba(183, 146, 90, 0.4);
+    border-color: rgba(216, 180, 103, 0.4);
     box-shadow: 0 20px 44px rgba(var(--shadow-color) / 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
 
@@ -773,7 +773,7 @@
 
   .question-option--default:hover,
   .question-option--default:focus-visible {
-    border-color: rgba(183, 146, 90, 0.45);
+    border-color: rgba(216, 180, 103, 0.45);
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 16px 32px rgba(var(--shadow-color) / 0.1);
     transform: translateY(-2px);
@@ -782,7 +782,7 @@
   .question-option--selected {
     border-color: var(--color-accent);
     color: var(--color-accent);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(183, 146, 90, 0.2));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(216, 180, 103, 0.2));
     box-shadow: 0 20px 36px rgba(var(--shadow-color) / 0.12);
   }
 
