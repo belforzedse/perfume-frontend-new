@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -17,6 +17,7 @@ import {
   useFadeScaleVariants,
   useStaggeredListVariants,
 } from "@/lib/motion";
+import { useSharePerfume } from "@/lib/useSharePerfume";
 
 const formatNumber = (value: number) => toPersianNumbers(String(value));
 
@@ -26,10 +27,12 @@ const MatchCard = ({
   perfume,
   order,
   compact = "normal",
+  onShare,
 }: {
   perfume: RankedPerfume;
   order: number;
   compact?: CompactMode;
+  onShare: (perfume: RankedPerfume) => void;
 }) => {
   const title = perfume.nameFa && perfume.nameFa.trim().length > 0 ? perfume.nameFa : perfume.nameEn;
   const detailLine = [perfume.collection, perfume.family]
@@ -45,8 +48,20 @@ const MatchCard = ({
   const brand = perfume.brand?.trim();
   const englishName = perfume.nameEn?.trim();
 
+  const handleKeyUp = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onShare(perfume);
+    }
+  };
+
   return (
-    <article className="glass-card glass-card--muted flex h-full flex-col gap-3 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 lg:p-6 text-right transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.01] cursor-pointer">
+    <button
+      type="button"
+      onClick={() => onShare(perfume)}
+      onKeyUp={handleKeyUp}
+      className="group glass-card glass-card--muted flex h-full w-full flex-col gap-3 rounded-2xl p-3 text-right transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.01] focus-visible:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent sm:gap-4 sm:rounded-3xl sm:p-4 md:gap-5 md:p-5 lg:p-6"
+    >
       <header className="flex items-center justify-between text-muted">
         <span className="glass-chip glass-chip--compact glass-chip--pill glass-chip--muted px-2 sm:px-2.5 md:px-3 text-[10px] sm:text-xs font-medium">
           {formatNumber(order)}
@@ -57,9 +72,9 @@ const MatchCard = ({
       </header>
 
       {perfume.image && (
-        <div className="flex flex-grow items-center justify-center group">
+        <div className="flex flex-grow items-center justify-center">
           <div
-            className="glass-surface glass-surface--media relative w-full overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+            className="glass-surface glass-surface--media relative w-full overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03] group-focus-visible:scale-[1.03]"
             style={{ height: imageHeight }}
           >
             <Image
@@ -116,7 +131,7 @@ const MatchCard = ({
           </div>
         )}
       </div>
-    </article>
+    </button>
   );
 };
 
@@ -138,6 +153,14 @@ function RecommendationsContent() {
     duration: signatureTransitions.surface.duration ?? 0.68,
     ease: signatureTransitions.surface.ease,
   });
+  const sharePerfume = useSharePerfume();
+
+  const handleShare = useCallback(
+    (perfume: RankedPerfume) => {
+      void sharePerfume(perfume);
+    },
+    [sharePerfume]
+  );
 
   useEffect(() => {
     const updateCompact = () => {
@@ -414,7 +437,7 @@ function RecommendationsContent() {
         >
           {recommendations.length > 0 && (
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted sm:text-xs">
-              <span>برای ذخیره یا اشتراک‌گذاری، کارت هر عطر را لمس کنید.</span>
+              <span>برای ذخیره یا اشتراک‌گذاری، کارت هر عطر را لمس کنید یا کلید Enter را فشار دهید.</span>
               <span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] text-muted">
                 تطابق میانگین: {formatNumber(Math.round(
                   recommendations.reduce((sum, item) => sum + item.matchPercentage, 0) / recommendations.length
@@ -434,7 +457,7 @@ function RecommendationsContent() {
                     className="h-full min-h-[200px]"
                     variants={cardVariants}
                   >
-                    <MatchCard perfume={perfume} order={index + 1} compact={compact} />
+                    <MatchCard perfume={perfume} order={index + 1} compact={compact} onShare={handleShare} />
                   </motion.div>
                 ))
               ) : (
