@@ -153,7 +153,8 @@
     min-height: 100dvh;
     background:
       radial-gradient(120% 120% at 85% 0%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 60%),
-      radial-gradient(140% 140% at 10% 100%, rgba(216, 180, 103, 0.16) 0%, rgba(216, 180, 103, 0) 65%),
+      radial-gradient(520px 520px at 92% -10%, rgba(216, 180, 103, 0.16) 0%, rgba(216, 180, 103, 0) 70%),
+      radial-gradient(420px 420px at -5% 105%, rgba(216, 180, 103, 0.1) 0%, rgba(216, 180, 103, 0) 72%),
       var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
@@ -548,7 +549,7 @@
 
   .btn-ghost:hover,
   .btn-ghost:focus-visible {
-    border-color: rgba(216, 180, 103, 0.4);
+    border-color: rgba(214, 196, 161, 0.32);
     box-shadow: 0 20px 44px rgba(var(--shadow-color) / 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
 
@@ -773,7 +774,7 @@
 
   .question-option--default:hover,
   .question-option--default:focus-visible {
-    border-color: rgba(216, 180, 103, 0.45);
+    border-color: rgba(214, 196, 161, 0.38);
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 16px 32px rgba(var(--shadow-color) / 0.1);
     transform: translateY(-2px);
@@ -782,7 +783,7 @@
   .question-option--selected {
     border-color: var(--color-accent);
     color: var(--color-accent);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(216, 180, 103, 0.2));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(214, 196, 161, 0.18));
     box-shadow: 0 20px 36px rgba(var(--shadow-color) / 0.12);
   }
 
