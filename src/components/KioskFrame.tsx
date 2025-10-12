@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import IdleTimer from "@/components/IdleTimer";
+import { GlassToastProvider } from "@/components/GlassToastProvider";
 import {
   durations,
   easings,
@@ -190,40 +191,42 @@ export default function KioskFrame({
   }, [router, pathname, isHome, IDLE_TIMEOUT_MS]);
 
   return (
-    <div className="kiosk-root">
-      <AnimatedBackground />
-      {!isHome && IDLE_TIMEOUT_MS > 0 && (
-        <IdleTimer
-          key={timerKey}
-          timeoutMs={IDLE_TIMEOUT_MS}
-          isActive={true}
-        />
-      )}
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={shouldReduceMotion ? "static" : pathname}
-          className={`kiosk-frame ${className}`}
-          initial={
-            shouldReduceMotion
-              ? false
-              : { opacity: 0, y: 26, scale: 0.984 }
-          }
-          animate={
-            shouldReduceMotion
-              ? { opacity: 1 }
-              : { opacity: 1, y: 0, scale: 1 }
-          }
-          exit={
-            shouldReduceMotion
-              ? { opacity: 1 }
-              : { opacity: 0, y: -18, scale: 0.988 }
-          }
-          transition={pageTransition}
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
-    </div>
+    <GlassToastProvider>
+      <div className="kiosk-root">
+        <AnimatedBackground />
+        {!isHome && IDLE_TIMEOUT_MS > 0 && (
+          <IdleTimer
+            key={timerKey}
+            timeoutMs={IDLE_TIMEOUT_MS}
+            isActive={true}
+          />
+        )}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={shouldReduceMotion ? "static" : pathname}
+            className={`kiosk-frame ${className}`}
+            initial={
+              shouldReduceMotion
+                ? false
+                : { opacity: 0, y: 26, scale: 0.984 }
+            }
+            animate={
+              shouldReduceMotion
+                ? { opacity: 1 }
+                : { opacity: 1, y: 0, scale: 1 }
+            }
+            exit={
+              shouldReduceMotion
+                ? { opacity: 1 }
+                : { opacity: 0, y: -18, scale: 0.988 }
+            }
+            transition={pageTransition}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </GlassToastProvider>
   );
 }
 
