@@ -6,7 +6,9 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import {
   createCollection,
+  fetchBrandsAdmin,
   fetchCollectionsAdmin,
+  type AdminBrand,
   type AdminCollection,
   type CreateCollectionPayload,
 } from "@/lib/admin-api";
@@ -19,14 +21,17 @@ type FeedbackState = {
 
 interface CollectionFormValues {
   name: string;
+  brandId: string;
 }
 
 const defaultValues: CollectionFormValues = {
   name: "",
+  brandId: "",
 };
 
 const buildPayload = (values: CollectionFormValues): CreateCollectionPayload => ({
   name: values.name.trim(),
+  brandId: values.brandId ? Number(values.brandId) : undefined,
 });
 
 export default function AdminCollectionsPage() {
@@ -37,6 +42,7 @@ export default function AdminCollectionsPage() {
     formState: { errors, isSubmitting },
   } = useForm<CollectionFormValues>({ defaultValues });
   const [collections, setCollections] = useState<AdminCollection[]>([]);
+  const [brands, setBrands] = useState<AdminBrand[]>([]);
   const [status, setStatus] = useState<FeedbackState | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -46,7 +52,11 @@ export default function AdminCollectionsPage() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const collectionData = await fetchCollectionsAdmin();
+      const [brandData, collectionData] = await Promise.all([
+        fetchBrandsAdmin(),
+        fetchCollectionsAdmin(),
+      ]);
+      setBrands(brandData);
       setCollections(collectionData);
     } catch (error) {
       console.error("خطا در بارگذاری کالکشن‌ها", error);
@@ -110,6 +120,27 @@ export default function AdminCollectionsPage() {
           />
           {errors.name && (
             <span className="text-xs text-red-500">{errors.name.message}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-[var(--color-foreground)]" htmlFor="brandId">
+            برند مرتبط <span className="text-red-500">*</span>
+          </label>
+          <select
+            id="brandId"
+            className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
+            {...register("brandId", { required: "انتخاب برند الزامی است." })}
+          >
+            <option value="">یک برند را انتخاب کنید</option>
+            {brands.map((brand) => (
+              <option key={brand.id} value={brand.id}>
+                {brand.name}
+              </option>
+            ))}
+          </select>
+          {errors.brandId && (
+            <span className="text-xs text-red-500">{errors.brandId.message}</span>
           )}
         </div>
 

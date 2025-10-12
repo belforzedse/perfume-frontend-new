@@ -228,6 +228,8 @@ export interface CreateBrandPayload {
 
 export interface CreateCollectionPayload {
   name: string;
+  brand?: number;
+  brandId?: number;
 }
 
 export interface CreatePerfumePayload {
@@ -312,9 +314,17 @@ export const createBrand = async (
 export const createCollection = async (
   payload: CreateCollectionPayload,
 ): Promise<AdminCollection> => {
+  const { brandId, brand, ...rest } = payload;
+  const relationId = brandId ?? brand;
+
+  const data = {
+    ...rest,
+    ...(relationId ? { brand: relationId } : {}),
+  };
+
   const response = await adminClient.post<
     StrapiSingleResponse<CollectionAttributes>
-  >("/api/collections", { data: payload }, {
+  >("/api/collections", { data }, {
     headers: authHeaders(true),
   });
 
