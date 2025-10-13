@@ -273,12 +273,22 @@ export default function AdminProductsPage() {
     });
   }, [reset]);
 
+  const exitEditMode = useCallback(
+    ({ preserveStatus = false }: { preserveStatus?: boolean } = {}) => {
+      setEditingPerfume(null);
+      setIsEditing(false);
+      reset(createDefaultValues());
+
+      if (!preserveStatus) {
+        setStatus(null);
+      }
+    },
+    [reset, setStatus, setEditingPerfume, setIsEditing],
+  );
+
   const handleCancelEdit = useCallback(() => {
-    setEditingPerfume(null);
-    setIsEditing(false);
-    reset(createDefaultValues());
-    setStatus(null);
-  }, [reset]);
+    exitEditMode({ preserveStatus: true });
+  }, [exitEditMode]);
 
   const handleDelete = useCallback(async (perfume: AdminPerfume) => {
     if (!confirm(`آیا مطمئن هستید که می‌خواهید عطر "${perfume.name_fa}" را حذف کنید؟`)) {
@@ -354,7 +364,7 @@ export default function AdminProductsPage() {
         }
         await updatePerfume(editingPerfume.documentId, payload);
         setStatus({ type: "success", message: "محصول با موفقیت به‌روزرسانی شد." });
-        handleCancelEdit();
+        exitEditMode({ preserveStatus: true });
       } else {
         await createPerfume(payload);
         setStatus({ type: "success", message: "محصول جدید با موفقیت ثبت شد." });
