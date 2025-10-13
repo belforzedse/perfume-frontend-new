@@ -247,7 +247,7 @@ export interface CreatePerfumePayload {
 
 export const fetchBrandsAdmin = async (): Promise<AdminBrand[]> => {
   const response = await adminClient.get<StrapiListResponse<BrandAttributes>>(
-    "/api/brands",
+    "api/brands",
     {
       headers: authHeaders(),
       params: {
@@ -264,7 +264,7 @@ export const fetchBrandsAdmin = async (): Promise<AdminBrand[]> => {
 export const fetchCollectionsAdmin = async (): Promise<AdminCollection[]> => {
   const response = await adminClient.get<
     StrapiListResponse<CollectionAttributes>
-  >("/api/collections", {
+  >("api/collections", {
     headers: authHeaders(),
     params: {
       "pagination[pageSize]": 100,
@@ -280,7 +280,7 @@ export const fetchCollectionsAdmin = async (): Promise<AdminCollection[]> => {
 
 export const fetchPerfumesAdmin = async (): Promise<AdminPerfume[]> => {
   const response = await adminClient.get<StrapiListResponse<PerfumeAttributes>>(
-    "/api/perfumes",
+    "api/perfumes",
     {
       headers: authHeaders(),
       params: {
@@ -303,7 +303,7 @@ export const createBrand = async (
   payload: CreateBrandPayload,
 ): Promise<AdminBrand> => {
   const response = await adminClient.post<StrapiSingleResponse<BrandAttributes>>(
-    "/api/brands",
+    "api/brands",
     { data: payload },
     { headers: authHeaders(true) },
   );
@@ -324,7 +324,7 @@ export const createCollection = async (
 
   const response = await adminClient.post<
     StrapiSingleResponse<CollectionAttributes>
-  >("/api/collections", { data }, {
+  >("api/collections", { data }, {
     headers: authHeaders(true),
   });
 
@@ -335,7 +335,7 @@ export const uploadFile = async (file: File): Promise<{ id: number; url: string 
   const formData = new FormData();
   formData.append('files', file);
 
-  const response = await adminClient.post('/api/upload', formData, {
+  const response = await adminClient.post("api/upload", formData, {
     headers: {
       ...authHeaders(),
       // Don't set Content-Type for FormData - let the browser set it
@@ -357,7 +357,7 @@ export const createPerfume = async (
 ): Promise<AdminPerfume> => {
   const response = await adminClient.post<
     StrapiSingleResponse<PerfumeAttributes>
-  >("/api/perfumes", { data: payload }, {
+  >("api/perfumes", { data: payload }, {
     headers: authHeaders(true),
     params: {
       "populate[brand][fields][0]": "name",
@@ -377,7 +377,7 @@ export const updatePerfume = async (
 ): Promise<AdminPerfume> => {
   const response = await adminClient.put<
     StrapiSingleResponse<PerfumeAttributes>
-  >(`/api/perfumes/${documentId}`, { data: payload }, {
+  >(`api/perfumes/${documentId}`, { data: payload }, {
     headers: authHeaders(true),
     params: {
       "populate[brand][fields][0]": "name",
@@ -390,7 +390,7 @@ export const updatePerfume = async (
 };
 
 export const deletePerfume = async (documentId: string): Promise<void> => {
-  await adminClient.delete(`/api/perfumes/${documentId}`, {
+  await adminClient.delete(`api/perfumes/${documentId}`, {
     headers: authHeaders(),
   });
 };
