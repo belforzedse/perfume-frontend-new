@@ -45,8 +45,18 @@ interface StrapiEntity<T> {
   attributes?: T | null;
 }
 
+interface StrapiPaginationMeta {
+  page?: number;
+  pageSize?: number;
+  pageCount?: number;
+  total?: number;
+}
+
 interface StrapiListResponse<T> {
   data: Array<StrapiEntity<T>>;
+  meta?: {
+    pagination?: StrapiPaginationMeta;
+  };
 }
 
 interface StrapiSingleResponse<T> {
@@ -245,58 +255,76 @@ export interface CreatePerfumePayload {
   cover?: number;
 }
 
-export const fetchBrandsAdmin = async (): Promise<AdminBrand[]> => {
-  const response = await adminClient.get<StrapiListResponse<BrandAttributes>>(
-    "api/brands",
-    {
+const fetchPaginatedEntities = async <T, R>(
+  path: string,
+  mapEntity: (entity: StrapiEntity<T>) => R,
+  baseParams: Record<string, unknown>,
+): Promise<R[]> => {
+  const collected: R[] = [];
+  let page = 1;
+  let pageCount = 1;
+
+  do {
+    const response = await adminClient.get<StrapiListResponse<T>>(path, {
       headers: authHeaders(),
       params: {
-        "pagination[pageSize]": 100,
-        sort: "name:asc",
-        publicationState: "preview",
+        ...baseParams,
+        "pagination[page]": page,
       },
+    });
+
+    if (Array.isArray(response.data.data)) {
+      collected.push(...response.data.data.map(mapEntity));
+    }
+
+    pageCount = response.data.meta?.pagination?.pageCount ?? 1;
+    page += 1;
+  } while (page <= pageCount);
+
+  return collected;
+};
+
+export const fetchBrandsAdmin = async (): Promise<AdminBrand[]> => {
+  return fetchPaginatedEntities<BrandAttributes, AdminBrand>(
+    "/api/brands",
+    mapBrand,
+    {
+      "pagination[pageSize]": 100,
+      sort: "name:asc",
+      publicationState: "preview",
     },
   );
-
-  return response.data.data.map(mapBrand);
 };
 
 export const fetchCollectionsAdmin = async (): Promise<AdminCollection[]> => {
-  const response = await adminClient.get<
-    StrapiListResponse<CollectionAttributes>
-  >("api/collections", {
-    headers: authHeaders(),
-    params: {
+  return fetchPaginatedEntities<CollectionAttributes, AdminCollection>(
+    "/api/collections",
+    mapCollection,
+    {
       "pagination[pageSize]": 100,
       sort: "name:asc",
       "populate[brand][fields][0]": "name",
       "populate[brand][fields][1]": "documentId",
       publicationState: "preview",
     },
-  });
-
-  return response.data.data.map(mapCollection);
+  );
 };
 
 export const fetchPerfumesAdmin = async (): Promise<AdminPerfume[]> => {
-  const response = await adminClient.get<StrapiListResponse<PerfumeAttributes>>(
-    "api/perfumes",
+  return fetchPaginatedEntities<PerfumeAttributes, AdminPerfume>(
+    "/api/perfumes",
+    mapPerfume,
     {
-      headers: authHeaders(),
-      params: {
-        "pagination[pageSize]": 100,
-        "populate[brand][fields][0]": "name",
-        "populate[collection][fields][0]": "name",
-        "populate[notes]": "*",
-        "populate[cover][fields][0]": "url",
-        "populate[cover][fields][1]": "alternativeText",
-        sort: "updatedAt:desc",
-        publicationState: "preview",
-      },
+      "pagination[pageSize]": 100,
+      "populate[brand][fields][0]": "name",
+      "populate[collection][fields][0]": "name",
+      "populate[notes]": "*",
+      "populate[cover][fields][0]": "url",
+      "populate[cover][fields][1]": "alternativeText",
+      sort: "updatedAt:desc",
+      publicationState: "preview",
     },
   );
-
-  return response.data.data.map(mapPerfume);
 };
 
 export const createBrand = async (
