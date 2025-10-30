@@ -24,7 +24,7 @@ import ImageUpload from "@/components/ImageUpload";
 import { useAdminMotionVariants } from "@/components/admin/AdminMotion";
 
 type FeedbackState = {
-  type: "success" | "error";
+  type: "success" | "error" | "warning";
   message: string;
 };
 
@@ -74,6 +74,12 @@ const normaliseNotes = (items: string[]): string[] =>
   );
 
 const normaliseText = (value?: string | null) => value?.toLowerCase() ?? "";
+
+const statusStyleMap: Record<FeedbackState["type"], string> = {
+  success: "border-green-300 bg-green-100 text-green-800",
+  error: "border-red-300 bg-red-100 text-red-800",
+  warning: "border-amber-300 bg-amber-100 text-amber-800",
+};
 
 interface NotesFieldProps {
   label: string;
@@ -204,19 +210,44 @@ export default function AdminProductsPage() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [brandData, collectionData, perfumeData] = await Promise.all([
+      const perfumePromise = fetchPerfumesAdmin();
+      const [brandResult, collectionResult] = await Promise.allSettled([
         fetchBrandsAdmin(),
         fetchCollectionsAdmin(),
-        fetchPerfumesAdmin(),
       ]);
-      setBrands(brandData);
-      setCollections(collectionData);
+
+      const perfumeData = await perfumePromise;
       setPerfumes(perfumeData);
+
+      const warnings: string[] = [];
+
+      if (brandResult.status === "fulfilled") {
+        setBrands(brandResult.value);
+      } else {
+        console.error("خطا در بارگذاری برندها", brandResult.reason);
+        warnings.push("بارگذاری برندها با مشکل مواجه شد. برخی فیلترها در دسترس نخواهند بود.");
+      }
+
+      if (collectionResult.status === "fulfilled") {
+        setCollections(collectionResult.value);
+      } else {
+        console.error("خطا در بارگذاری کالکشن‌ها", collectionResult.reason);
+        warnings.push("بارگذاری کالکشن‌ها با مشکل مواجه شد. برخی فیلترها در دسترس نخواهند بود.");
+      }
+
+      if (warnings.length > 0) {
+        setStatus({
+          type: "warning",
+          message: warnings.join(" "),
+        });
+      } else {
+        setStatus((current) => (current?.type === "warning" ? null : current));
+      }
     } catch (error) {
-      console.error("خطا در بارگذاری داده‌های محصول", error);
+      console.error("خطا در بارگذاری لیست عطرها", error);
       setStatus({
         type: "error",
-        message: "بارگذاری داده‌ها با خطا مواجه شد. دوباره تلاش کنید.",
+        message: "بارگذاری عطرها با خطا مواجه شد. دوباره تلاش کنید.",
       });
     } finally {
       setLoading(false);
@@ -273,12 +304,22 @@ export default function AdminProductsPage() {
     });
   }, [reset]);
 
+  const exitEditMode = useCallback(
+    ({ preserveStatus = false }: { preserveStatus?: boolean } = {}) => {
+      setEditingPerfume(null);
+      setIsEditing(false);
+      reset(createDefaultValues());
+
+      if (!preserveStatus) {
+        setStatus(null);
+      }
+    },
+    [reset, setStatus, setEditingPerfume, setIsEditing],
+  );
+
   const handleCancelEdit = useCallback(() => {
-    setEditingPerfume(null);
-    setIsEditing(false);
-    reset(createDefaultValues());
-    setStatus(null);
-  }, [reset]);
+    exitEditMode({ preserveStatus: true });
+  }, [exitEditMode]);
 
   const handleDelete = useCallback(async (perfume: AdminPerfume) => {
     if (!confirm(`آیا مطمئن هستید که می‌خواهید عطر "${perfume.name_fa}" را حذف کنید؟`)) {
@@ -354,7 +395,7 @@ export default function AdminProductsPage() {
         }
         await updatePerfume(editingPerfume.documentId, payload);
         setStatus({ type: "success", message: "محصول با موفقیت به‌روزرسانی شد." });
-        handleCancelEdit();
+        exitEditMode({ preserveStatus: true });
       } else {
         await createPerfume(payload);
         setStatus({ type: "success", message: "محصول جدید با موفقیت ثبت شد." });
@@ -620,11 +661,7 @@ export default function AdminProductsPage() {
           {status && (
             <motion.div
               key={`${status.type}-${status.message}`}
-              className={`rounded-[var(--radius-base)] border px-4 py-3 text-sm ${
-                status.type === "success"
-                  ? "border-green-300 bg-green-100 text-green-800"
-                  : "border-red-300 bg-red-100 text-red-800"
-              }`}
+              className={`rounded-[var(--radius-base)] border px-4 py-3 text-sm ${statusStyleMap[status.type]}`}
               initial="hidden"
               animate="visible"
               exit="exit"

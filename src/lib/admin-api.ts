@@ -238,6 +238,8 @@ export interface CreateBrandPayload {
 
 export interface CreateCollectionPayload {
   name: string;
+  brand?: number;
+  brandId?: number;
 }
 
 export interface CreatePerfumePayload {
@@ -329,7 +331,7 @@ export const createBrand = async (
   payload: CreateBrandPayload,
 ): Promise<AdminBrand> => {
   const response = await adminClient.post<StrapiSingleResponse<BrandAttributes>>(
-    "/api/brands",
+    "api/brands",
     { data: payload },
     { headers: authHeaders(true) },
   );
@@ -340,9 +342,17 @@ export const createBrand = async (
 export const createCollection = async (
   payload: CreateCollectionPayload,
 ): Promise<AdminCollection> => {
+  const { brandId, brand, ...rest } = payload;
+  const relationId = brandId ?? brand;
+
+  const data = {
+    ...rest,
+    ...(relationId ? { brand: relationId } : {}),
+  };
+
   const response = await adminClient.post<
     StrapiSingleResponse<CollectionAttributes>
-  >("/api/collections", { data: payload }, {
+  >("api/collections", { data }, {
     headers: authHeaders(true),
   });
 
@@ -353,7 +363,7 @@ export const uploadFile = async (file: File): Promise<{ id: number; url: string 
   const formData = new FormData();
   formData.append('files', file);
 
-  const response = await adminClient.post('/api/upload', formData, {
+  const response = await adminClient.post("api/upload", formData, {
     headers: {
       ...authHeaders(),
       // Don't set Content-Type for FormData - let the browser set it
@@ -375,7 +385,7 @@ export const createPerfume = async (
 ): Promise<AdminPerfume> => {
   const response = await adminClient.post<
     StrapiSingleResponse<PerfumeAttributes>
-  >("/api/perfumes", { data: payload }, {
+  >("api/perfumes", { data: payload }, {
     headers: authHeaders(true),
     params: {
       "populate[brand][fields][0]": "name",
@@ -395,7 +405,7 @@ export const updatePerfume = async (
 ): Promise<AdminPerfume> => {
   const response = await adminClient.put<
     StrapiSingleResponse<PerfumeAttributes>
-  >(`/api/perfumes/${documentId}`, { data: payload }, {
+  >(`api/perfumes/${documentId}`, { data: payload }, {
     headers: authHeaders(true),
     params: {
       "populate[brand][fields][0]": "name",
@@ -408,7 +418,7 @@ export const updatePerfume = async (
 };
 
 export const deletePerfume = async (documentId: string): Promise<void> => {
-  await adminClient.delete(`/api/perfumes/${documentId}`, {
+  await adminClient.delete(`api/perfumes/${documentId}`, {
     headers: authHeaders(),
   });
 };
