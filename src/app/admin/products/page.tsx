@@ -33,10 +33,10 @@ interface PerfumeFormValues {
   nameEn: string;
   brandId: string;
   collectionId: string;
-  gender: string;
-  season: string;
-  family: string;
-  character: string;
+  gender: string[];
+  season: string[];
+  family: string[];
+  character: string[];
   notes: PerfumeNotes;
   image?: File | null;
 }
@@ -51,10 +51,10 @@ const createDefaultValues = (): PerfumeFormValues => ({
   nameEn: "",
   brandId: "",
   collectionId: "",
-  gender: "",
-  season: "",
-  family: "",
-  character: "",
+  gender: [],
+  season: [],
+  family: [],
+  character: [],
   notes: {
     top: [],
     middle: [],
@@ -154,6 +154,52 @@ function NotesField({ label, helper, value, onChange, error }: NotesFieldProps) 
           ))}
         </div>
       )}
+      {error && <span className="text-xs text-red-500">{error}</span>}
+    </div>
+  );
+}
+
+interface MultiSelectFieldProps {
+  label: string;
+  options: string[];
+  value: string[];
+  onChange: (value: string[]) => void;
+  error?: string;
+}
+
+function MultiSelectField({ label, options, value, onChange, error }: MultiSelectFieldProps) {
+  const handleToggle = (option: string) => {
+    if (value.includes(option)) {
+      onChange(value.filter((item) => item !== option));
+    } else {
+      onChange([...value, option]);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-sm font-medium text-[var(--color-foreground)]">{label}</label>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => handleToggle(option)}
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+              value.includes(option)
+                ? "bg-[var(--color-accent)] text-white shadow-md"
+                : "bg-white border border-[var(--color-border)] text-[var(--color-foreground)] hover:border-[var(--color-accent)]"
+            }`}
+          >
+            {value.includes(option) && (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+            {option}
+          </button>
+        ))}
+      </div>
       {error && <span className="text-xs text-red-500">{error}</span>}
     </div>
   );
@@ -295,10 +341,10 @@ export default function AdminProductsPage() {
       nameEn: perfume.name_en,
       brandId: perfume.brand?.id.toString() || "",
       collectionId: perfume.collection?.id.toString() || "",
-      gender: perfume.gender || "",
-      season: perfume.season || "",
-      family: perfume.family || "",
-      character: perfume.character || "",
+      gender: perfume.gender ? [perfume.gender] : [],
+      season: perfume.season ? [perfume.season] : [],
+      family: perfume.family ? [perfume.family] : [],
+      character: perfume.character ? [perfume.character] : [],
       notes: perfume.notes,
       image: null, // Don't populate image field when editing (user must upload a new file to change it)
     });
@@ -371,10 +417,10 @@ export default function AdminProductsPage() {
       const payload: CreatePerfumePayload | UpdatePerfumePayload = {
         name_fa: values.nameFa.trim(),
         name_en: values.nameEn.trim(),
-        gender: values.gender || undefined,
-        season: values.season || undefined,
-        family: values.family || undefined,
-        character: values.character || undefined,
+        gender: values.gender.length > 0 ? values.gender.join(", ") : undefined,
+        season: values.season.length > 0 ? values.season.join(", ") : undefined,
+        family: values.family.length > 0 ? values.family.join(", ") : undefined,
+        character: values.character.length > 0 ? values.character.join(", ") : undefined,
         notes: {
           top: normaliseNotes(values.notes.top),
           middle: normaliseNotes(values.notes.middle),
@@ -518,79 +564,63 @@ export default function AdminProductsPage() {
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[var(--color-foreground)]" htmlFor="gender">
-              جنسیت هدف
-            </label>
-            <select
-              id="gender"
-              className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
-              {...register("gender")}
-            >
-              <option value="">انتخاب نشده</option>
-              {genderOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Controller
+            control={control}
+            name="gender"
+            render={({ field, fieldState }) => (
+              <MultiSelectField
+                label="جنسیت هدف"
+                options={genderOptions}
+                value={field.value ?? []}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
 
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[var(--color-foreground)]" htmlFor="season">
-              فصل پیشنهادی
-            </label>
-            <select
-              id="season"
-              className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
-              {...register("season")}
-            >
-              <option value="">انتخاب نشده</option>
-              {seasonOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Controller
+            control={control}
+            name="season"
+            render={({ field, fieldState }) => (
+              <MultiSelectField
+                label="فصل پیشنهادی"
+                options={seasonOptions}
+                value={field.value ?? []}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[var(--color-foreground)]" htmlFor="family">
-              خانواده عطری
-            </label>
-            <select
-              id="family"
-              className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
-              {...register("family")}
-            >
-              <option value="">انتخاب نشده</option>
-              {familyOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Controller
+            control={control}
+            name="family"
+            render={({ field, fieldState }) => (
+              <MultiSelectField
+                label="خانواده عطری"
+                options={familyOptions}
+                value={field.value ?? []}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
 
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[var(--color-foreground)]" htmlFor="character">
-              کاراکتر / حس کلی
-            </label>
-            <select
-              id="character"
-              className="rounded-[var(--radius-base)] border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-[var(--color-foreground)] focus:border-[var(--color-accent)] focus:outline-none"
-              {...register("character")}
-            >
-              <option value="">انتخاب نشده</option>
-              {characterOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Controller
+            control={control}
+            name="character"
+            render={({ field, fieldState }) => (
+              <MultiSelectField
+                label="کاراکتر / حس کلی"
+                options={characterOptions}
+                value={field.value ?? []}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
         </div>
 
         <div className="flex flex-col gap-2">
