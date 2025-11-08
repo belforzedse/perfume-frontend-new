@@ -1,6 +1,79 @@
 import axios from "axios";
 
-import { API_URL } from "./api";
+import { API_URL, STRAPI_TOKEN } from "./api";
+
+// Translation mappings for form fields
+const PersianToEnglishMappings = {
+  gender: {
+    "زنانه": "Female",
+    "مردانه": "Male",
+    "یونیسکس": "Unisex",
+  },
+  season: {
+    "بهار": "Spring",
+    "تابستان": "Summer",
+    "پاییز": "Fall",
+    "زمستان": "Winter",
+    "چهارفصل": "All Seasons",
+  },
+  family: {
+    "گلی": "Floral",
+    "چوبی": "Woody",
+    "شرقی": "Oriental",
+    "مرکباتی": "Citrus",
+    "آروماتیک": "Aromatic",
+    "مشکدار": "Musky",
+  },
+  character: {
+    "رسمی": "Formal",
+    "روزمره": "Casual",
+    "رمانتیک": "Romantic",
+    "اسپرت": "Sport",
+    "جذاب": "Attractive",
+    "کلاسیک": "Classic",
+  },
+} as const;
+
+// Create reverse mappings for displaying backend values
+const EnglishToPersianMappings = {
+  gender: Object.fromEntries(
+    Object.entries(PersianToEnglishMappings.gender).map(([k, v]) => [v, k])
+  ) as Record<string, string>,
+  season: Object.fromEntries(
+    Object.entries(PersianToEnglishMappings.season).map(([k, v]) => [v, k])
+  ) as Record<string, string>,
+  family: Object.fromEntries(
+    Object.entries(PersianToEnglishMappings.family).map(([k, v]) => [v, k])
+  ) as Record<string, string>,
+  character: Object.fromEntries(
+    Object.entries(PersianToEnglishMappings.character).map(([k, v]) => [v, k])
+  ) as Record<string, string>,
+} as const;
+
+// Convert Persian values to English for API submission
+export const convertToEnglish = (
+  fieldName: keyof typeof PersianToEnglishMappings,
+  persianValues: string[]
+): string => {
+  const mappings = PersianToEnglishMappings[fieldName];
+  const englishValues = persianValues.map(
+    (value) => mappings[value as keyof typeof mappings] || value
+  );
+  return englishValues.join(", ");
+};
+
+// Convert English values back to Persian for display
+export const convertToPersian = (
+  fieldName: keyof typeof EnglishToPersianMappings,
+  englishString: string | null | undefined
+): string[] => {
+  if (!englishString) return [];
+  const mappings = EnglishToPersianMappings[fieldName];
+  return englishString
+    .split(", ")
+    .map((value) => mappings[value.trim()] || value.trim())
+    .filter((value) => value.length > 0);
+};
 
 const adminClient = axios.create({
   baseURL: "/api/strapi",
@@ -22,7 +95,8 @@ adminClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error("[Admin API] Error:", error.config?.url);
+    const url = error.config?.url || error.response?.config?.url || "unknown";
+    console.error("[Admin API] Error:", url);
     console.error("[Admin API] Error details:", error.response?.status, error.response?.data || error.message);
     return Promise.reject(error);
   }
@@ -32,6 +106,10 @@ const authHeaders = (includeContentType = false) => {
   const headers: Record<string, string> = {
     Accept: "application/json",
   };
+
+  if (STRAPI_TOKEN) {
+    headers["Authorization"] = `Bearer ${STRAPI_TOKEN}`;
+  }
 
   if (includeContentType) {
     headers["Content-Type"] = "application/json";
@@ -122,14 +200,11 @@ export interface AdminCollection {
   brand?: AdminBrand | null;
 }
 
-const mapCollection = (
-  entity: StrapiEntity<CollectionAttributes>,
-): AdminCollection => {
+const mapCollection = (entity: StrapiEntity<CollectionAttributes>): AdminCollection => {
   // In Strapi v5, attributes are at root level
-  const attributes = (entity.attributes ?? (entity as unknown)) as
-    CollectionAttributes & Record<string, unknown>;
+  const attributes = entity.attributes ?? (entity as unknown as Record<string, unknown>);
   const rawEntity = entity as unknown as Record<string, unknown>;
-  const brandEntity = unwrapRelation<BrandAttributes>(attributes.brand);
+  const brandEntity = unwrapRelation<BrandAttributes>((attributes as CollectionAttributes).brand);
 
   return {
     id: entity.id,
@@ -138,6 +213,7 @@ const mapCollection = (
     brand: brandEntity ? mapBrand(brandEntity) : null,
   };
 };
+
 
 interface PerfumeNotesAttributes {
   top?: string[] | null;
@@ -216,15 +292,21 @@ const mapPerfume = (entity: StrapiEntity<PerfumeAttributes>): AdminPerfume => {
   const brandEntity = unwrapRelation<BrandAttributes>(attrs.brand);
   const collectionEntity = unwrapRelation<CollectionAttributes>(attrs.collection);
 
+  // Convert English values back to Persian for display
+  const genderPersian = convertToPersian("gender", attrs.gender?.trim());
+  const seasonPersian = convertToPersian("season", attrs.season?.trim());
+  const familyPersian = convertToPersian("family", attrs.family?.trim());
+  const characterPersian = convertToPersian("character", attrs.character?.trim());
+
   return {
     id: entity.id,
     documentId: (rawEntity.documentId as string | undefined),
     name_fa: attrs.name_fa?.trim() ?? "",
     name_en: attrs.name_en?.trim() ?? "",
-    gender: attrs.gender?.trim() || undefined,
-    season: attrs.season?.trim() || undefined,
-    family: attrs.family?.trim() || undefined,
-    character: attrs.character?.trim() || undefined,
+    gender: genderPersian.join(", ") || undefined,
+    season: seasonPersian.join(", ") || undefined,
+    family: familyPersian.join(", ") || undefined,
+    character: characterPersian.join(", ") || undefined,
     notes: normaliseNotes(attrs.notes),
     brand: brandEntity ? mapBrand(brandEntity) : null,
     collection: collectionEntity ? mapCollection(collectionEntity) : null,

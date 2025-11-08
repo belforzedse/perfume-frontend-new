@@ -92,6 +92,7 @@ const proxyRequest = async (
 };
 
 export const runtime = "nodejs";
+export const maxDuration = 60; // Allow up to 60 seconds for large uploads
 
 export const GET = (request: NextRequest, context: RouteContext) =>
   proxyRequest("GET", request, context);

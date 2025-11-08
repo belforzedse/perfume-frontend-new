@@ -12,6 +12,8 @@ import {
   fetchCollectionsAdmin,
   fetchPerfumesAdmin,
   uploadFile,
+  convertToEnglish,
+  convertToPersian,
   type AdminBrand,
   type AdminCollection,
   type AdminPerfume,
@@ -335,16 +337,16 @@ export default function AdminProductsPage() {
     setEditingPerfume(perfume);
     setIsEditing(true);
 
-    // Populate form with existing data
+    // Populate form with existing data (values are already in Persian from the API mapping)
     reset({
       nameFa: perfume.name_fa,
       nameEn: perfume.name_en,
       brandId: perfume.brand?.id.toString() || "",
       collectionId: perfume.collection?.id.toString() || "",
-      gender: perfume.gender ? [perfume.gender] : [],
-      season: perfume.season ? [perfume.season] : [],
-      family: perfume.family ? [perfume.family] : [],
-      character: perfume.character ? [perfume.character] : [],
+      gender: perfume.gender ? perfume.gender.split(", ").filter(v => v.length > 0) : [],
+      season: perfume.season ? perfume.season.split(", ").filter(v => v.length > 0) : [],
+      family: perfume.family ? perfume.family.split(", ").filter(v => v.length > 0) : [],
+      character: perfume.character ? perfume.character.split(", ").filter(v => v.length > 0) : [],
       notes: perfume.notes,
       image: null, // Don't populate image field when editing (user must upload a new file to change it)
     });
@@ -417,10 +419,11 @@ export default function AdminProductsPage() {
       const payload: CreatePerfumePayload | UpdatePerfumePayload = {
         name_fa: values.nameFa.trim(),
         name_en: values.nameEn.trim(),
-        gender: values.gender.length > 0 ? values.gender.join(", ") : undefined,
-        season: values.season.length > 0 ? values.season.join(", ") : undefined,
-        family: values.family.length > 0 ? values.family.join(", ") : undefined,
-        character: values.character.length > 0 ? values.character.join(", ") : undefined,
+        // Convert Persian values to English for backend
+        gender: values.gender.length > 0 ? convertToEnglish("gender", values.gender) : undefined,
+        season: values.season.length > 0 ? convertToEnglish("season", values.season) : undefined,
+        family: values.family.length > 0 ? convertToEnglish("family", values.family) : undefined,
+        character: values.character.length > 0 ? convertToEnglish("character", values.character) : undefined,
         notes: {
           top: normaliseNotes(values.notes.top),
           middle: normaliseNotes(values.notes.middle),
