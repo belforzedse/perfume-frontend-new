@@ -144,6 +144,7 @@ export default function PerfumeDetailsModal({
         base: Array.isArray(perfume.notes?.base) ? perfume.notes.base : [],
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perfume?.notes]);
 
   if (!perfume) return null;

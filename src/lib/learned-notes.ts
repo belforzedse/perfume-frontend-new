@@ -45052,7 +45052,7 @@ type ReadonlyLearnedNote = {
     readonly primaryLayer: "top" | "middle" | "base";
   };
   readonly brands: readonly string[];
-  readonly brandCounts: readonly Array<{ readonly brand: string; readonly count: number }>;
+  readonly brandCounts: readonly { readonly brand: string; readonly count: number }[];
   readonly totalBrands: number;
 };
 
@@ -45072,7 +45072,7 @@ export function getAllLearnedNotes(): LearnedNote[] {
  * Get notes by category
  */
 export function getNotesByCategory(category: string): LearnedNote[] {
-  const notesByCategory = learnedNotesData.notesByCategory as Record<string, readonly ReadonlyLearnedNote[]>;
+  const notesByCategory = learnedNotesData.notesByCategory as unknown as Record<string, readonly ReadonlyLearnedNote[]>;
   const categoryData = notesByCategory[category];
   if (!categoryData) return [];
   // Convert readonly array to mutable array, handling nested readonly arrays
