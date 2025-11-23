@@ -42,54 +42,77 @@ export const STYLE_CHOICES: Choice[] = [
   { value: "any", label: "فرقی ندارد", icon: "⭕" },
 ];
 
+import { getUniqueKeywordsForCategory } from "./learned-notes";
+
+// Base keywords (original set)
+const BASE_KEYWORDS = {
+  citrus: ["bergamot", "lemon", "orange", "grapefruit", "lime", "citrus", "mandarin"],
+  floral: ["rose", "jasmine", "tuberose", "violet", "peony", "lily"],
+  woody: ["cedar", "sandalwood", "vetiver", "oak", "oud", "wood"],
+  spicy: ["pepper", "cinnamon", "cardamom", "clove", "nutmeg", "spice"],
+  sweet: ["vanilla", "caramel", "tonka", "honey", "chocolate", "praline"],
+  green: ["mint", "herb", "tea", "basil", "sage", "green"],
+  oriental: ["amber", "incense", "resin", "labdanum", "benzoin", "oriental"],
+  musky: ["musk", "powder", "iris", "heliotrope", "cashmere"],
+};
+
+// Get learned keywords and merge with base keywords
+function getExpandedKeywords(category: keyof typeof BASE_KEYWORDS): string[] {
+  const base = BASE_KEYWORDS[category];
+  const learned = getUniqueKeywordsForCategory(category);
+  // Merge and deduplicate
+  const all = [...base, ...learned];
+  return Array.from(new Set(all.map((k) => k.toLowerCase()))).sort();
+}
+
 export const NOTE_CHOICES: NoteChoice[] = [
   {
     value: "citrus",
     label: "مرکباتی",
     icon: "🍊",
-    keywords: ["bergamot", "lemon", "orange", "grapefruit", "lime", "citrus", "mandarin"],
+    keywords: getExpandedKeywords("citrus"),
   },
   {
     value: "floral",
     label: "گلی",
     icon: "🌸",
-    keywords: ["rose", "jasmine", "tuberose", "violet", "peony", "lily"],
+    keywords: getExpandedKeywords("floral"),
   },
   {
     value: "woody",
     label: "چوبی و دودی",
     icon: "🌲",
-    keywords: ["cedar", "sandalwood", "vetiver", "oak", "oud", "wood"],
+    keywords: getExpandedKeywords("woody"),
   },
   {
     value: "spicy",
     label: "ادویه‌ای و گرم",
     icon: "🌶️",
-    keywords: ["pepper", "cinnamon", "cardamom", "clove", "nutmeg", "spice"],
+    keywords: getExpandedKeywords("spicy"),
   },
   {
     value: "sweet",
     label: "شیرین و خوراکی",
     icon: "🍫",
-    keywords: ["vanilla", "caramel", "tonka", "honey", "chocolate", "praline"],
+    keywords: getExpandedKeywords("sweet"),
   },
   {
     value: "green",
     label: "سبز و گیاهی",
     icon: "🌿",
-    keywords: ["mint", "herb", "tea", "basil", "sage", "green"],
+    keywords: getExpandedKeywords("green"),
   },
   {
     value: "oriental",
     label: "شرقی و کهربایی",
     icon: "🪔",
-    keywords: ["amber", "incense", "resin", "labdanum", "benzoin", "oriental"],
+    keywords: getExpandedKeywords("oriental"),
   },
   {
     value: "musky",
     label: "مشکی و پودری",
     icon: "🧴",
-    keywords: ["musk", "powder", "iris", "heliotrope", "cashmere"],
+    keywords: getExpandedKeywords("musky"),
   },
 ];
 

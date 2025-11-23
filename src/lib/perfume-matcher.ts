@@ -1,6 +1,7 @@
 import { Perfume } from "@/lib/api";
 import { LABEL_LOOKUP, NOTE_CHOICES } from "@/lib/kiosk-options";
 import { QuestionnaireAnswers } from "@/lib/questionnaire";
+import { getNotesMatchingKeyword, translatePersianNote, getPersianToEnglishMap } from "@/lib/learned-notes";
 
 const STRONG_KEYWORDS = [
   "intense",
@@ -38,12 +39,12 @@ const LAYER_WEIGHTS: Record<LayerKey, number> = {
 };
 
 const SCORE_WEIGHTS = {
-  moods: 28,
+  styles: 30, // Gender/style is most important - if you want masculine, you don't want feminine
+  moods: 24,
   moments: 18,
-  times: 10,
-  intensity: 12,
-  styles: 8,
   noteAffinity: 14,
+  intensity: 12,
+  times: 10,
   noteLayering: 6,
   synergy: 8,
   versatility: 4,
@@ -379,12 +380,54 @@ const evaluateStyle = (
 ): MultiScoreResult => {
   if (styles.length === 0) return { average: 0, strongMatches: 0 };
   const preferred = STYLE_MAP[styles[0]] ?? STYLE_MAP.any;
-  const match = preferred.includes(analysis.gender) ? 1 : analysis.gender ? 0.35 : 0.5;
+  
+  // If user selected "any", accept all perfumes
+  if (styles[0] === "any") {
+    return {
+      average: 1,
+      bestLabel: LABEL_LOOKUP[styles[0]],
+      bestValue: styles[0],
+      strongMatches: 1,
+    };
+  }
+  
+  // Perfect match: perfume gender is in preferred list
+  if (preferred.includes(analysis.gender)) {
+    return {
+      average: 1,
+      bestLabel: LABEL_LOOKUP[styles[0]],
+      bestValue: styles[0],
+      strongMatches: 1,
+    };
+  }
+  
+  // Unisex perfumes are acceptable for any specific gender preference (but score lower)
+  if (analysis.gender === "unisex") {
+    return {
+      average: 0.7,
+      bestLabel: undefined,
+      bestValue: styles[0],
+      strongMatches: 0,
+    };
+  }
+  
+  // Mismatch: user wants masculine but perfume is feminine (or vice versa)
+  // Heavily penalize this - it's a fundamental mismatch
+  if (analysis.gender) {
+    return {
+      average: 0.1, // Very low score for gender mismatch
+      bestLabel: undefined,
+      bestValue: styles[0],
+      strongMatches: 0,
+    };
+  }
+  
+  // No gender specified on perfume - neutral score
   return {
-    average: match,
-    bestLabel: match >= 0.7 ? LABEL_LOOKUP[styles[0]] : undefined,
+    average: 0.5,
+    bestLabel: undefined,
     bestValue: styles[0],
-    strongMatches: match >= 0.6 ? 1 : 0,
+    strongMatches: 0,
   };
 };
 
@@ -395,6 +438,9 @@ const evaluateNotes = (
   if (desired.length === 0)
     return { affinity: 0, layered: 0, coverage: 0, best: null };
 
+  // Get Persian-to-English translation map for bidirectional matching
+  const persianToEnglishMap = getPersianToEnglishMap();
+
   let totalAffinity = 0;
   let totalLayering = 0;
   let totalCoverage = 0;
@@ -403,6 +449,33 @@ const evaluateNotes = (
   desired.forEach((value) => {
     const keywords = NOTE_KEYWORDS[value] ?? [];
     if (keywords.length === 0) return;
+    
+    // Enhanced: Also get learned notes for this category
+    const learnedNotesForCategory = keywords.flatMap((keyword) =>
+      getNotesMatchingKeyword(keyword)
+    );
+    
+    // Combine base keywords with learned note English names
+    const allKeywords = [
+      ...keywords,
+      ...learnedNotesForCategory
+        .map((n) => n.english)
+        .filter((e): e is string => Boolean(e && typeof e === "string"))
+        .map((e) => e.toLowerCase()),
+    ];
+    const uniqueKeywords = Array.from(new Set(allKeywords));
+    
+    // Create a set of Persian note names that match these English keywords
+    const matchingPersianNotes = new Set<string>();
+    uniqueKeywords.forEach((englishKeyword) => {
+      // Find all Persian notes that translate to this English keyword
+      for (const [persian, english] of persianToEnglishMap.entries()) {
+        if (english.includes(englishKeyword) || englishKeyword.includes(english)) {
+          matchingPersianNotes.add(persian);
+        }
+      }
+    });
+    
     let affinityContribution = 0;
     let layeringContribution = 0;
     let layersHit = 0;
@@ -410,11 +483,31 @@ const evaluateNotes = (
 
     (Object.keys(LAYER_WEIGHTS) as LayerKey[]).forEach((layer) => {
       const layerNotes = notes[layer];
-      const hits = keywords.filter((keyword) =>
-        layerNotes.some((note) => note.includes(keyword))
+      
+      // Match both English keywords and Persian notes
+      const hits = uniqueKeywords.filter((keyword) => {
+        // Check if any note in this layer matches the English keyword
+        return layerNotes.some((note) => {
+          const noteLower = note.toLowerCase();
+          // Direct English match
+          if (noteLower.includes(keyword)) return true;
+          // Check if this Persian note translates to the English keyword
+          const translated = translatePersianNote(note);
+          return translated.some((t) => t.includes(keyword) || keyword.includes(t));
+        });
+      });
+      
+      // Also check for Persian note matches
+      const persianHits = Array.from(matchingPersianNotes).filter((persianNote) =>
+        layerNotes.some((note) => {
+          const noteLower = note.toLowerCase();
+          return noteLower.includes(persianNote) || persianNote.includes(noteLower);
+        })
       );
-      if (hits.length > 0) {
-        const coverageRatio = hits.length / keywords.length;
+      
+      const totalHits = hits.length + persianHits.length;
+      if (totalHits > 0) {
+        const coverageRatio = Math.min(1, totalHits / (uniqueKeywords.length + matchingPersianNotes.size));
         const weight = LAYER_WEIGHTS[layer];
         affinityContribution += Math.min(1, coverageRatio * 1.2) * weight;
         layeringContribution += weight;
@@ -423,11 +516,27 @@ const evaluateNotes = (
       }
     });
 
-    const overallHits = keywords.filter((keyword) =>
-      notes.all.some((note) => note.includes(keyword))
+    // Overall hits across all layers
+    const overallHits = uniqueKeywords.filter((keyword) =>
+      notes.all.some((note) => {
+        const noteLower = note.toLowerCase();
+        if (noteLower.includes(keyword)) return true;
+        const translated = translatePersianNote(note);
+        return translated.some((t) => t.includes(keyword) || keyword.includes(t));
+      })
     ).length;
-    if (overallHits > 0) {
-      affinityContribution += Math.min(1, overallHits / keywords.length) * 0.25;
+    
+    const persianOverallHits = Array.from(matchingPersianNotes).filter((persianNote) =>
+      notes.all.some((note) => {
+        const noteLower = note.toLowerCase();
+        return noteLower.includes(persianNote) || persianNote.includes(noteLower);
+      })
+    ).length;
+    
+    if (overallHits > 0 || persianOverallHits > 0) {
+      const totalHits = overallHits + persianOverallHits;
+      const totalKeywords = uniqueKeywords.length + matchingPersianNotes.size;
+      affinityContribution += Math.min(1, totalHits / totalKeywords) * 0.25;
     }
 
     if (layersHit > 1) {

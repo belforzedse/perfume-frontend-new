@@ -17,7 +17,7 @@ import {
   useFadeScaleVariants,
   useStaggeredListVariants,
 } from "@/lib/motion";
-import { useSharePerfume } from "@/lib/useSharePerfume";
+import PerfumeDetailsModal from "@/components/PerfumeDetailsModal";
 
 const formatNumber = (value: number) => toPersianNumbers(String(value));
 
@@ -27,12 +27,12 @@ const MatchCard = ({
   perfume,
   order,
   compact = "normal",
-  onShare,
+  onClick,
 }: {
   perfume: RankedPerfume;
   order: number;
   compact?: CompactMode;
-  onShare: (perfume: RankedPerfume) => void;
+  onClick: (perfume: RankedPerfume) => void;
 }) => {
   const title = perfume.nameFa && perfume.nameFa.trim().length > 0 ? perfume.nameFa : perfume.nameEn;
   const detailLine = [perfume.collection, perfume.family]
@@ -51,14 +51,14 @@ const MatchCard = ({
   const handleKeyUp = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      onShare(perfume);
+      onClick(perfume);
     }
   };
 
   return (
     <button
       type="button"
-      onClick={() => onShare(perfume)}
+      onClick={() => onClick(perfume)}
       onKeyUp={handleKeyUp}
       className="group glass-card glass-card--muted flex h-full w-full flex-col gap-3 rounded-2xl p-3 text-right transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.01] focus-visible:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent sm:gap-4 sm:rounded-3xl sm:p-4 md:gap-5 md:p-5 lg:p-6"
     >
@@ -153,14 +153,19 @@ function RecommendationsContent() {
     duration: signatureTransitions.surface.duration ?? 0.68,
     ease: signatureTransitions.surface.ease,
   });
-  const sharePerfume = useSharePerfume();
+  const [selectedPerfume, setSelectedPerfume] = useState<RankedPerfume | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleShare = useCallback(
-    (perfume: RankedPerfume) => {
-      void sharePerfume(perfume);
-    },
-    [sharePerfume]
-  );
+  const handlePerfumeClick = useCallback((perfume: RankedPerfume) => {
+    setSelectedPerfume(perfume);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    // Clear selected perfume after animation
+    setTimeout(() => setSelectedPerfume(null), 300);
+  }, []);
 
   useEffect(() => {
     const updateCompact = () => {
@@ -219,7 +224,9 @@ function RecommendationsContent() {
         const allPerfumes = await getPerfumes();
         if (cancelled) return;
         const ranked = rankPerfumes(allPerfumes, parsedAnswers);
-        setRecommendations(ranked);
+        // Only keep the top 20 matches for better performance
+        const topMatches = ranked.slice(0, 20);
+        setRecommendations(topMatches);
         setShowAll(false);
       } catch (err) {
         if (cancelled) return;
@@ -437,7 +444,7 @@ function RecommendationsContent() {
         >
           {recommendations.length > 0 && (
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted sm:text-xs">
-              <span>برای ذخیره یا اشتراک‌گذاری، کارت هر عطر را لمس کنید یا کلید Enter را فشار دهید.</span>
+              <span>برای مشاهده جزئیات، کارت هر عطر را لمس کنید یا کلید Enter را فشار دهید.</span>
               <span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] text-muted">
                 تطابق میانگین: {formatNumber(Math.round(
                   recommendations.reduce((sum, item) => sum + item.matchPercentage, 0) / recommendations.length
@@ -457,7 +464,7 @@ function RecommendationsContent() {
                     className="h-full min-h-[200px]"
                     variants={cardVariants}
                   >
-                    <MatchCard perfume={perfume} order={index + 1} compact={compact} onShare={handleShare} />
+                    <MatchCard perfume={perfume} order={index + 1} compact={compact} onClick={handlePerfumeClick} />
                   </motion.div>
                 ))
               ) : (
@@ -494,6 +501,13 @@ function RecommendationsContent() {
           </div>
         </motion.section>
       </div>
+
+      {/* Perfume Details Modal */}
+      <PerfumeDetailsModal
+        perfume={selectedPerfume}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </main>
   );
 }
